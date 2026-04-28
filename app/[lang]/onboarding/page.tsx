@@ -16,7 +16,6 @@ export default async function page({ params }: props) {
   });
 
   const state = await onboardingService.getOnboardingState();
-  console.log(state)
   if (state.step === "redirect") {
     // Si el servicio nos da un ID para auto-seleccionar, lo guardamos ahora
     if (state.activeRealEstateId) {
