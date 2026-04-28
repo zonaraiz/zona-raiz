@@ -21,8 +21,6 @@ export function ListingBreadcrumb({ data }: ListingBreadcrumbProps) {
   const cityLabel = CITY_LABELS[property.city] ?? property.city;
   const stateLabel = STATE_LABELS[property.state] ?? property.state;
 
-  console.log(listingTypeSlug, propertyTypeSlug, cityLabel, stateLabel);
-
   const crumbs = [
     {
       label: "Inicio",

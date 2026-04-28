@@ -29,6 +29,7 @@ import {
   IconBath,
   IconCurrencyDollar,
   IconMapPin,
+  IconSearch,
 } from "@tabler/icons-react";
 import { CtaButton } from "./button-cta";
 
@@ -273,7 +274,7 @@ export function LandingHero({ lang = "es" }: LandingHeroProps) {
                   <Button
                     type="submit"
                     disabled={isSearching}
-                    className="w-full"
+                    className="w-full rounded-full"
                   >
                     {isSearching ? (
                       <>
@@ -283,7 +284,7 @@ export function LandingHero({ lang = "es" }: LandingHeroProps) {
                     ) : (
                       <>
                         {t("hero.search_btn")}
-                        <IconArrowRight className="size-4" />
+                        <IconSearch className="size-4" />
                       </>
                     )}
                   </Button>

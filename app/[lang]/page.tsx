@@ -23,12 +23,13 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps) {
   const { lang } = await params;
   const cookieStore = await cookies();
-  const { sessionService, favoriteService } = await appModule(lang, {
+  const { sessionService, favoriteService, cookiesService } = await appModule(lang, {
     cookies: cookieStore,
   });
   const landingData = await getLandingData();
   let isAuth = false; // ✅ declared in outer scope
   let favoriteIds: string[] = [];
+  const role = await cookiesService.getProfileRole()
 
   try {
     isAuth = await sessionService.isAuth();
@@ -46,7 +47,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <LandingNav isAuth={isAuth} />
+      <LandingNav isAuth={isAuth} role={role} />
       <main className="flex-1">
         <Suspense fallback={<HeroSkeleton />}>
           <LandingHero lang={lang} />

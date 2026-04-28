@@ -57,8 +57,6 @@ export function PropertyForm({
     mode: "onBlur",
   });
 
-  console.log(form.formState.errors)
-
   const wizardRef = useRef<WizardRef>(null)
 
   const {

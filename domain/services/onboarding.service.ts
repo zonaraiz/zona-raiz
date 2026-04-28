@@ -37,7 +37,9 @@ export class OnboardingService {
     // El Admin suele tener una visión global, pero si necesita una inmobiliaria específica,
     // se podría aplicar la misma lógica que al RealEstate.
     if (role === EUserRole.Admin) {
-      return { step: "redirect", path: routes.dashboard() };
+      const realEstates = await this.sessionPort.getRealEstatesForUser();
+
+      return { step: "select-real-estate", realEstates };
     }
 
     if (role === EUserRole.RealEstate) {

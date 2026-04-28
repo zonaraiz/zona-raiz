@@ -21,9 +21,11 @@ import Logo from "../navigation/logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CtaButton } from "./button-cta";
+import { EUserRole } from "@/domain/entities/profile.entity";
 
 interface LandingNavProps {
   isAuth: boolean;
+  role: EUserRole | null;
 }
 
 type NavigationSection = {
@@ -58,7 +60,7 @@ const AuthButton = ({
   </Link>
 );
 
-export function LandingNav({ isAuth }: LandingNavProps) {
+export function LandingNav({ isAuth, role }: LandingNavProps) {
   const { t } = useTranslation("landing");
   const routes = useRoutes();
 
@@ -76,11 +78,14 @@ export function LandingNav({ isAuth }: LandingNavProps) {
       href: routes.contact(),
       title: t("nav.contact"),
     },
-    {
+  ];
+
+  if (role === EUserRole.Admin || role === EUserRole.RealEstate) {
+    navigationData.push({
       href: isAuth ? routes.dashboard() : routes.signin(),
       title: isAuth ? t("nav.dashboard") : t("nav.login"),
-    },
-  ];
+    });
+  }
 
   const [sticky, setSticky] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -138,11 +143,13 @@ export function LandingNav({ isAuth }: LandingNavProps) {
                 href={routes.search()}
                 className="hidden lg:flex"
               />
-              <AuthButton
-                text={isAuth ? t("nav.dashboard") : t("nav.login")}
-                href={isAuth ? routes.dashboard() : routes.signin()}
-                className="hidden lg:flex"
-              />
+              {(role === EUserRole.Admin || role === EUserRole.RealEstate) && (
+                <AuthButton
+                  text={isAuth ? t("nav.dashboard") : t("nav.login")}
+                  href={isAuth ? routes.onboarding() : routes.signin()}
+                  className="hidden lg:flex"
+                />
+              )}
             </div>
             <div className="lg:hidden">
               <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>

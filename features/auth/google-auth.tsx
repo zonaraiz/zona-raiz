@@ -26,7 +26,6 @@ export default function GoogleAuth({ disabled }: GoogleAuthProps) {
       if ("data" in response) {
         if ("redirectUrl" in response.data) {
           const url = decodeURIComponent(response.data.redirectUrl as string);
-          console.log(url);
           if (url.trim().length) window.location.href = url;
         }
       }
