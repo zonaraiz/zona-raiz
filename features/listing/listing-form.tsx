@@ -59,7 +59,7 @@ export function ListingForm({
     setError,
     onSuccess: (result) => {
       if (result.success) {
-        toast.success(t(`messages.${isUpdateMode} ? "updated" : "created"}`));
+        toast.success(t(`messages.${isUpdateMode ? 'updated': 'created'}`));
         if (!isUpdateMode) reset();
       }
     },

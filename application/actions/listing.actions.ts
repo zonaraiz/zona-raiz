@@ -18,7 +18,7 @@ export const createListingAction = withServerAction(
     const i18n = await initI18n(lang);
     const t = i18n.getFixedT(lang);
 
-    const { propertyService, sessionService, listingService } = await appModule(
+    const { propertyService, listingService } = await appModule(
       lang,
       { cookies: cookieStore },
     );
@@ -33,12 +33,8 @@ export const createListingAction = withServerAction(
     const property = await propertyService.getById(validated.property_id);
     if (!property) throw new Error(t("common:exceptions.data_not_found"));
 
-    const agent_id = await sessionService.getCurrentUserId();
-    if (!agent_id) throw new Error(t("common:exceptions.unauthorized"));
-
     const listing = await listingService.create({
       ...validated,
-      agent_id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       expenses_included: raw.expenses_included === "on",
@@ -98,9 +94,23 @@ export const updateListingAction = withServerAction(
 
     const agent_id = currentListing.agent_id;
 
+    const basicData = {
+      minimum_contract_duration: validated.minimum_contract_duration,
+      property_id: validated.property_id,
+      listing_type: validated.listing_type,
+      price: validated.price,
+      currency: validated.currency,
+      price_negotiable: validated.price_negotiable,
+      status: validated.status,
+      virtual_tour_url: validated.virtual_tour_url,
+      video_url: validated.video_url,
+      available_from: validated.available_from,
+      whatsapp_contact: validated.whatsapp_contact,
+    }
+
     const dataToUpdate = {
       ...currentListing,
-      ...validated,
+      ...basicData,
       agent_id,
       updated_at: new Date().toISOString(),
       expenses_included: raw.expenses_included === "on",

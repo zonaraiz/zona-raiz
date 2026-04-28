@@ -30,7 +30,26 @@ export default async function DashboardLayout({
     cookies: cookieStore,
   });
 
-  const real_estate_id = (await cookiesService.getRealEstateId()) as string;
+  const real_estate_id_cookie =
+    (await cookiesService.getRealEstateId()) as string;
+  let real_estate_id = real_estate_id_cookie;
+
+  // 🛡️ SEGUNDA OPORTUNIDAD: Si la cookie no está, intentamos recuperarla de la DB
+  if (!real_estate_id) {
+    const realEstates = await sessionService.getRealEstatesForUser();
+
+    if (realEstates && realEstates.length === 1) {
+      real_estate_id = realEstates[0].real_estate.id;
+      // Opcional: intentar setearla aquí, aunque en Server Components es limitado
+    } else {
+      // Si realmente no hay nada, entonces sí mandamos a onboarding
+      return encodedRedirect(
+        "error",
+        routes.onboarding(),
+        t("common:exceptions.data_not_found"),
+      );
+    }
+  }
 
   if (!real_estate_id) {
     return encodedRedirect(

@@ -55,12 +55,11 @@ export const createListingSchema = yup.object({
     )
     .default("")
     .optional(),
-  available_from: yup.date().min(
-    new Date(),
-    i18next.t("validations:date", {
-      attribute: "available_from",
-    }),
-  ),
+  available_from: yup
+    .date()
+    .typeError(i18next.t("validations:invalid_date")) // Captura fechas irreales/mal formateadas
+    .required(i18next.t("validations:required", { attribute: "available_from" })) // No permite nulos
+    .nullable(),
   minimum_contract_duration: yup
     .number()
     .integer(

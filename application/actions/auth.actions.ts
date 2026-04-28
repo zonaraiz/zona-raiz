@@ -70,7 +70,7 @@ export const signInAction = withServerAction(async (formData: FormData) => {
   const lang = await getLangServerSide();
   const cookieStore = await cookies();
   const routes = createRouter(lang);
-  const { authService, cookiesService, sessionService } = await appModule(
+  const { authService, cookiesService } = await appModule(
     lang,
     {
       cookies: cookieStore,
@@ -80,22 +80,7 @@ export const signInAction = withServerAction(async (formData: FormData) => {
   const role = await authService.signIn(input.email, input.password);
   cookiesService.setSession(COOKIE_NAMES.ROLE, role);
 
-  if (role === EUserRole.RealEstate || role === EUserRole.Admin) {
-    const realEstates = await sessionService.getRealEstatesForUser();
-
-    if (realEstates.length === 1) {
-      const current = realEstates[0];
-      cookiesService.setSession(
-        COOKIE_NAMES.REAL_ESTATE,
-        current.real_estate.id,
-      );
-      cookiesService.setSession(COOKIE_NAMES.REAL_ESTATE_ROLE, current.role);
-    }
-
-    return { redirectTo: routes.onboarding() }; // ✅ faltaba este return
-  }
-
-  return { redirectTo: routes.home() };
+  return { redirectTo: routes.onboarding() };
 });
 
 export const signOutAction = withServerAction(async () => {

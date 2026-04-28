@@ -13,6 +13,7 @@ export type CreateListingInput = Omit<
   ListingEntity,
   | "id"
   | "property_id"
+  | "agent_id"
   | "views_count"
   | "enquiries_count"
   | "whatsapp_clicks"

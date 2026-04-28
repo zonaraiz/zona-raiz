@@ -1,7 +1,7 @@
 create table if not exists public.listings (
   id uuid primary key default gen_random_uuid(),
   property_id uuid not null references public.properties on delete cascade,
-  agent_id uuid not null references public.real_estate_agents on delete restrict,
+  agent_id uuid references public.real_estate_agents on delete restrict,
 
   -- Tipo y precio
   listing_type listing_type not null,

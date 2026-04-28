@@ -6,7 +6,7 @@ import { ProfileEntity } from "./profile.entity";
 export interface ListingEntity {
   id: string;
   property_id: string;
-  agent_id: string;
+  agent_id: string | null;
 
   listing_type: ListingType;
   price: number;

@@ -7,7 +7,7 @@ import { getLangServerSide } from "@/infrastructure/shared/utils/lang";
 import { createRouter } from "@/i18n/router";
 
 export type OnboardingState =
-  | { step: "redirect"; path: string }
+  | { step: "redirect"; path: string; activeRealEstateId?: string } // Agregamos el ID opcional
   | { step: "register-real-estate" }
   | { step: "select-real-estate"; realEstates: RealEstateWithRoleEntity[] };
 
@@ -34,6 +34,8 @@ export class OnboardingService {
       return { step: "redirect", path: routes.home() };
     }
 
+    // El Admin suele tener una visión global, pero si necesita una inmobiliaria específica,
+    // se podría aplicar la misma lógica que al RealEstate.
     if (role === EUserRole.Admin) {
       return { step: "redirect", path: routes.dashboard() };
     }
@@ -47,7 +49,12 @@ export class OnboardingService {
       }
 
       if (count === 1) {
-        return { step: "redirect", path: routes.dashboard() };
+        // 🔥 AUTO-SELECCIÓN: Pasamos el ID para que el llamador lo procese
+        return {
+          step: "redirect",
+          path: routes.dashboard(),
+          activeRealEstateId: realEstates[0].real_estate.id
+        };
       }
 
       return {
