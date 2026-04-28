@@ -21,11 +21,13 @@ import Logo from "../navigation/logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CtaButton } from "./button-cta";
-import { EUserRole } from "@/domain/entities/profile.entity";
+import { EUserRole, ProfileEntity } from "@/domain/entities/profile.entity";
+import { NavUser } from "../navigation/nav-user";
 
 interface LandingNavProps {
   isAuth: boolean;
   role: EUserRole | null;
+  profile?: ProfileEntity | null;
 }
 
 type NavigationSection = {
@@ -60,7 +62,7 @@ const AuthButton = ({
   </Link>
 );
 
-export function LandingNav({ isAuth, role }: LandingNavProps) {
+export function LandingNav({ isAuth, role, profile }: LandingNavProps) {
   const { t } = useTranslation("landing");
   const routes = useRoutes();
 
@@ -143,12 +145,18 @@ export function LandingNav({ isAuth, role }: LandingNavProps) {
                 href={routes.search()}
                 className="hidden lg:flex"
               />
-              {(role === EUserRole.Admin || role === EUserRole.RealEstate) && (
-                <AuthButton
-                  text={isAuth ? t("nav.dashboard") : t("nav.login")}
-                  href={isAuth ? routes.onboarding() : routes.signin()}
-                  className="hidden lg:flex"
-                />
+              {isAuth && profile ? (
+                <div className="hidden lg:flex">
+                  <NavUser profile={profile} />
+                </div>
+              ) : (
+                (role === EUserRole.Admin || role === EUserRole.RealEstate) && (
+                  <AuthButton
+                    text={isAuth ? t("nav.dashboard") : t("nav.login")}
+                    href={isAuth ? routes.onboarding() : routes.signin()}
+                    className="hidden lg:flex"
+                  />
+                )
               )}
             </div>
             <div className="lg:hidden">
@@ -169,6 +177,16 @@ export function LandingNav({ isAuth, role }: LandingNavProps) {
                       </Link>
                     </DropdownMenuItem>
                   ))}
+                  {isAuth && profile && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <Link href={routes.profile()}>
+                        <DropdownMenuItem className="cursor-pointer text-sm font-medium">
+                          {profile.full_name}
+                        </DropdownMenuItem>
+                      </Link>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

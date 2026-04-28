@@ -34,6 +34,7 @@ import { ListingType } from "@/domain/entities/listing.enums";
 import { PropertyType } from "@/domain/entities/property.enums";
 import { buildUrl } from "./_search/helpers";
 import { LandingNav } from "@/features/landing/landing-nav";
+import { ProfileEntity, EUserRole } from "@/domain/entities/profile.entity";
 
 interface SearchPageClientProps {
   filters: ListingSearchFiltersType;
@@ -46,6 +47,8 @@ interface SearchPageClientProps {
   lang: Lang;
   favoriteIds?: string[];
   isAuth: boolean;
+  profile?: ProfileEntity | null;
+  role?: EUserRole | null;
 }
 
 function FiltersContent({
@@ -74,6 +77,8 @@ export function SearchPageClient({
   lang,
   favoriteIds,
   isAuth,
+  profile,
+  role,
 }: SearchPageClientProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -111,7 +116,7 @@ export function SearchPageClient({
 
   return (
     <div className="min-h-screen bg-background">
-      <LandingNav isAuth={isAuth} />
+      <LandingNav isAuth={isAuth} role={role} profile={profile} />
 
       {/* Breadcrumb */}
       <div className="bg-primary border-y">

@@ -196,16 +196,20 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
   // Auth + favorites
   let favoriteIds: string[] = [];
   let isAuth = false;
+  let profile = null;
+  let role = null;
   try {
-    const { sessionService, favoriteService } = await appModule(lang, {
+    const { sessionService, favoriteService, profileService, cookiesService } = await appModule(lang, {
       cookies: cookieStore,
     });
+    role = await cookiesService.getProfileRole();
     isAuth = await sessionService.isAuth();
     if (isAuth) {
       const userId = await sessionService.getCurrentUserId();
       if (userId) {
         const favorites = await favoriteService.findByProfileId(userId);
         favoriteIds = favorites.map((f) => f.listing_id);
+        profile = await profileService.getCachedProfileByUserId(userId);
       }
     }
   } catch {
@@ -238,6 +242,8 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
         basePath={basePath}
         favoriteIds={favoriteIds}
         isAuth={isAuth}
+        profile={profile}
+        role={role}
       />
     </>
   );

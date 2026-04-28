@@ -23,12 +23,13 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps) {
   const { lang } = await params;
   const cookieStore = await cookies();
-  const { sessionService, favoriteService, cookiesService } = await appModule(lang, {
+  const { sessionService, favoriteService, cookiesService, profileService } = await appModule(lang, {
     cookies: cookieStore,
   });
   const landingData = await getLandingData();
   let isAuth = false; // ✅ declared in outer scope
   let favoriteIds: string[] = [];
+  let profile = null;
   const role = await cookiesService.getProfileRole()
 
   try {
@@ -38,6 +39,7 @@ export default async function HomePage({ params }: HomePageProps) {
       if (userId) {
         const favorites = await favoriteService.findByProfileId(userId);
         favoriteIds = favorites.map((f) => f.listing_id);
+        profile = await profileService.getCachedProfileByUserId(userId);
       }
     }
   } catch {
@@ -47,7 +49,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <LandingNav isAuth={isAuth} role={role} />
+      <LandingNav isAuth={isAuth} role={role} profile={profile} />
       <main className="flex-1">
         <Suspense fallback={<HeroSkeleton />}>
           <LandingHero lang={lang} />
