@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/sidebar";
 import { IconName } from "lucide-react/dynamic";
 import { ProfileEntity } from "@/domain/entities/profile.entity";
-import { Building2Icon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
 import { FavoritesList } from "@/features/favorites/favorites-list";
