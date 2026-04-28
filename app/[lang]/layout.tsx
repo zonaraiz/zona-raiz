@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Providers } from "./providers";
 import { ReactNode } from 'react'
 import { Lang } from '@/i18n/settings';
+import { AuthErrorHandler } from '@/features/errors/error-handler-content';
 
 export const metadata: Metadata = {
   title: "Zonaraíz",
@@ -37,6 +38,7 @@ export default async function RootLayout({
         className={`${notoSans.variable} antialiased`}
       >
         <Providers>
+          <AuthErrorHandler />
           <main className="min-h-screen bg-background mx-auto">
             {children}
           </main>
