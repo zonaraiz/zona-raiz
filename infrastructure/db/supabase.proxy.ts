@@ -29,13 +29,6 @@ export async function updateSession(request: NextRequest) {
   // AUTH
   // =========================
   const isAuth = await sessionService.isAuth();
-
-  console.log('\n')
-  console.log('\n')
-  console.log('isAuth:', isAuth)
-  console.log('\n')
-  console.log('\n')
-
   if (!isAuth) {
     return redirectTo(routes.signin(), request);
   }
