@@ -1,8 +1,8 @@
 import { appModule } from "@/application/modules/app.module";
 import { OnboardingWrapper } from "@/features/onboarding/onboarding-wrapper";
 import { Lang } from "@/i18n/settings";
-import { COOKIE_NAMES } from "@/infrastructure/config/constants";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface props {
   params: Promise<{ lang: Lang }>;
@@ -11,7 +11,7 @@ interface props {
 export default async function page({ params }: props) {
   const { lang } = await params;
   const cookieStore = await cookies();
-  const { onboardingService, cookiesService } = await appModule(lang, {
+  const { onboardingService } = await appModule(lang, {
     cookies: cookieStore,
   });
 
@@ -19,10 +19,7 @@ export default async function page({ params }: props) {
   if (state.step === "redirect") {
     // Si el servicio nos da un ID para auto-seleccionar, lo guardamos ahora
     if (state.activeRealEstateId) {
-      cookiesService.setSession(
-        COOKIE_NAMES.REAL_ESTATE,
-        state.activeRealEstateId,
-      );
+      redirect(`/api/onboarding/set-real-estate?id=${state.activeRealEstateId}`);
     }
   }
 
