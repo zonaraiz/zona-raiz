@@ -16,6 +16,7 @@ import { cookies } from "next/headers";
 import { ListingEntity } from "@/domain/entities/listing.entity";
 import { ListingType } from "@/domain/entities/listing.enums";
 import { PropertyType } from "@/domain/entities/property.enums";
+import { EUserRole } from "@/domain/entities/profile.entity";
 
 interface SearchPageProps {
   params: Promise<{ lang: Lang; location?: string[] }>;
@@ -193,17 +194,21 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
 
   const { listings, total } = await getListings(filters, lang);
 
-  // Auth + favorites
+// Auth + favorites
   let favoriteIds: string[] = [];
   let isAuth = false;
   let profile = null;
-  let role = null;
+  let role = EUserRole.Client;
+
   try {
     const { sessionService, favoriteService, profileService, cookiesService } = await appModule(lang, {
       cookies: cookieStore,
     });
-    role = await cookiesService.getProfileRole();
+    role = isAuth ? await cookiesService.getProfileRole() || EUserRole.Client : EUserRole.Client;
+
     isAuth = await sessionService.isAuth();
+    role = isAuth ? await cookiesService.getProfileRole() || EUserRole.Client : EUserRole.Client;
+
     if (isAuth) {
       const userId = await sessionService.getCurrentUserId();
       if (userId) {
@@ -231,7 +236,7 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SearchPageClient
+<SearchPageClient
         lang={lang}
         filters={filters}
         listings={listings}

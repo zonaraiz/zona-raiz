@@ -10,16 +10,16 @@ Sistema de generación de datos de prueba para desarrollo y testing.
 
 ```bash
 # Generar seed.sql (sin TRUNCATE)
-pnpm seed:sql
+bun seed:sql
 
 # Generar con TRUNCATE (borra datos existentes)
-pnpm seed:sql --truncate
+bun seed:sql --truncate
 
 # Ver SQL en consola sin guardar
-pnpm seed:sql --dry-run
+bun seed:sql --dry-run
 
 # Guardar en archivo específico
-pnpm seed:sql -o mi-seed.sql
+bun seed:sql -o mi-seed.sql
 ```
 
 ### Opciones

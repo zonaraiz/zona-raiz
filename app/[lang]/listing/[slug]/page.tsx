@@ -5,6 +5,7 @@ import { Lang } from "@/i18n/settings";
 import { cookies } from "next/headers";
 import { mapListingToDetailDTO } from "@/application/mappers/listing.mapper";
 import { ListingDetail } from "@/features/listing/listing-detail";
+import { EUserRole } from "@/domain/entities/profile.entity";
 
 interface Props {
   params: Promise<{ slug: string; lang: Lang }>;
@@ -63,7 +64,7 @@ export default async function page({ params }: Props) {
   const cookieStore = await cookies();
   const { slug, lang } = await params;
 
-  const { listingService, sessionService, favoriteService } = await appModule(
+  const { listingService, sessionService, favoriteService, cookiesService } = await appModule(
     lang,
     { cookies: cookieStore },
   );
@@ -74,8 +75,10 @@ export default async function page({ params }: Props) {
   }
 
   let isAuth = false;
+  let role = EUserRole.Client
   try {
     isAuth = await sessionService.isAuth();
+    role = isAuth ? await cookiesService.getProfileRole() || EUserRole.Client : EUserRole.Client
   } catch {}
 
   let isFavInitial = false;
@@ -96,6 +99,7 @@ export default async function page({ params }: Props) {
       data={listingDetailData}
       isFavInitial={isFavInitial}
       isAuth={isAuth}
+      role={role}
     />
   );
 }

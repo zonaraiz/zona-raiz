@@ -56,7 +56,7 @@ function printHelp() {
   console.log(`
 🎲 Seed SQL Generator
 
-Usage: pnpm seed:sql [options]
+Usage: bun seed:sql [options]
 
 Options:
   --truncate, -t     Incluir TRUNCATE al inicio del SQL (para datos limpios)
@@ -65,10 +65,10 @@ Options:
   --help, -h         Mostrar esta ayuda
 
 Examples:
-  pnpm seed:sql                    # Generar seed.sql sin TRUNCATE
-  pnpm seed:sql --truncate        # Generar con TRUNCATE
-  pnpm seed:sql -o custom.sql     # Guardar en custom.sql
-  pnpm seed:sql --dry-run          # Ver SQL en consola
+  bun seed:sql                    # Generar seed.sql sin TRUNCATE
+  bun seed:sql --truncate        # Generar con TRUNCATE
+  bun seed:sql -o custom.sql     # Guardar en custom.sql
+  bun seed:sql --dry-run          # Ver SQL en consola
 `);
 }
 

@@ -34,7 +34,7 @@ Plataforma inmobiliaria multi-tenant con Next.js 16 + Supabase.
 ## 📋 Requisitos
 
 - Node.js 20.x
-- pnpm 10.x
+- bun 10.x
 - Docker (para despliegue con contenedor)
 - Supabase (cloud o self-hosted)
 
@@ -44,19 +44,19 @@ Plataforma inmobiliaria multi-tenant con Next.js 16 + Supabase.
 
 ```bash
 # Instalar dependencias
-pnpm install
+bun install
 
 # Iniciar Supabase local
-pnpm supabase:start
+bun supabase:start
 
 # Copiar variables de entorno
 cp .env.example .env
 
 # Ejecutar migraciones
-pnpm supabase:db:push
+bun supabase:db:push
 
 # Iniciar servidor de desarrollo
-pnpm dev
+bun dev
 ```
 
 ### Produccion con Docker
@@ -144,13 +144,13 @@ docker compose restart nextjs
 
 | Script | Descripción |
 |--------|-------------|
-| `pnpm dev` | Servidor de desarrollo |
-| `pnpm build` | Build de producción |
-| `pnpm start` | Iniciar producción |
-| `pnpm test` | Ejecutar tests |
-| `pnpm lint` | Linting |
-| `pnpm supabase:start` | Iniciar Supabase local |
-| `pnpm supabase:db:push` | Enviar migraciones |
+| `bun dev` | Servidor de desarrollo |
+| `bun build` | Build de producción |
+| `bun start` | Iniciar producción |
+| `bun test` | Ejecutar tests |
+| `bun lint` | Linting |
+| `bun supabase:start` | Iniciar Supabase local |
+| `bun supabase:db:push` | Enviar migraciones |
 
 ## 🌐 Endpoints
 

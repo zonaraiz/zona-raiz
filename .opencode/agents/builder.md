@@ -74,8 +74,8 @@ cd ~/projects/zona_raiz-<slug>  # SIEMPRE trabajar en el worktree
 ## Al terminar
  
 ```bash
-pnpm tsc --noEmit
-pnpm lint
+bun tsc --noEmit
+bun lint
 git log --oneline origin/master...HEAD
 ```
 
