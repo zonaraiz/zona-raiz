@@ -90,7 +90,7 @@ export const parseSearchParams = (
     neighborhood: parsed.neighborhood || (sp.neighborhood as string) || "",
     street: (sp.street as string) || "",
     min_price: sp.min_price ? Number(sp.min_price) : 0,
-    max_price: sp.max_price ? Number(sp.max_price) : 100000000,
+    max_price: sp.max_price ? Number(sp.max_price) : 10000000000000,
     min_bedrooms: sp.min_bedrooms ? Number(sp.min_bedrooms) : undefined,
     min_bathrooms: sp.min_bathrooms ? Number(sp.min_bathrooms) : undefined,
     amenities: amenities.length > 0 ? amenities : [],

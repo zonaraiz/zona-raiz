@@ -236,7 +236,7 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-<SearchPageClient
+      <SearchPageClient
         lang={lang}
         filters={filters}
         listings={listings}

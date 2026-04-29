@@ -45,7 +45,7 @@ export function pickDefined<T extends object>(
   const result: any = {};
   for (const key in obj) {
     const value = obj[key];
-    if (value !== null && value !== undefined) {
+    if (value !== null && value !== undefined && value.toString().trim().length > 0) {
       result[key] = value;
     }
   }

@@ -44,7 +44,7 @@ export const defaultListingSearchFiltersValues: ListingSearchFiltersInput = {
   neighborhood: undefined,
   street: undefined,
   min_price: 0,
-  max_price: 100000000,
+  max_price: 10000000000000,
   min_bedrooms: undefined,
   min_bathrooms: undefined,
   amenities: [],

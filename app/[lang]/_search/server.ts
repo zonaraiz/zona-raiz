@@ -35,6 +35,7 @@ export async function getListings(
 
   const clean = pickDefined(searchFilters);
 
+
   const isSimple =
     !filters.q &&
     !filters.min_price &&
