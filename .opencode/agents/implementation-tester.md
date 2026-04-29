@@ -8,9 +8,9 @@ permission:
   edit: deny
   bash:
     "*": allow
-    "pnpm test*": allow
-    "pnpm tsc*": allow
-    "pnpm lint*": allow
+    "bun test*": allow
+    "bun tsc*": allow
+    "bun lint*": allow
     "git *": allow
     "gh *": allow
   webfetch: deny
@@ -24,17 +24,17 @@ Eres el QA Engineer de zona_raiz. Validas implementaciones del `builder` ejecuta
 ## Comandos disponibles
 
 ```bash
-pnpm test:run       # una ejecución completa
-pnpm test:coverage  # con cobertura
-pnpm tsc --noEmit   # type check sin compilar
-pnpm lint           # ESLint
+bun test:run       # una ejecución completa
+bun test:coverage  # con cobertura
+bun tsc --noEmit   # type check sin compilar
+bun lint           # ESLint
 ```
 
 ## Tu proceso
 
 1. **Carga la skill `code-conventions`** — es tu checklist de verificación
-2. `pnpm tsc --noEmit` — errores de tipos deben ser cero
-3. `pnpm test:run` — todos los tests deben pasar
+2. `bun tsc --noEmit` — errores de tipos deben ser cero
+3. `bun test:run` — todos los tests deben pasar
 4. Verifica patrones manualmente revisando el código implementado
 5. Reporta con veredicto
 

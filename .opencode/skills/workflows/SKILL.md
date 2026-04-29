@@ -12,49 +12,49 @@ description: >
 
 ```bash
 # Desarrollo
-pnpm dev                        # Next.js dev server
-pnpm build                      # build de producción
-pnpm lint                       # ESLint
+bun dev                        # Next.js dev server
+bun build                      # build de producción
+bun lint                       # ESLint
 
 # Testing
-pnpm test                       # Vitest watch mode
-pnpm test:run                   # una ejecución (CI)
-pnpm test:watch                 # watch explícito
-pnpm test:coverage              # con cobertura
+bun test                       # Vitest watch mode
+bun test:run                   # una ejecución (CI)
+bun test:watch                 # watch explícito
+bun test:coverage              # con cobertura
 
 # Supabase local
-pnpm supabase:start             # levanta Docker + Supabase local
-pnpm supabase:stop              # detiene Supabase
-pnpm supabase:status            # estado de servicios
-pnpm supabase:reset             # reset completo de BD local
-pnpm supabase:migration:new     # crear migración nueva
+bun supabase:start             # levanta Docker + Supabase local
+bun supabase:stop              # detiene Supabase
+bun supabase:status            # estado de servicios
+bun supabase:reset             # reset completo de BD local
+bun supabase:migration:new     # crear migración nueva
 
 # Supabase producción
-pnpm supabase:db:push           # aplica migraciones en producción
-pnpm supabase:gen:types         # genera tipos → types/supabase.ts
+bun supabase:db:push           # aplica migraciones en producción
+bun supabase:gen:types         # genera tipos → types/supabase.ts
 
 # TypeScript
-pnpm tsc --noEmit               # type check sin compilar
+bun tsc --noEmit               # type check sin compilar
 ```
 
 ## Migraciones de base de datos
 
 ```bash
 # 1. Crear migración
-pnpm supabase:migration:new nombre-descriptivo
+bun supabase:migration:new nombre-descriptivo
 # → supabase/migrations/<timestamp>_nombre-descriptivo.sql
 
 # 2. Escribir el SQL
 
 # 3. Aplicar en local
-pnpm supabase:reset
+bun supabase:reset
 
 # 4. Regenerar tipos
-pnpm supabase:gen:types
+bun supabase:gen:types
 # → tipos/supabase.ts
 
 # 5. Aplicar en producción
-pnpm supabase:db:push
+bun supabase:db:push
 ```
 
 ### Template de migración
@@ -226,9 +226,9 @@ GOOGLE_CLIENT_ID=
 
 ## Checklist antes de hacer commit
 
-- [ ] `pnpm tsc --noEmit` sin errores
-- [ ] `pnpm test:run` pasa
-- [ ] `pnpm lint` sin warnings nuevos
+- [ ] `bun tsc --noEmit` sin errores
+- [ ] `bun test:run` pasa
+- [ ] `bun lint` sin warnings nuevos
 - [ ] Si hubo cambios de schema: migración creada y tipos regenerados
 - [ ] Cache tags invalidados en los actions correspondientes
 - [ ] Sin `any` nuevo en TypeScript (excepto mappers)

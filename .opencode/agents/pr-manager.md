@@ -52,8 +52,8 @@ Closes KRO-X
 [output de git log --oneline]
 
 ## Checklist
-- [x] `pnpm tsc --noEmit` pasa
-- [x] `pnpm test:run` pasa
+- [x] `bun tsc --noEmit` pasa
+- [x] `bun test:run` pasa
 - [x] Patrones del proyecto seguidos
 - [x] Traducciones en es/ y en/
 - [x] Sin `any` en TypeScript
