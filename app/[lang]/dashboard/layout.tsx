@@ -30,6 +30,9 @@ export default async function DashboardLayout({
     cookies: cookieStore,
   });
 
+  const role = await cookiesService.getProfileRole()
+
+
   const real_estate_id_cookie =
     (await cookiesService.getRealEstateId()) as string;
   let real_estate_id = real_estate_id_cookie;
@@ -98,6 +101,19 @@ export default async function DashboardLayout({
     }
   } catch {
     favorites = [];
+  }
+
+
+  if (role == EUserRole.Client) {
+    return (
+      <div className="flex flex-1 flex-col bg-[radial-gradient(#ccc,transparent_1px)] bg-size-[16px_16px] h-lvh">
+        <div className="@container/main flex flex-1 flex-col gap-2">
+          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6  h-full">
+            <Suspense fallback={<PageLoader />}>{children}</Suspense>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

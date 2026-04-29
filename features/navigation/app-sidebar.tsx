@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import { NavMain } from "@/features/navigation/nav-main";
-import { NavUser } from "@/features/navigation/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { IconName } from "lucide-react/dynamic";
 import { ProfileEntity } from "@/domain/entities/profile.entity";
@@ -16,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { FavoritesList } from "@/features/favorites/favorites-list";
 import { ListingEntity } from "@/domain/entities/listing.entity";
 import Logo from "@/assets/svg/logo";
+import { DropwdownMenuUser } from "./dropdow-menu-user";
 
 interface FavoriteWithListing {
   id: string;
@@ -64,7 +66,11 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       </SidebarContent>
       <Separator />
       <SidebarFooter>
-        <NavUser profile={props.profile} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropwdownMenuUser profile={props.profile} />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

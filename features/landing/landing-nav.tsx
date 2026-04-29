@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CtaButton } from "./button-cta";
 import { EUserRole, ProfileEntity } from "@/domain/entities/profile.entity";
-import { NavUser } from "../navigation/nav-user";
+import { DropwdownMenuUser } from "../navigation/dropdow-menu-user";
 
 interface LandingNavProps {
   isAuth: boolean;
@@ -148,16 +148,14 @@ export function LandingNav({ isAuth, role, profile }: LandingNavProps) {
               />
               {isAuth && profile ? (
                 <div className="hidden lg:flex">
-                  <NavUser profile={profile} />
+                  <DropwdownMenuUser profile={profile} />
                 </div>
               ) : (
-                (role === EUserRole.Admin || role === EUserRole.RealEstate) && (
-                  <AuthButton
-                    text={isAuth ? t("nav.dashboard") : t("nav.login")}
-                    href={isAuth ? routes.onboarding() : routes.signin()}
-                    className="hidden lg:flex"
-                  />
-                )
+                <AuthButton
+                  text={isAuth ? t("nav.dashboard") : t("nav.login")}
+                  href={isAuth ? routes.onboarding() : routes.signin()}
+                  className="hidden lg:flex"
+                />
               )}
             </div>
             <div className="lg:hidden">
