@@ -16,6 +16,7 @@ import { cookies } from "next/headers";
 import { ListingEntity } from "@/domain/entities/listing.entity";
 import { ListingType } from "@/domain/entities/listing.enums";
 import { PropertyType } from "@/domain/entities/property.enums";
+import { EUserRole } from "@/domain/entities/profile.entity";
 
 interface SearchPageProps {
   params: Promise<{ lang: Lang; location?: string[] }>;
@@ -196,11 +197,15 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
   // Auth + favorites
   let favoriteIds: string[] = [];
   let isAuth = false;
+  let role = EUserRole.Client
+
   try {
-    const { sessionService, favoriteService } = await appModule(lang, {
+    const { sessionService, favoriteService, cookiesService } = await appModule(lang, {
       cookies: cookieStore,
     });
     isAuth = await sessionService.isAuth();
+    role = isAuth ? await cookiesService.getProfileRole() || EUserRole.Client : EUserRole.Client
+
     if (isAuth) {
       const userId = await sessionService.getCurrentUserId();
       if (userId) {
@@ -238,6 +243,7 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
         basePath={basePath}
         favoriteIds={favoriteIds}
         isAuth={isAuth}
+        role={role}
       />
     </>
   );

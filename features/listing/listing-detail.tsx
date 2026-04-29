@@ -9,17 +9,20 @@ import { ListingDetailInfo } from "./listing-detail-info";
 import { EnquiryForm } from "./enquiry-form";
 import { ListingPricing } from "./listing-pricing";
 import { ListingActions } from "./listing-actions";
+import { EUserRole } from "@/domain/entities/profile.entity";
 
 interface ListingDetailProps {
   data: ListingDetailDTO | null | undefined;
   isFavInitial?: boolean;
   isAuth?: boolean;
+  role: EUserRole
 }
 
 export function ListingDetail({
   data,
   isFavInitial = false,
   isAuth = false,
+  role
 }: ListingDetailProps) {
   if (!data) return null;
   const { propertyDetail, listing } = data;
@@ -27,7 +30,7 @@ export function ListingDetail({
 
   return (
     <div>
-      <LandingNav isAuth={isAuth} />
+      <LandingNav isAuth={isAuth} role={role}/>
       <ListingBreadcrumb data={data} />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
