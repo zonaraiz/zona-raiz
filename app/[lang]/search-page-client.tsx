@@ -116,7 +116,7 @@ export function SearchPageClient({
 
   return (
     <div className="min-h-screen bg-background">
-      <LandingNav isAuth={isAuth} role={role} profile={profile} />
+      <LandingNav isAuth={isAuth} role={role ?? null} profile={profile} />
 
       {/* Breadcrumb */}
       <div className="bg-primary border-y">
