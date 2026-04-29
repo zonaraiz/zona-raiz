@@ -7,7 +7,8 @@
     "listings": "publicaciones",
     "enquiries": "consultas",
     "imports": "importacion",
-    "users": "usuarios"
+    "users": "usuarios",
+    "profile": "perfil"
   },
   "property_images": {
     "drag_drop": "Arrastra una imagen aquí",

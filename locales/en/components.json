@@ -7,7 +7,8 @@
     "listing": "listing",
     "enquiries": "enquiries",
     "imports": "imports",
-    "users": "users"
+    "users": "users",
+    "profile": "profile"
   },
   "property_images": {
     "drag_drop": "Drag an image here",

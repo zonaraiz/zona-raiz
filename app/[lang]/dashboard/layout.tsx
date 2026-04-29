@@ -11,6 +11,7 @@ import { Lang } from "@/i18n/settings";
 import { initI18n } from "@/i18n/server";
 import { cookies } from "next/headers";
 import { appModule } from "@/application/modules/app.module";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -29,37 +30,43 @@ export default async function DashboardLayout({
   const { cookiesService, sessionService } = await appModule(lang, {
     cookies: cookieStore,
   });
+  const isAuth = await sessionService.isAuth();
+
+  if (!isAuth) {
+    return redirect(routes.signin());
+  }
 
   const role = await cookiesService.getProfileRole()
 
+  if (role !== EUserRole.Client) {
+    const real_estate_id_cookie =
+      (await cookiesService.getRealEstateId()) as string;
+    let real_estate_id = real_estate_id_cookie;
 
-  const real_estate_id_cookie =
-    (await cookiesService.getRealEstateId()) as string;
-  let real_estate_id = real_estate_id_cookie;
+    // 🛡️ SEGUNDA OPORTUNIDAD: Si la cookie no está, intentamos recuperarla de la DB
+    if (!real_estate_id) {
+      const realEstates = await sessionService.getRealEstatesForUser();
 
-  // 🛡️ SEGUNDA OPORTUNIDAD: Si la cookie no está, intentamos recuperarla de la DB
-  if (!real_estate_id) {
-    const realEstates = await sessionService.getRealEstatesForUser();
+      if (realEstates && realEstates.length === 1) {
+        real_estate_id = realEstates[0].real_estate.id;
+        // Opcional: intentar setearla aquí, aunque en Server Components es limitado
+      } else {
+        // Si realmente no hay nada, entonces sí mandamos a onboarding
+        return encodedRedirect(
+          "error",
+          routes.onboarding(),
+          t("common:exceptions.data_not_found"),
+        );
+      }
+    }
 
-    if (realEstates && realEstates.length === 1) {
-      real_estate_id = realEstates[0].real_estate.id;
-      // Opcional: intentar setearla aquí, aunque en Server Components es limitado
-    } else {
-      // Si realmente no hay nada, entonces sí mandamos a onboarding
+    if (!real_estate_id) {
       return encodedRedirect(
         "error",
         routes.onboarding(),
         t("common:exceptions.data_not_found"),
       );
     }
-  }
-
-  if (!real_estate_id) {
-    return encodedRedirect(
-      "error",
-      routes.onboarding(),
-      t("common:exceptions.data_not_found"),
-    );
   }
 
   const profile = await sessionService.getCachedCurrentUser();
@@ -79,6 +86,7 @@ export default async function DashboardLayout({
     created_at: string;
     listing?: any;
   }[] = [];
+
   try {
     const { favoriteService, listingService } = await appModule(lang, {
       cookies: cookieStore,
@@ -103,19 +111,6 @@ export default async function DashboardLayout({
     favorites = [];
   }
 
-
-  if (role == EUserRole.Client) {
-    return (
-      <div className="flex flex-1 flex-col bg-[radial-gradient(#ccc,transparent_1px)] bg-size-[16px_16px] h-lvh">
-        <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6  h-full">
-            <Suspense fallback={<PageLoader />}>{children}</Suspense>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <SidebarProvider
       style={
@@ -132,7 +127,7 @@ export default async function DashboardLayout({
         favorites={favorites}
       />
       <SidebarInset>
-        <SiteHeader />
+        {role !== EUserRole.Client ? <SiteHeader /> : null}
         <div className="flex flex-1 flex-col bg-[radial-gradient(#ccc,transparent_1px)] bg-size-[16px_16px] h-lvh">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6  h-full">

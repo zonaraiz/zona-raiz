@@ -28,6 +28,7 @@ export class OnboardingService {
     }
 
     const profile = await this.profilePort.getProfileByUserId(userId);
+
     const role = profile.role;
 
     if (role === EUserRole.Client) {

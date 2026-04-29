@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { COOKIE_NAMES, COOKIE_OPTIONS } from "@/infrastructure/config/constants";
+import {
+  COOKIE_NAMES,
+  COOKIE_OPTIONS,
+} from "@/infrastructure/config/constants";
 import { createRouter } from "@/i18n/router";
 import { appModule } from "@/application/modules/app.module";
 import { detectLang } from "@/i18n/detect-lang";
@@ -29,7 +32,9 @@ export async function GET(request: NextRequest) {
   }
 
   if (!profile) {
-    return NextResponse.redirect(`${origin}${routes.signin()}?error=auth_error`);
+    return NextResponse.redirect(
+      `${origin}${routes.signin()}?error=auth_error`,
+    );
   }
 
   // 2. Seteamos el rol básico en la cookie para que el middleware/layout lo reconozca

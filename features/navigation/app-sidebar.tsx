@@ -62,7 +62,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavMain items={props.menu} />
         <Separator className="my-2" />
-        {favorites.length > 0 && <FavoritesList favorites={favorites} />}
+        <FavoritesList favorites={favorites} />
       </SidebarContent>
       <Separator />
       <SidebarFooter>

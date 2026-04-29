@@ -85,79 +85,75 @@ export class SessionService {
     const t = i18n.getFixedT(this.lang);
 
     const id = await this.sessionPort.getCurrentUserId();
+    const roleProfile = await this.cookiesPort.getProfileRole();
+
+    const basicRoutes = [
+      {
+        title: t("components:nav.dashboard"),
+        url: routes.dashboard(),
+        icon: "layout-dashboard",
+      },
+      {
+        title: t("components:nav.properties"),
+        url: routes.properties(),
+        icon: "building-2",
+      },
+      {
+        title: t("components:nav.listings"),
+        url: routes.listings(),
+        icon: "tags",
+      },
+      {
+        title: t("components:nav.enquiries"),
+        url: routes.enquiries(),
+        icon: "message-square-text",
+      },
+    ];
+
+    if (roleProfile == EUserRole.Admin) {
+      return basicRoutes.concat([
+        {
+          title: t("components:nav.users"),
+          url: routes.users(),
+          icon: "users",
+        },
+        {
+          title: t("components:nav.imports"),
+          url: routes.import(),
+          icon: "upload",
+        }
+      ]);
+    }
+
+    if (roleProfile == EUserRole.Client) {
+      return ([
+        {
+          title: t("components:nav.profile"),
+          url: routes.profile(),
+          icon: "user",
+        }
+      ]);
+    }
+
     const role = await this.profiles.getRoleByUserId(id as string);
     switch (role) {
+      case EAgentRole.Agent:
+        return basicRoutes;
       case EAgentRole.Coordinator:
-        return [
-          {
-            title: t("components:nav.dashboard"),
-            url: routes.dashboard(),
-            icon: "layout-dashboard",
-          },
+        return basicRoutes.concat([
           {
             title: t("components:nav.real_estates"),
             url: routes.realEstates(),
-            icon: "map-pin-house",
-          },
-          {
-            title: t("components:nav.properties"),
-            url: routes.properties(),
-            icon: "building-2",
-          },
-          {
-            title: t("components:nav.listings"),
-            url: routes.listings(),
-            icon: "tags",
-          },
-          {
-            title: t("components:nav.users"),
-            url: routes.users(),
-            icon: "users",
-          },
-          {
-            title: t("components:nav.enquiries"),
-            url: routes.enquiries(),
-            icon: "message-square-text",
+            icon: "building",
           },
           {
             title: t("components:nav.import"),
             url: routes.import(),
             icon: "upload",
           },
-        ];
+        ]);
       default:
-        return [
-          {
-            title: t("components:nav.dashboard"),
-            url: routes.dashboard(),
-            icon: "layout-dashboard",
-          },
-          {
-            title: t("components:nav.properties"),
-            url: routes.properties(),
-            icon: "building-2",
-          },
-          {
-            title: t("components:nav.listings"),
-            url: routes.listings(),
-            icon: "tags",
-          },
-          {
-            title: t("components:nav.enquiries"),
-            url: routes.enquiries(),
-            icon: "message-square-text",
-          },
-          {
-            title: t("components:nav.users"),
-            url: routes.users(),
-            icon: "users",
-          },
-          {
-            title: t("components:nav.imports"),
-            url: routes.import(),
-            icon: "upload",
-          },
-        ];
+        return basicRoutes;
     }
   }
 
