@@ -1,0 +1,63 @@
+{
+  "title": "Terms and Conditions of Use",
+  "acceptance": {
+    "title": "1. Acceptance",
+    "description": "Access, navigation, and use of Zonaraíz implies express and complete acceptance of these terms. If the user does not agree, they must refrain from using the platform."
+  },
+  "nature": {
+    "title": "2. Nature of the Platform",
+    "description": "Zonaraíz is a digital intermediation technology platform that facilitates the publication and consultation of information related to real estate properties.",
+    "point1": "It is not the owner of the published properties",
+    "point2": "It does not act as a real estate agent",
+    "point3": "It does not intervene in negotiations",
+    "point4": "It does not represent any of the parties"
+  },
+  "independence": {
+    "title": "3. Independence of the Parties",
+    "description": "All interaction, contact, negotiation, or transaction is carried out exclusively between users. Zonaraíz does not participate, supervise, or guarantee said relationships."
+  },
+  "liability": {
+    "title": "4. Exclusion of Liability",
+    "description": "To the maximum extent permitted by law, Zonaraíz shall not be responsible for: the truthfulness, quality, legality, or existence of the properties; the capacity or legitimacy of advertisers; errors in prices, characteristics, or availability; direct, indirect, or consequential damages; fraud, scams, or breaches; or economic losses derived from the use of the platform. The user acknowledges that they use the platform at their own risk."
+  },
+  "content": {
+    "title": "5. User-Generated Content",
+    "description": "The user is solely responsible for the content they publish. By publishing, they declare and warrant that they have the necessary rights to the content, the information is truthful and up-to-date, and it does not infringe on third-party rights. Zonaraíz is not obligated to verify the content but may remove it at any time."
+  },
+  "license": {
+    "title": "6. Content Usage License",
+    "description": "By publishing content on Zonaraíz, the user grants a non-exclusive, free, transferable, and worldwide license to use, reproduce, modify, display, and distribute said content within the platform and for promotional purposes."
+  },
+  "public": {
+    "title": "7. Information from Public Sources and Third Parties",
+    "description": "Zonaraíz may collect, index, organize, and display information from public or open sources, including contact data and commercial information. Zonaraíz acts as a technological aggregator of publicly available information. If a data subject considers that any content affects their rights or does not wish to appear on the platform, they may request modification or removal through the available channels."
+  },
+  "notification": {
+    "title": "8. Notification and Content Removal",
+    "description": "Any person may report content they consider incorrect, outdated, misleading, or that violates rights. Zonaraíz may remove it preventively, request additional information, or suspend publications or accounts."
+  },
+  "misuse": {
+    "title": "9. Misuse",
+    "description": "It is prohibited to: publish false information, impersonate identity, use the platform for fraud, extract data massively without authorization, or carry out illegal activities."
+  },
+  "services": {
+    "title": "10. Current and Future Services",
+    "description": "Zonaraíz may offer free services and, in the future, paid services (premium). The specific conditions for paid services will be communicated in advance."
+  },
+  "suspension": {
+    "title": "11. Suspension and Termination",
+    "description": "Zonaraíz may suspend or delete accounts or content without prior notice in case of any breach or risk to the platform."
+  },
+  "indemnity": {
+    "title": "12. Indemnity",
+    "description": "The user agrees to hold Zonaraíz harmless against any claim, demand, or damage derived from their use of the platform, the content they publish, or the violation of these terms."
+  },
+  "modifications": {
+    "title": "13. Modifications",
+    "description": "Zonaraíz may modify these terms at any time. Continued use of the platform implies acceptance of the changes."
+  },
+  "applicable": {
+    "title": "14. Applicable Legislation",
+    "description": "These terms are governed by the legislation of the Republic of Colombia."
+  }
+}

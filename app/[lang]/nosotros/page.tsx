@@ -13,28 +13,24 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const { lang } = await params;
   const { t } = await getTranslation(lang);
   const cookieStore = await cookies();
-  const { sessionService, favoriteService, cookiesService, profileService } = await appModule(lang, {
+  const { sessionService, cookiesService, profileService } = await appModule(lang, {
     cookies: cookieStore,
   });
 
   let isAuth = false;
-  let favoriteIds: string[] = [];
   let profile = null;
-  let role = await cookiesService.getProfileRole();
+  const role = await cookiesService.getProfileRole();
 
   try {
     isAuth = await sessionService.isAuth();
     if (isAuth) {
       const userId = await sessionService.getCurrentUserId();
       if (userId) {
-        const favorites = await favoriteService.findByProfileId(userId);
-        favoriteIds = favorites.map((f) => f.listing_id);
         profile = await profileService.getCachedProfileByUserId(userId);
       }
     }
   } catch {
     isAuth = false;
-    favoriteIds = [];
   }
 
   return (

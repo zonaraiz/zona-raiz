@@ -1,0 +1,51 @@
+{
+  "title": "Política de Tratamiento de Datos Personales",
+  "responsible": {
+    "title": "1. Responsable del Tratamiento",
+    "description": "Zonaraíz es responsable del tratamiento de datos personales conforme a la legislación colombiana vigente en materia de protección de datos personales."
+  },
+  "data": {
+    "title": "2. Datos Recollectados",
+    "description": "Se podrán recolectar datos de identificación, datos de contacto, información comercial, y datos de navegación y uso de la plataforma."
+  },
+  "purposes": {
+    "title": "3. Finalidades",
+    "description": "Los datos serán utilizados para operar la plataforma, facilitar el contacto entre usuarios, personalizar contenidos, enviar comunicaciones relacionadas con el servicio, y para análisis estadístico y mejora del sistema."
+  },
+  "base": {
+    "title": "4. Base del Tratamiento",
+    "description": "El tratamiento se realiza con base en la autorización del titular, el uso de información de carácter público, y el interés legítimo de operación de la plataforma."
+  },
+  "sources": {
+    "title": "5. Datos de Fuentes Públicas",
+    "description": "Zonaraíz podrá tratar datos obtenidos de fuentes públicas o de acceso abierto, incluyendo información comercial y de contacto. En estos casos se respetarán los derechos de los titulares y se permitirá la solicitud de modificación o eliminación."
+  },
+  "sharing": {
+    "title": "6. Compartición de Datos",
+    "description": "Los datos podrán ser compartidos con otros usuarios interesados, proveedores tecnológicos, y herramientas de análisis."
+  },
+  "security": {
+    "title": "7. Seguridad",
+    "description": "Zonaraíz implementa medidas razonables de seguridad para proteger los datos personales, sin garantizar invulnerabilidad absoluta frente a posibles amenazas."
+  },
+  "rights": {
+    "title": "8. Derechos del Titular",
+    "description": "El titular podrá acceder a sus datos, rectificarlos, solicitar su eliminación, y revocar la autorización otorgada para el tratamiento."
+  },
+  "procedure": {
+    "title": "9. Procedimiento de Consultas y Reclamos",
+    "description": "Las solicitudes podrán realizarse a través de los canales oficiales definidos por Zonaraíz. Se responderán en un plazo razonable."
+  },
+  "conservation": {
+    "title": "10. Conservación de Datos",
+    "description": "Los datos se conservarán mientras sean necesarios para las finalidades del servicio."
+  },
+  "changes": {
+    "title": "11. Modificaciones",
+    "description": "Zonaraíz podrá modificar esta política en cualquier momento. El uso continuo de la plataforma implica aceptación de los cambios."
+  },
+  "applicable": {
+    "title": "12. Legislación Aplicable",
+    "description": "Esta política se rige por la legislación colombiana, en particular la Ley 1581 de 2012 y sus decretos reglamentarios."
+  }
+}

@@ -10,7 +10,7 @@ export const ROUTES = {
   },
 
   contact: {
-    es: "/concto",
+    es: "/contacto",
     en: "/contact",
   },
 

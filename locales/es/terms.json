@@ -1,0 +1,63 @@
+{
+  "title": "Términos y Condiciones de Uso",
+  "acceptance": {
+    "title": "1. Aceptación",
+    "description": "El acceso, navegación y uso de Zonaraíz implica la aceptación expresa e íntegra de estos términos. Si el usuario no está de acuerdo, deberá abstenerse de utilizar la plataforma."
+  },
+  "nature": {
+    "title": "2. Naturaleza de la Plataforma",
+    "description": "Zonaraíz es una plataforma tecnológica de intermediación digital que facilita la publicación y consulta de información relacionada con bienes inmuebles.",
+    "point1": "No es propietario de los inmuebles publicados",
+    "point2": "No actúa como agente inmobiliario",
+    "point3": "No interviene en negociaciones",
+    "point4": "No representa a ninguna de las partes"
+  },
+  "independence": {
+    "title": "3. Independencia de las Partes",
+    "description": "Toda interacción, contacto, negociación o transacción se realiza exclusivamente entre los usuarios. Zonaraíz no participa, supervisa ni garantiza dichas relaciones."
+  },
+  "liability": {
+    "title": "4. Exclusión de Responsabilidad",
+    "description": "En la máxima medida permitida por la ley, Zonaraíz no será responsable por: la veracidad, calidad, legalidad o existencia de los inmuebles; la capacidad o legitimidad de los anunciantes; errores en precios, características o disponibilidad; daños directos, indirectos o lucro cesante; fraudes, estafas o incumplimientos; ni pérdidas económicas derivadas del uso de la plataforma. El usuario reconoce que utiliza la plataforma bajo su propio riesgo."
+  },
+  "content": {
+    "title": "5. Contenido Generado por Usuarios",
+    "description": "El usuario es el único responsable del contenido que publica. Al publicar, declara y garantiza que tiene los derechos necesarios sobre el contenido, la información es veraz y actualizada, y no infringe derechos de terceros. Zonaraíz no está obligado a verificar el contenido, pero podrá eliminarlo en cualquier momento."
+  },
+  "license": {
+    "title": "6. Licencia de Uso de Contenido",
+    "description": "Al publicar contenido en Zonaraíz, el usuario otorga una licencia no exclusiva, gratuita, transferible y mundial para usar, reproducir, modificar, mostrar y distribuir dicho contenido dentro de la plataforma y para fines promocionales."
+  },
+  "public": {
+    "title": "7. Información de Fuentes Públicas y Terceros",
+    "description": "Zonaraíz podrá recopilar, indexar, organizar y mostrar información proveniente de fuentes públicas o de acceso abierto, incluyendo datos de contacto e información comercial. Zonaraíz actúa como un agregador tecnológico de información disponible públicamente. Si un titular considera que algún contenido afecta sus derechos o no desea aparecer en la plataforma, podrá solicitar su modificación o eliminación mediante los canales dispuestos."
+  },
+  "notification": {
+    "title": "8. Notificación y Retiro de Contenido",
+    "description": "Cualquier persona podrá reportar contenido que considere incorrecto, desactualizado, engañoso o que vulnere derechos. Zonaraíz podrá retirarlo preventivamente, solicitar información adicional, o suspender publicaciones o cuentas."
+  },
+  "misuse": {
+    "title": "9. Uso Indebido",
+    "description": "Está prohibido: publicar información falsa, suplantar identidad, usar la plataforma para fraudes, extraer datos masivamente sin autorización, o realizar actividades ilegales."
+  },
+  "services": {
+    "title": "10. Servicios Actuales y Futuros",
+    "description": "Zonaraíz podrá ofrecer servicios gratuitos y, en el futuro, servicios pagos (premium). Las condiciones específicas de servicios pagos serán informadas previamente."
+  },
+  "suspension": {
+    "title": "11. Suspensión y Terminación",
+    "description": "Zonaraíz podrá suspender o eliminar cuentas o contenidos sin previo aviso ante cualquier incumplimiento o riesgo para la plataforma."
+  },
+  "indemnity": {
+    "title": "12. Indemnidad",
+    "description": "El usuario se obliga a mantener indemne a Zonaraíz frente a cualquier reclamación, demanda o daño derivado de su uso de la plataforma, el contenido que publique, o la violación de estos términos."
+  },
+  "modifications": {
+    "title": "13. Modificaciones",
+    "description": "Zonaraíz podrá modificar estos términos en cualquier momento. El uso continuo de la plataforma implica aceptación de los cambios."
+  },
+  "applicable": {
+    "title": "14. Legislación Aplicable",
+    "description": "Estos términos se rigen por la legislación de la República de Colombia."
+  }
+}
