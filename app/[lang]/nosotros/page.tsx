@@ -4,10 +4,17 @@ import { LandingNav } from "@/features/landing/landing-nav";
 import { LandingFooter } from "@/features/landing/landing-footer";
 import { cookies } from "next/headers";
 import { appModule } from "@/application/modules/app.module";
+import type { Metadata } from "next";
 
 interface AboutPageProps {
   params: Promise<{ lang: Lang }>;
 }
+
+export const metadata: Metadata = {
+  title: "Sobre Nosotros | Zonaraíz",
+  description: "Conoce más sobre Zonaraíz, nuestra misión, visión y valores.",
+  authors: [{ name: "CEO Name" }],
+};
 
 export default async function AboutPage({ params }: AboutPageProps) {
   const { lang } = await params;

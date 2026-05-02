@@ -4,10 +4,17 @@ import { LandingNav } from "@/features/landing/landing-nav";
 import { LandingFooter } from "@/features/landing/landing-footer";
 import { cookies } from "next/headers";
 import { appModule } from "@/application/modules/app.module";
+import type { Metadata } from "next";
 
 interface PrivacyPageProps {
   params: Promise<{ lang: Lang }>;
 }
+
+export const metadata: Metadata = {
+  title: "Política de Privacidad | Zonaraíz",
+  description: "Política de privacidad de Zonaraíz - Conoce cómo protegemos tus datos personales.",
+  authors: [{ name: "CEO Name" }],
+};
 
 export default async function PrivacyPage({ params }: PrivacyPageProps) {
   const { lang } = await params;

@@ -4,10 +4,17 @@ import { LandingNav } from "@/features/landing/landing-nav";
 import { LandingFooter } from "@/features/landing/landing-footer";
 import { cookies } from "next/headers";
 import { appModule } from "@/application/modules/app.module";
+import type { Metadata } from "next";
 
 interface TermsPageProps {
   params: Promise<{ lang: Lang }>;
 }
+
+export const metadata: Metadata = {
+  title: "Términos y Condiciones | Zonaraíz",
+  description: "Términos y condiciones de uso de Zonaraíz - Conoce las condiciones que rigen el uso de nuestra plataforma.",
+  authors: [{ name: "CEO Name" }],
+};
 
 export default async function TermsPage({ params }: TermsPageProps) {
   const { lang } = await params;
