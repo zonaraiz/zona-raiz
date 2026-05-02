@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Resolver } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
@@ -15,7 +16,7 @@ export function ContactForm() {
   const { t } = useTranslation("contact");
 
   const form = useForm<ContactFormValues>({
-    resolver: yupResolver(contactSchema) as any,
+    resolver: yupResolver(contactSchema) as Resolver<ContactFormValues>,
     defaultValues: defaultContactValues,
     mode: "onBlur",
   });
