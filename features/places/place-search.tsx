@@ -42,67 +42,95 @@ interface PlaceSearchProps {
   onSelect?: (place: ParsedPlace) => void;
 }
 
+// ─── Estado de carga del script ───────────────────────────────────────────────
+type ScriptState = "idle" | "loading" | "ready" | "error";
+
 function useGooglePlaces() {
-  const [ready, setReady] = useState(
-    () => typeof window !== "undefined" && !!window.google?.maps?.places,
-  );
+  const [state, setState] = useState<ScriptState>(() => {
+    if (typeof window !== "undefined" && window.google?.maps?.places)
+      return "ready";
+    return "idle";
+  });
 
   useEffect(() => {
-    if (window.google?.maps?.places) return;
+    if (state === "ready") return;
 
     const existing = document.getElementById("google-places-script");
-    const onLoad = () => setReady(true);
+
+    const onLoad = () => setState("ready");
+    const onError = () => setState("error");
 
     if (existing) {
+      // Script ya existe pero aún cargando
+      if (window.google?.maps?.places) {
+        setState("ready");
+        return;
+      }
       existing.addEventListener("load", onLoad);
-      return () => existing.removeEventListener("load", onLoad);
+      existing.addEventListener("error", onError);
+      return () => {
+        existing.removeEventListener("load", onLoad);
+        existing.removeEventListener("error", onError);
+      };
     }
 
+    setState("loading");
     const script = document.createElement("script");
     script.id = "google-places-script";
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&language=es`;
     script.async = true;
     script.defer = true;
     script.addEventListener("load", onLoad);
+    script.addEventListener("error", onError);
     document.head.appendChild(script);
-    return () => script.removeEventListener("load", onLoad);
-  }, []);
 
-  return ready;
+    // Timeout de seguridad: si tarda más de 10s, marcar como error
+    const timeout = setTimeout(() => {
+      if (!window.google?.maps?.places) setState("error");
+    }, 10_000);
+
+    return () => {
+      script.removeEventListener("load", onLoad);
+      script.removeEventListener("error", onError);
+      clearTimeout(timeout);
+    };
+  }, []); // solo una vez
+
+  return state;
 }
 
-// ─────────────────────────────────────────────
-// Parsear desde los `terms` de la predicción
-// terms[0] = barrio/ciudad, terms[1] = ciudad/estado, terms[2] = estado, terms[3] = país
-// ─────────────────────────────────────────────
 function parsePredictionTerms(prediction: Prediction): ParsedPlace {
   const terms = prediction.terms.map((t) => slugify(t.value));
-
-  // Si hay 4+ términos: barrio, ciudad, estado, país
-  if (terms.length >= 4) {
-    return {
-      neighborhood: terms[0],
-      city: terms[1],
-      state: terms[2],
-    };
-  }
-
-  // Si hay 3 términos: ciudad, estado, país
-  if (terms.length === 3) {
-    return {
-      city: terms[0],
-      state: terms[1],
-    };
-  }
-
-  // Si hay 2 términos: ciudad/estado, país
-  if (terms.length === 2) {
-    return {
-      city: terms[0],
-    };
-  }
-
+  if (terms.length >= 4)
+    return { neighborhood: terms[0], city: terms[1], state: terms[2] };
+  if (terms.length === 3) return { city: terms[0], state: terms[1] };
+  if (terms.length === 2) return { city: terms[0] };
   return { city: terms[0] };
+}
+
+// Obtener detalles con timeout propio
+function getPlaceDetails(
+  service: google.maps.places.PlacesService,
+  placeId: string,
+  timeoutMs = 5000,
+): Promise<google.maps.places.PlaceResult> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error("getDetails timeout")),
+      timeoutMs,
+    );
+    service.getDetails(
+      { placeId, fields: ["address_components"] },
+      (result, status) => {
+        clearTimeout(timer);
+        if (status === google.maps.places.PlacesServiceStatus.OK && result) {
+          resolve(result);
+        } else {
+          reject(new Error(`Places API status: ${status}`));
+        }
+      },
+    );
+  });
 }
 
 export function PlaceSearch({
@@ -114,22 +142,32 @@ export function PlaceSearch({
 }: PlaceSearchProps) {
   const router = useRouter();
   const { t } = useTranslation("components");
-  const ready = useGooglePlaces();
-  const serviceRef = useRef<google.maps.places.AutocompleteService | null>(
-    null,
-  );
+  const scriptState = useGooglePlaces();
+  const serviceRef = useRef<google.maps.places.AutocompleteService | null>(null);
+  const mountedRef = useRef(true);
 
   const [query, setQuery] = useState("");
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<ParsedPlace | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
+  // Inicializar servicio cuando el script esté listo
   useEffect(() => {
-    if (!ready) return;
-    serviceRef.current = new google.maps.places.AutocompleteService();
-  }, [ready]);
+    if (scriptState === "ready" && !serviceRef.current) {
+      serviceRef.current = new google.maps.places.AutocompleteService();
+    }
+  }, [scriptState]);
+
+  // Cleanup al desmontar
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const fetchPredictions = useCallback((input: string) => {
     if (!serviceRef.current || input.length < 2) {
@@ -138,7 +176,13 @@ export function PlaceSearch({
     }
     clearTimeout(debounceRef.current);
     setLoading(true);
+
     debounceRef.current = setTimeout(() => {
+      // Timeout de seguridad para la búsqueda de predicciones
+      const safetyTimer = setTimeout(() => {
+        if (mountedRef.current) setLoading(false);
+      }, 5000);
+
       serviceRef.current!.getPlacePredictions(
         {
           input,
@@ -146,6 +190,8 @@ export function PlaceSearch({
           types: ["(regions)"],
         },
         (results, status) => {
+          clearTimeout(safetyTimer);
+          if (!mountedRef.current) return;
           setLoading(false);
           if (status === google.maps.places.PlacesServiceStatus.OK && results) {
             setPredictions(results as unknown as Prediction[]);
@@ -169,84 +215,18 @@ export function PlaceSearch({
     setPredictions([]);
     setLoading(true);
 
-    // Parsear fallback desde los terms
     const parsedFromTerms = parsePredictionTerms(prediction);
-    const basePlace = {
+    const basePlace: ParsedPlace = {
       ...parsedFromTerms,
       label: prediction.structured_formatting.main_text,
     };
 
-    // Intentar obtener detalles completos del lugar
-    try {
-      // Crear un elemento dummy para el servicio
-      const dummyDiv = document.createElement("div");
-      const placesService = new google.maps.places.PlacesService(dummyDiv);
-
-      // Una sola llamada a getDetails para obtener address_components
-      const details = await new Promise<google.maps.places.PlaceResult>(
-        (resolve, reject) => {
-          placesService.getDetails(
-            {
-              placeId: prediction.place_id,
-              fields: ["address_components"],
-            },
-            (result, status) => {
-              if (
-                status === google.maps.places.PlacesServiceStatus.OK &&
-                result
-              ) {
-                resolve(result);
-              } else {
-                reject(new Error(`Places API status: ${status}`));
-              }
-            },
-          );
-        },
-      );
-
-      const addressComponents = details.address_components || [];
-
-      // Extraer country
-      const countryComponent = addressComponents.find((comp) =>
-        comp.types.includes("country"),
-      );
-      const country = countryComponent?.short_name?.toLowerCase();
-
-      // Extraer state
-      const stateComponent = addressComponents.find((comp) =>
-        comp.types.includes("administrative_area_level_1"),
-      );
-      const state = stateComponent?.long_name;
-
-      // Extraer city
-      const cityComponent = addressComponents.find(
-        (comp) =>
-          comp.types.includes("locality") ||
-          comp.types.includes("administrative_area_level_2"),
-      );
-      const city = cityComponent?.long_name;
-
-      // Extraer neighborhood
-      const neighborhoodComponent = addressComponents.find(
-        (comp) =>
-          comp.types.includes("sublocality_level_1") ||
-          comp.types.includes("neighborhood"),
-      );
-      const neighborhood = neighborhoodComponent?.long_name;
-
-      const place: ParsedPlace = {
-        ...(country && { country }),
-        ...(state && { state }),
-        ...(city && { city }),
-        ...(neighborhood && { neighborhood }),
-        label: prediction.structured_formatting.main_text,
-      };
-
+    const finalize = (place: ParsedPlace) => {
+      if (!mountedRef.current) return;
       setSelected(place);
       setLoading(false);
       setQuery("");
       onSelect?.(place);
-
       if (navigate) {
         router.push(
           buildSearchUrl({
@@ -256,23 +236,34 @@ export function PlaceSearch({
           }),
         );
       }
-    } catch (error) {
-      console.warn("Place Details failed:", error);
-      // Si falla Place Details, usar datos de términos como fallback
-      setSelected(basePlace);
-      setLoading(false);
-      setQuery("");
-      onSelect?.(basePlace);
+    };
 
-      if (navigate) {
-        router.push(
-          buildSearchUrl({
-            lang,
-            city: parsedFromTerms.city,
-            neighborhood: parsedFromTerms.neighborhood,
-          }),
-        );
-      }
+    try {
+      const dummyDiv = document.createElement("div");
+      const placesService = new google.maps.places.PlacesService(dummyDiv);
+      const details = await getPlaceDetails(placesService, prediction.place_id);
+
+      const components = details.address_components ?? [];
+      const find = (...types: string[]) =>
+        components.find((c) => types.some((t) => c.types.includes(t)));
+
+      const place: ParsedPlace = {
+        country: find("country")?.short_name?.toLowerCase(),
+        state: find("administrative_area_level_1")?.long_name,
+        city: find("locality", "administrative_area_level_2")?.long_name,
+        neighborhood: find("sublocality_level_1", "neighborhood")?.long_name,
+        label: prediction.structured_formatting.main_text,
+      };
+
+      // Limpiar undefined
+      Object.keys(place).forEach(
+        (k) => place[k as keyof ParsedPlace] === undefined && delete place[k as keyof ParsedPlace],
+      );
+
+      finalize(place);
+    } catch (error) {
+      console.warn("Place Details failed, using fallback:", error);
+      finalize(basePlace);
     }
   };
 
@@ -281,6 +272,22 @@ export function PlaceSearch({
     setQuery("");
     onSelect?.({});
   };
+
+  // Si el script falló, mostrar input deshabilitado con mensaje
+  if (scriptState === "error") {
+    return (
+      <div className={`relative ${className ?? ""}`}>
+        <Command shouldFilter={false} className="rounded-xl border shadow-sm opacity-60">
+          <div className="flex items-center px-3 gap-2 min-h-11">
+            <IconMapPin className="size-4 text-muted-foreground shrink-0" />
+            <span className="text-sm text-muted-foreground">
+              {t("places.unavailable", "Búsqueda no disponible")}
+            </span>
+          </div>
+        </Command>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative ${className ?? ""}`}>
@@ -308,8 +315,13 @@ export function PlaceSearch({
             <CommandInput
               value={query}
               onValueChange={handleInput}
-              placeholder={placeholder}
-              className="border-0 focus:ring-0 h-10 px-0 flex-1"
+              placeholder={
+                scriptState !== "ready"
+                  ? t("places.loading", "Cargando…")
+                  : placeholder
+              }
+              disabled={scriptState !== "ready"}
+              className="border-0 focus:ring-0 h-10 px-0 flex-1 disabled:opacity-50"
             />
           )}
         </div>
