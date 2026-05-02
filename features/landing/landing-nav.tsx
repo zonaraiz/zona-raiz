@@ -81,6 +81,14 @@ export function LandingNav({ isAuth, role, profile }: LandingNavProps) {
       href: routes.contact(),
       title: t("nav.contact"),
     },
+    {
+      href: routes.privacy(),
+      title: t("nav.privacy"),
+    },
+    {
+      href: routes.terms(),
+      title: t("nav.terms"),
+    },
   ];
 
   if (role === EUserRole.Admin || role === EUserRole.RealEstate) {

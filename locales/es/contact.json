@@ -1,0 +1,23 @@
+{
+  "title": "Contáctenos",
+  "subtitle": "Estamos aquí para ayudarte. Escríbenos y te responderemos lo antes posible.",
+  "info_title": "Información de Contacto",
+  "email_label": "Correo Electrónico",
+  "phone_label": "Teléfono",
+  "address_label": "Dirección",
+  "address_value": "Bogotá, Colombia",
+  "hours_label": "Horario de Atención",
+  "hours_value": "Lunes a Viernes: 9:00 AM - 6:00 PM",
+  "form_title": "Envíanos un Mensaje",
+  "form_name": "Nombre",
+  "form_name_placeholder": "Tu nombre completo",
+  "form_email": "Correo Electrónico",
+  "form_email_placeholder": "tu@email.com",
+  "form_phone": "Teléfono (opcional)",
+  "form_phone_placeholder": "+57 300 123 4567",
+  "form_message": "Mensaje",
+  "form_message_placeholder": "Escribe tu mensaje aquí...",
+  "form_submit": "Enviar Mensaje",
+  "form_success": "¡Mensaje enviado correctamente! Te contactaremos pronto.",
+  "form_error": "Error al enviar el mensaje. Por favor intenta de nuevo."
+}

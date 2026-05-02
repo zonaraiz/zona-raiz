@@ -1,0 +1,51 @@
+{
+  "title": "Personal Data Processing Policy",
+  "responsible": {
+    "title": "1. Data Controller",
+    "description": "Zonaraíz is responsible for processing personal data in accordance with Colombian legislation on personal data protection."
+  },
+  "data": {
+    "title": "2. Data Collected",
+    "description": "We may collect identification data, contact information, commercial information, and browsing and usage data from the platform."
+  },
+  "purposes": {
+    "title": "3. Purposes",
+    "description": "The data will be used to operate the platform, facilitate contact between users, personalize content, send communications related to the service, and for statistical analysis and system improvement."
+  },
+  "base": {
+    "title": "4. Legal Basis for Processing",
+    "description": "Processing is carried out based on the data subject's authorization, the use of publicly available information, and the legitimate interest in operating the platform."
+  },
+  "sources": {
+    "title": "5. Data from Public Sources",
+    "description": "Zonaraíz may process data obtained from public or open sources, including commercial and contact information. In these cases, data subjects' rights will be respected and requests for modification or deletion will be allowed."
+  },
+  "sharing": {
+    "title": "6. Data Sharing",
+    "description": "Data may be shared with other interested users, technology providers, and analysis tools."
+  },
+  "security": {
+    "title": "7. Security",
+    "description": "Zonaraíz implements reasonable security measures to protect personal data, but cannot guarantee absolute invulnerability against potential threats."
+  },
+  "rights": {
+    "title": "8. Data Subject Rights",
+    "description": "Data subjects may access their data, request correction, request deletion, and revoke the authorization granted for processing."
+  },
+  "procedure": {
+    "title": "9. Queries and Complaints Procedure",
+    "description": "Requests can be made through the official channels defined by Zonaraíz. Responses will be provided within a reasonable time."
+  },
+  "conservation": {
+    "title": "10. Data Retention",
+    "description": "Data will be retained as long as necessary for the purposes of the service."
+  },
+  "changes": {
+    "title": "11. Modifications",
+    "description": "Zonaraíz may modify this policy at any time. Continued use of the platform implies acceptance of the changes."
+  },
+  "applicable": {
+    "title": "12. Applicable Legislation",
+    "description": "This policy is governed by Colombian legislation, particularly Law 1581 of 2012 and its regulatory decrees."
+  }
+}

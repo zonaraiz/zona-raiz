@@ -1,0 +1,19 @@
+{
+  "title": "Sobre Nosotros",
+  "intro": "Zonaraíz es tu asesor inmobiliario líder en Colombia, transformando sueños en hogares. Nos especializamos en conectar compradores, vendedores y arrendadores con las propiedades ideales en todo el país.",
+  "mission": {
+    "title": "Misión",
+    "description": "Nuestra misión es simplificar el proceso de búsqueda y gestión de propiedades immobiliarias, proporcionando una plataforma tecnológica innovadora que facilite la conexión entre propietarios y usuarios interesados, con un compromiso constante con la transparencia y la excelencia en el servicio."
+  },
+  "vision": {
+    "title": "Visión",
+    "description": "Ser la plataforma inmobiliaria líder en Colombia, reconocida por su innovación tecnológica, confiabilidad y capacidad de transformar la manera en que las personas encuentran su hogar ideal."
+  },
+  "values": {
+    "title": "Valores",
+    "trust": "Confianza: Construimos relaciones sólidas con nuestros usuarios basadas en la honestidad y transparencia.",
+    "transparency": "Transparencia: Garantizamos información clara y veraz sobre todas las propiedades.",
+    "innovation": "Innovación: Utilizamos tecnología de vanguardia para mejorar constantemente nuestra plataforma.",
+    "commitment": "Compromiso: Estamos dedicados a satisfacer las necesidades de nuestros usuarios."
+  }
+}

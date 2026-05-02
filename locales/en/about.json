@@ -1,0 +1,19 @@
+{
+  "title": "About Us",
+  "intro": "Zonaraíz is your leading real estate advisor in Colombia, turning dreams into homes. We specialize in connecting buyers, sellers, and renters with ideal properties throughout the country.",
+  "mission": {
+    "title": "Mission",
+    "description": "Our mission is to simplify the process of searching for and managing real estate properties, providing an innovative technological platform that facilitates the connection between property owners and interested users, with a constant commitment to transparency and excellence in service."
+  },
+  "vision": {
+    "title": "Vision",
+    "description": "To be the leading real estate platform in Colombia, recognized for its technological innovation, reliability, and ability to transform the way people find their ideal home."
+  },
+  "values": {
+    "title": "Values",
+    "trust": "Trust: We build solid relationships with our users based on honesty and transparency.",
+    "transparency": "Transparency: We guarantee clear and truthful information about all properties.",
+    "innovation": "Innovation: We use cutting-edge technology to constantly improve our platform.",
+    "commitment": "Commitment: We are dedicated to meeting the needs of our users."
+  }
+}
