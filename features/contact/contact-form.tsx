@@ -21,9 +21,7 @@ export function ContactForm() {
   });
 
   const {
-    setError,
     formState: { isSubmitting },
-    handleSubmit,
   } = form;
 
   const onSubmit = async (values: ContactFormValues) => {
@@ -49,7 +47,7 @@ export function ContactForm() {
   return (
     <Card>
       <CardContent className="pt-6">
-        <Form form={form} onSubmit={handleSubmit(onSubmit)}>
+        <Form form={form} onSubmit={onSubmit}>
           <div className="space-y-4">
             <Form.Input
               name="name"
