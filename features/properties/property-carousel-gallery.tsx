@@ -1,81 +1,86 @@
 "use client";
-
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function PropertyCarouselGallery({
   images,
 }: {
   images: string[];
 }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
 
-  if (!images || images.length === 0) return null;
+  useEffect(() => {
+    if (!api) return;
+    setCurrent(api.selectedScrollSnap() + 1);
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
+  const handleThumbClick = useCallback(
+    (index: number) => {
+      api?.scrollTo(index);
+    },
+    [api]
+  );
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 lg:px-0">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        <div className="lg:col-span-8  relative w-full aspect-video md:8/3 lg:aspect-8/3 overflow-hidden rounded-3xl bg-muted">
-          <Image
-            src={images[currentImageIndex]}
-            alt={`Propiedad - imagen ${currentImageIndex + 1}`}
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover transition-all duration-500"
-          />
-          {/* Badge de contador opcional */}
-          <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs">
-            {currentImageIndex + 1} / {images.length}
-          </div>
-        </div>
-        <div className="lg:col-span-4 flex flex-col gap-4 w-full h-full lg:justify-start justify-center">
-          <Carousel
-            className="w-full"
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-          >
-            <CarouselContent className="-ml-2">
-              {images.map((image, index) => (
-                <CarouselItem
-                  className="pl-2 basis-1/3 md:basis-1/4 lg:basis-3/5"
-                  key={`${image}-${index}`}
-                >
-                  <button
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`relative w-full aspect-square rounded-xl overflow-hidden transition-all duration-200 ring-offset-background
-                      ${currentImageIndex === index ? "ring-2 ring-primary ring-offset-2 scale-95" : "opacity-70 hover:opacity-100"}
-                    `}
-                  >
-                    <Image
-                      alt={`Thumbnail ${index + 1}`}
-                      fill
-                      src={image}
-                      sizes="(max-width: 768px) 33vw, 15vw"
-                      className="object-cover"
-                    />
-                  </button>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+    <div className="p-8 container">
+      {/* Imagen principal */}
+      <Carousel className="w-full" setApi={setApi}>
+        <CarouselContent>
+          {images.map((image) => (
+            <CarouselItem key={image}>
+              <div className="relative w-full aspect-video max-w-180 mx-auto">
+                <Image
+                  alt="property-image"
+                  fill
+                  className="rounded-lg object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  src={image}
+                />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
 
-            {/* Controles del Carousel */}
-            <div className="flex items-center justify-end gap-2 lg:relative">
-              <CarouselPrevious className="static translate-y-0" />
-              <CarouselNext className="static translate-y-0" />
-            </div>
-          </Carousel>
-        </div>
-      </div>
+      {/* Thumbnails */}
+      <Carousel className="mt-4 max-w-xl mx-auto">
+        <CarouselContent className="my-1 max-w-lg mx-auto">
+          {images.map((image, index) => (
+            <CarouselItem
+              className={cn(
+                "basis-1/4 cursor-pointer transition-opacity",
+                current === index + 1 ? "opacity-100" : "opacity-50"
+              )}
+              key={image}
+              onClick={() => handleThumbClick(index)}
+            >
+              <div className="relative w-full aspect-video">
+                <Image
+                  alt="property-thumb"
+                  fill
+                  className="rounded-xl object-cover"
+                  src={image}
+                />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </div>
   );
 }
