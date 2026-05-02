@@ -15,8 +15,18 @@ export const ROUTES = {
   },
 
   about: {
-    es: "/nostros",
+    es: "/nosotros",
     en: "/about",
+  },
+
+  privacy: {
+    es: "/privacidad",
+    en: "/privacy",
+  },
+
+  terms: {
+    es: "/terminos",
+    en: "/terms",
   },
 
   signin: {
