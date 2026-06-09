@@ -4,8 +4,8 @@ import * as yup from "yup";
 export const descriptionSchema = yup
   .string()
   .transform((value) => (typeof value === "string" ? value.trim() : value))
-  .nullable()
   .default("")
+  .optional()
   .max(
     2000,
     i18next.t("validations:max.string", {
