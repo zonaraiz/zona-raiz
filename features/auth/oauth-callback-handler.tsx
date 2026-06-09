@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useRoutes } from "@/i18n/client-router";
 
 /**
  * Componente que maneja el callback de OAuth desde Supabase.
@@ -20,7 +21,7 @@ import { useRouter, useParams } from "next/navigation";
  */
 export default function OAuthCallbackHandler() {
   const router = useRouter();
-  const params = useParams();
+  const routes = useRoutes();
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -39,11 +40,7 @@ export default function OAuthCallbackHandler() {
     if (accessToken || refreshToken) {
       setIsProcessing(true);
 
-      // Construir URL de callback con tokens como query params
-      const lang = params.lang || "es";
-      const callbackUrl = `/${lang}/auth/callback`;
-
-      const url = new URL(callbackUrl, window.location.origin);
+      const url = new URL(routes.callback(), window.location.origin);
       if (accessToken) url.searchParams.set("access_token", accessToken);
       if (refreshToken) url.searchParams.set("refresh_token", refreshToken);
 
@@ -54,7 +51,7 @@ export default function OAuthCallbackHandler() {
       // Redirigir al callback
       router.push(url.toString());
     }
-  }, [router, params.lang, isProcessing]);
+  }, [router, routes, isProcessing]);
 
   // Este componente no renderiza nada visible
   return null;

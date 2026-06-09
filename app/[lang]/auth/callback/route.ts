@@ -19,6 +19,8 @@ export async function GET(request: NextRequest) {
   });
 
   const code = searchParams.get("code");
+  const accessToken = searchParams.get("access_token");
+  const refreshToken = searchParams.get("refresh_token");
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type");
 
@@ -27,6 +29,11 @@ export async function GET(request: NextRequest) {
   // 1. Intercambio de tokens (PKCE o OTP)
   if (code) {
     profile = await authService.exchangeCodeForSession(code);
+  } else if (accessToken && refreshToken) {
+    profile = await authService.setSessionFromAccessToken(
+      accessToken,
+      refreshToken,
+    );
   } else if (token_hash && type) {
     profile = await authService.verifyOtp(token_hash, type);
   }
