@@ -76,8 +76,18 @@ export function PropertyForm({
     onSuccess: (result) => {
       if (result.success) {
         toast.success(t(`messages.${isUpdateMode ? "updated" : "created"}`))
-        if (!isUpdateMode && "data" in result && result.data?.id) {
-          router.push(routes.propertyImages(result.data.id))
+        const createdPropertyId =
+          !isUpdateMode &&
+          "data" in result &&
+          typeof result.data === "object" &&
+          result.data !== null &&
+          "id" in result.data &&
+          typeof result.data.id === "string"
+            ? result.data.id
+            : null
+
+        if (createdPropertyId) {
+          router.push(routes.propertyImages(createdPropertyId))
           return
         }
         if (!isUpdateMode) reset()
