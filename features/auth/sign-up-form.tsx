@@ -47,7 +47,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"form">) {
       router.push(routes.signin());
     },
     onError: (error) => {
-      toast.error(t("messages.error.sign_up"));
+      toast.error(error.message || t("messages.error.sign_up"));
       console.error("Sign up error:", error);
     },
   });

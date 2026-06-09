@@ -54,7 +54,7 @@ export function SignInForm({ className, ...props }: ComponentProps<"form">) {
       }
     },
     onError: (error) => {
-      toast.error(t("messages.error.sign_up"));
+      toast.error(error.message || t("messages.error.sign_up"));
       console.error("Sign in error:", error);
     },
   });
