@@ -30,6 +30,18 @@ export function PropertyLocationForm() {
     if (place.city) {
       setValue("city", place.city, { shouldValidate: true });
     }
+    if (typeof place.latitude === "number") {
+      setValue("latitude", place.latitude, { shouldValidate: true });
+    }
+    if (typeof place.longitude === "number") {
+      setValue("longitude", place.longitude, { shouldValidate: true });
+    }
+    if (place.postal_code) {
+      setValue("postal_code", place.postal_code, { shouldValidate: true });
+    }
+    if (place.street) {
+      setValue("street", place.street, { shouldValidate: true });
+    }
   };
 
   const handleModeChange = (mode: "search" | "manual") => {

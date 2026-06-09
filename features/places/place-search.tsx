@@ -15,6 +15,7 @@ import {
 import { buildSearchUrl } from "@/i18n/client-router";
 import { Lang } from "@/i18n/settings";
 import { slugify } from "@/lib/utils";
+import countries from "@/lib/countries.json";
 
 type Prediction = {
   place_id: string;
@@ -32,6 +33,10 @@ export type ParsedPlace = {
   country?: string;
   neighborhood?: string;
   label?: string;
+  latitude?: number;
+  longitude?: number;
+  postal_code?: string;
+  street?: string;
 };
 
 interface PlaceSearchProps {
@@ -44,6 +49,63 @@ interface PlaceSearchProps {
 
 // ─── Estado de carga del script ───────────────────────────────────────────────
 type ScriptState = "idle" | "loading" | "ready" | "error";
+
+type LocalPlaceOption = {
+  place_id: string;
+  description: string;
+  structured_formatting: {
+    main_text: string;
+    secondary_text: string;
+  };
+  terms: { value: string }[];
+  raw: ParsedPlace;
+};
+
+const localPlaceOptions: LocalPlaceOption[] = countries.flatMap((country) =>
+  country.states.flatMap((state) => [
+    {
+      place_id: `local-state:${state.value}`,
+      description: `${state.label}, ${country.label}`,
+      structured_formatting: {
+        main_text: state.label,
+        secondary_text: country.label,
+      },
+      terms: [{ value: state.label }, { value: country.label }],
+      raw: {
+        country: country.value,
+        state: state.value,
+        label: state.label,
+      },
+    },
+    ...state.cities.map((city) => ({
+      place_id: `local-city:${state.value}:${city.value}`,
+      description: `${city.label}, ${state.label}, ${country.label}`,
+      structured_formatting: {
+        main_text: city.label,
+        secondary_text: `${state.label}, ${country.label}`,
+      },
+      terms: [{ value: city.label }, { value: state.label }, { value: country.label }],
+      raw: {
+        country: country.value,
+        state: state.value,
+        city: city.value,
+        label: city.label,
+      },
+    })),
+  ]),
+);
+
+function getLocalPredictions(input: string): Prediction[] {
+  const query = slugify(input).replace(/_/g, "");
+  if (query.length < 2) return [];
+
+  return localPlaceOptions
+    .filter((item) => {
+      const haystack = slugify(item.description).replace(/_/g, "");
+      return haystack.includes(query);
+    })
+    .slice(0, 8) as unknown as Prediction[];
+}
 
 function useGooglePlaces() {
   const [state, setState] = useState<ScriptState>(() => {
@@ -106,6 +168,49 @@ function parsePredictionTerms(prediction: Prediction): ParsedPlace {
   if (terms.length === 3) return { city: terms[0], state: terms[1] };
   if (terms.length === 2) return { city: terms[0] };
   return { city: terms[0] };
+}
+
+async function geocodeFallback(place: ParsedPlace): Promise<ParsedPlace> {
+  const query = [place.label, place.state, "Colombia"].filter(Boolean).join(", ");
+  if (!query) return place;
+
+  try {
+    const url = new URL("https://nominatim.openstreetmap.org/search");
+    url.searchParams.set("q", query);
+    url.searchParams.set("format", "jsonv2");
+    url.searchParams.set("limit", "1");
+    url.searchParams.set("countrycodes", "co");
+    url.searchParams.set("addressdetails", "1");
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) return place;
+    const results = (await response.json()) as Array<{
+      lat: string;
+      lon: string;
+      address?: Record<string, string>;
+    }>;
+
+    const first = results[0];
+    if (!first) return place;
+
+    return {
+      ...place,
+      latitude: Number(first.lat),
+      longitude: Number(first.lon),
+      postal_code: first.address?.postcode,
+      street:
+        first.address?.road ||
+        first.address?.pedestrian ||
+        first.address?.suburb,
+    };
+  } catch {
+    return place;
+  }
 }
 
 // Obtener detalles con timeout propio
@@ -187,7 +292,7 @@ export function PlaceSearch({
         {
           input,
           componentRestrictions: { country: "co" },
-          types: ["(regions)"],
+          types: ["geocode"],
         },
         (results, status) => {
           clearTimeout(safetyTimer);
@@ -196,7 +301,7 @@ export function PlaceSearch({
           if (status === google.maps.places.PlacesServiceStatus.OK && results) {
             setPredictions(results as unknown as Prediction[]);
           } else {
-            setPredictions([]);
+            setPredictions(getLocalPredictions(input));
           }
         },
       );
@@ -239,6 +344,14 @@ export function PlaceSearch({
     };
 
     try {
+      if (prediction.place_id.startsWith("local-")) {
+        const localMatch = localPlaceOptions.find(
+          (item) => item.place_id === prediction.place_id,
+        );
+        finalize(await geocodeFallback(localMatch?.raw ?? basePlace));
+        return;
+      }
+
       const dummyDiv = document.createElement("div");
       const placesService = new google.maps.places.PlacesService(dummyDiv);
       const details = await getPlaceDetails(placesService, prediction.place_id);
@@ -248,16 +361,27 @@ export function PlaceSearch({
         components.find((c) => types.some((t) => c.types.includes(t)));
 
       const place: ParsedPlace = {
-        country: find("country")?.short_name?.toLowerCase(),
-        state: find("administrative_area_level_1")?.long_name,
-        city: find("locality", "administrative_area_level_2")?.long_name,
-        neighborhood: find("sublocality_level_1", "neighborhood")?.long_name,
+        country: find("country")?.short_name?.toUpperCase(),
+        state: slugify(find("administrative_area_level_1")?.long_name ?? ""),
+        city: slugify(
+          find("locality", "administrative_area_level_2")?.long_name ?? "",
+        ),
+        neighborhood: slugify(
+          find("sublocality_level_1", "neighborhood")?.long_name ?? "",
+        ),
         label: prediction.structured_formatting.main_text,
+        latitude: details.geometry?.location?.lat(),
+        longitude: details.geometry?.location?.lng(),
+        postal_code: find("postal_code")?.long_name,
+        street: find("route")?.long_name,
       };
 
       // Limpiar undefined
       Object.keys(place).forEach(
-        (k) => place[k as keyof ParsedPlace] === undefined && delete place[k as keyof ParsedPlace],
+        (k) =>
+          (place[k as keyof ParsedPlace] === undefined ||
+            place[k as keyof ParsedPlace] === "") &&
+          delete place[k as keyof ParsedPlace],
       );
 
       finalize(place);
