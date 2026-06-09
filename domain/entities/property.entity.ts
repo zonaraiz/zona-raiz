@@ -47,6 +47,7 @@ export const propertyTypeOptions = [
   { label: "Condominio", value: PropertyType.Condo },
   { label: "Casa adosada", value: PropertyType.TownHouse },
   { label: "Terreno", value: PropertyType.Land },
+  { label: "Finca", value: PropertyType.State },
   { label: "Comercial", value: PropertyType.Commercial },
   { label: "Oficina", value: PropertyType.Office },
   { label: "Bodega", value: PropertyType.Warehouse },

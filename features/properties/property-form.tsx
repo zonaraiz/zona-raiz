@@ -78,6 +78,10 @@ export function PropertyForm({
         toast.success(t(`messages.${isUpdateMode ? "updated" : "created"}`))
         if (!isUpdateMode) reset()
         wizardRef.current?.complete()
+        if (!isUpdateMode && "data" in result && result.data?.id) {
+          router.push(routes.propertyImages(result.data.id))
+          return
+        }
         router.push(routes.dashboard())
       }
     },

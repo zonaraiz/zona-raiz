@@ -38,7 +38,7 @@ export const createPropertyAction = withServerAction(
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
 
-    await propertyService.create(realEstateId, {
+    const property = await propertyService.create(realEstateId, {
       ...input,
       property_type,
       amenities,
@@ -53,6 +53,8 @@ export const createPropertyAction = withServerAction(
     revalidateTag(CACHE_TAGS.PROPERTY.ALL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
     revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(realEstateId), { expire: 0 });
+
+    return property;
   },
 );
 
