@@ -3,22 +3,21 @@ import * as yup from "yup";
 
 export const descriptionSchema = yup
   .string()
-  .required(
-    i18next.t("validations:required", {
+  .transform((value) => (typeof value === "string" ? value.trim() : value))
+  .nullable()
+  .default("")
+  .max(
+    2000,
+    i18next.t("validations:max.string", {
       attribute: "description",
+      max: "2000",
     }),
   )
-  .min(
-    10,
+  .test(
+    "description-min-if-present",
     i18next.t("validations:min.string", {
       attribute: "description",
       min: "10",
     }),
-  )
-  .max(
-    100,
-    i18next.t("validations:max.string", {
-      attribute: "description",
-      max: "100",
-    }),
+    (value) => !value || value.length === 0 || value.length >= 10,
   );
