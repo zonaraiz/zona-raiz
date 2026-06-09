@@ -14,7 +14,7 @@ import { appModule } from "@/application/modules/app.module";
 import * as yup from "yup";
 
 const searchProfilesSchema = yup.object({
-  email: yup.string().email().required(),
+  email: yup.string().trim().min(2).required(),
 });
 
 export const updateProfileAction = withServerAction(
@@ -94,13 +94,6 @@ export const searchProfilesByEmailAction = withServerAction(
     );
 
     const profiles = await profileService.searchProfilesByEmail(email);
-
-    // Guardar resultados en cookie para que el cliente los lea
-    cookieStore.set("search_profiles_data", JSON.stringify(profiles), {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60, // 1 minuto
-    });
+    return profiles;
   },
 );

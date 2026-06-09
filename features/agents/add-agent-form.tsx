@@ -22,21 +22,6 @@ interface Props {
   realEstateId: string
 }
 
-function parseSearchProfilesCookie(): ProfileEntity[] {
-  if (typeof document === "undefined") return []
-  const match = document.cookie.match(/search_profiles_data=([^;]+)/)
-  if (!match) return []
-  try {
-    return JSON.parse(decodeURIComponent(match[1]))
-  } catch {
-    return []
-  }
-}
-
-function clearSearchProfilesCookie() {
-  document.cookie = "search_profiles_data=; Max-Age=0"
-}
-
 export const AddAgentForm = ({
   realEstateId
 }: Props) => {
@@ -57,14 +42,13 @@ export const AddAgentForm = ({
 
   const searchMutation = useServerMutation({
     action: searchProfilesByEmailAction,
-    onSuccess: () => {
-      const profiles = parseSearchProfilesCookie()
+    onSuccess: (result) => {
+      const profiles = "data" in result ? (result.data as ProfileEntity[]) : []
       const options = profiles.map(p => ({
         label: p.email,
         value: p.id,
       }))
       setSearchOptions(options)
-      clearSearchProfilesCookie()
       pendingQueryRef.current = null
     },
     onError: (error) => {
@@ -117,23 +101,6 @@ export const AddAgentForm = ({
     // Return empty array - results will be set via useEffect when mutation completes
     return []
   }, [searchMutation])
-
-  // Sync search results from cookie when searchMutation completes
-  useEffect(() => {
-    if (searchMutation.isSuccess) {
-      const profiles = parseSearchProfilesCookie()
-      // Only update if this matches our pending query
-      if (pendingQueryRef.current) {
-        const options = profiles.map(p => ({
-          label: p.email,
-          value: p.id,
-        }))
-        setSearchOptions(options)
-      }
-      clearSearchProfilesCookie()
-      pendingQueryRef.current = null
-    }
-  }, [searchMutation.isSuccess])
 
   const isLoading = isSubmitting || mutation.isPending
 
