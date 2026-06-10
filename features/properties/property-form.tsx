@@ -194,7 +194,7 @@ export function PropertyForm({
           id="features"
           title={t("sections.features")}
           canNext={() => trigger(stepFields.features)}
-          nextText={isUpdateMode ? undefined : t("add_images")}
+          nextText={isUpdateMode ? undefined : t("actions.add_images")}
           onNext={
             isUpdateMode
               ? undefined
@@ -210,12 +210,12 @@ export function PropertyForm({
         {!isUpdateMode && (
           <WizardTab
             id="images"
-            title={t("add_images")}
+            title={t("actions.add_images")}
             canSubmit={() => Boolean(createdPropertyId)}
           >
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold">{t("add_images")}</h3>
+                <h3 className="text-lg font-semibold">{t("actions.add_images")}</h3>
                 <p className="text-sm text-muted-foreground">
                   Sube las imágenes del inmueble antes de finalizar.
                 </p>
