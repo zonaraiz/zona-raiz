@@ -31,6 +31,7 @@ interface WizardTabProps {
   icon?: React.ElementType;
   nextText?: string;
   canNext?: () => boolean | Promise<boolean>;
+  onNext?: () => boolean | Promise<boolean>;
   canBack?: () => boolean | Promise<boolean>;
   canSubmit?: () => boolean | Promise<boolean>;
   children: ReactNode;
@@ -93,6 +94,12 @@ export const WizardTabs = forwardRef<WizardRef, WizardTabsProps>(
         const ok = await currentTab.props.canNext();
         if (!ok) return;
       }
+
+      if (currentTab.props.onNext) {
+        const ok = await currentTab.props.onNext();
+        if (!ok) return;
+      }
+
       next();
     };
 
