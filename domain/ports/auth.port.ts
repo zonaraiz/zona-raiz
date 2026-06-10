@@ -10,8 +10,8 @@ export type OAuthProvider = "google" | "apple" | "facebook" | "github" | "twitte
 
 export interface AuthPort {
   signIn(email: string, password: string): Promise<{ userId: string }>
-  signUp(data: SignUpData): Promise<void>
-  sendOtp(email: string): Promise<void>
+  signUp(data: SignUpData, redirectTo?: string): Promise<void>
+  sendOtp(email: string, redirectTo?: string): Promise<void>
   exchangeCodeForSession(token: string): Promise<{ userId: string }>
   setSessionFromAccessToken(accessToken: string, refreshToken: string): Promise<{ userId: string }>
   verifyOtp(token: string, type: string): Promise<{ userId: string }>

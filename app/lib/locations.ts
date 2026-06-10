@@ -29,3 +29,18 @@ export const CITY_LABELS: Record<string, string> = Object.fromEntries(
     ),
   ),
 );
+
+export function humanizeLocation(value?: string | null): string {
+  if (!value) return "";
+
+  if (CITY_LABELS[value]) return CITY_LABELS[value];
+  if (STATE_LABELS[value]) return STATE_LABELS[value];
+
+  return value
+    .replaceAll("_", " ")
+    .replaceAll("-", " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}

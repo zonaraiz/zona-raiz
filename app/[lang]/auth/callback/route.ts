@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
   const accessToken = searchParams.get("access_token");
   const refreshToken = searchParams.get("refresh_token");
   const tokenHash = searchParams.get("token_hash");
-  const type = searchParams.get("type");
+  const type = searchParams.get("type") || "email";
 
   const sessionResponse = createMutableResponse(request);
   const supabase = createSupabaseRouteClient(request, sessionResponse);
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       });
       if (error) throw error;
       userId = data.user?.id ?? null;
-    } else if (tokenHash && type) {
+    } else if (tokenHash) {
       const { data, error } = await supabase.auth.verifyOtp({
         type: type as "signup" | "recovery" | "email_change" | "email",
         token_hash: tokenHash,

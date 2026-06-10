@@ -11,6 +11,8 @@ import {
   CITIES_SET,
   CITY_TO_STATE,
   CITY_LABELS,
+  STATE_LABELS,
+  humanizeLocation,
 } from "@/lib/locations";
 import { ListingType } from "@/domain/entities/listing.enums";
 import { PropertyType } from "@/domain/entities/property.enums";
@@ -112,9 +114,11 @@ export const buildUrl = (
   const params = new URLSearchParams();
 
   if (merged.q) params.set("q", merged.q);
+  if (merged.street) params.set("street", merged.street);
+  if (merged.neighborhood) params.set("neighborhood", merged.neighborhood);
   if (merged.min_price && merged.min_price > 0)
     params.set("min_price", String(merged.min_price));
-  if (merged.max_price && merged.max_price < 100000000)
+  if (merged.max_price && merged.max_price < 10000000000000)
     params.set("max_price", String(merged.max_price));
   if (merged.min_bedrooms)
     params.set("min_bedrooms", String(merged.min_bedrooms));
@@ -166,7 +170,8 @@ export const getBreadcrumbLabel = (
   t: (key: string) => string,
 ): string => {
   const parts: string[] = [];
-  if (parsed.city) parts.push(CITY_LABELS[parsed.city] ?? parsed.city);
-  if (parsed.neighborhood) parts.push(parsed.neighborhood);
+  if (parsed.city) parts.push(CITY_LABELS[parsed.city] ?? humanizeLocation(parsed.city));
+  else if (parsed.state) parts.push(STATE_LABELS[parsed.state] ?? humanizeLocation(parsed.state));
+  if (parsed.neighborhood) parts.push(humanizeLocation(parsed.neighborhood));
   return parts.join(" > ") || t("common:sections.all_properties");
 };

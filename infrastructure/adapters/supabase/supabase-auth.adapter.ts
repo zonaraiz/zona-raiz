@@ -6,11 +6,12 @@ import { SupabaseAdminClient } from "@/infrastructure/db/supabase.server-admin";
 export class SupabaseAuthAdapter implements AuthPort {
   constructor(private readonly supabase: SupabaseClient) {}
 
-  async signUp(input: SignUpData) {
+  async signUp(input: SignUpData, redirectTo?: string) {
     const { error, data } = await this.supabase.auth.signUp({
       email: input.email,
       password: input.password,
       options: {
+        ...(redirectTo ? { emailRedirectTo: redirectTo } : {}),
         data: {
           full_name: input.full_name,
           phone: input.phone,
@@ -52,11 +53,13 @@ export class SupabaseAuthAdapter implements AuthPort {
     if (error) throw error;
   }
 
-  async sendOtp(email: string) {
+  async sendOtp(email: string, redirectTo?: string) {
     const { error } = await this.supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+        emailRedirectTo:
+          redirectTo ??
+          `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/es/autenticacion/callback`,
       },
     });
     if (error) throw error;

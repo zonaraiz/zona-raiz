@@ -10,8 +10,8 @@ export class AuthService {
     private readonly lang: Lang = "es",
   ) { }
 
-  async signUp(data: SignUpData) {
-    return this.auth.signUp(data)
+  async signUp(data: SignUpData, redirectTo?: string) {
+    return this.auth.signUp(data, redirectTo)
   }
 
   async signIn(email: string, password: string): Promise<string> {
@@ -22,8 +22,8 @@ export class AuthService {
     return role
   }
 
-  async sendOtp(email: string) {
-    return this.auth.sendOtp(email)
+  async sendOtp(email: string, redirectTo?: string) {
+    return this.auth.sendOtp(email, redirectTo)
   }
 
   async signOut() {

@@ -35,6 +35,7 @@ import { PropertyType } from "@/domain/entities/property.enums";
 import { buildUrl } from "./_search/helpers";
 import { LandingNav } from "@/features/landing/landing-nav";
 import { ProfileEntity, EUserRole } from "@/domain/entities/profile.entity";
+import { CITY_LABELS, STATE_LABELS, humanizeLocation } from "@/lib/locations";
 
 interface SearchPageClientProps {
   filters: ListingSearchFiltersType;
@@ -80,7 +81,7 @@ export function SearchPageClient({
   profile,
   role,
 }: SearchPageClientProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["listings", "common"]);
   const router = useRouter();
 
   const handleFiltersChange = (newFilters: ListingSearchFiltersType) => {
@@ -101,11 +102,11 @@ export function SearchPageClient({
     if (newFilters.city) parts.push(newFilters.city as string);
 
     const newBasePath = `/${lang}${parts.length ? `/${parts.join("/")}` : ""}`;
-    window.location.href = buildUrl(
+    router.push(buildUrl(
       { ...newFilters, page: 1 },
       newBasePath,
       newFilters,
-    );
+    ), { scroll: false });
   };
 
   const handleSortChange = (value: string) => {
@@ -149,9 +150,13 @@ export function SearchPageClient({
             <div className="flex items-center justify-between mb-4 gap-3">
               <div className="min-w-0">
                 <h1 className="text-xl sm:text-2xl font-bold capitalize truncate">
-                  {(filters.city as string) ||
-                    (filters.state as string) ||
-                    (t("common:properties") as string)}
+                  {filters.city
+                    ? CITY_LABELS[filters.city as string] ??
+                      humanizeLocation(filters.city as string)
+                    : filters.state
+                      ? STATE_LABELS[filters.state as string] ??
+                        humanizeLocation(filters.state as string)
+                      : t("detail.breadcrumb.properties")}
                 </h1>
                 <p className="text-sm text-muted-foreground capitalize">
                   {total} {total === 1 ? t("words:result") : t("words:results")}
@@ -196,7 +201,7 @@ export function SearchPageClient({
                 >
                   <SelectTrigger className="w-40 sm:w-50">
                     <SelectValue
-                      placeholder={t("properties:placeholders.order_by")}
+                      placeholder="Ordenar por"
                     />
                   </SelectTrigger>
                   <SelectContent>

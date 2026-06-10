@@ -12,6 +12,8 @@ import { useTranslation } from "react-i18next";
 import { FavoriteToggleButton } from "@/features/favorites/favorite-toggle-button";
 import { useListingOptions } from "./hooks/use-listing-options";
 import Image from "next/image";
+import { CITY_LABELS, STATE_LABELS, humanizeLocation } from "@/lib/locations";
+import { propertyTypeLabels } from "@/domain/entities/property.entity";
 
 interface ListingCardProps {
   listing: ListingEntity;
@@ -153,7 +155,13 @@ export function ListingCard({
             <div className="flex items-center gap-1 mt-1 text-muted-foreground">
               <MapPin className="w-3.5 h-3.5 shrink-0" />
               <span className="text-sm truncate capitalize">
-                {[property.neighborhood, property.city, property.state]
+                {[
+                  property.neighborhood
+                    ? humanizeLocation(property.neighborhood)
+                    : null,
+                  property.city ? CITY_LABELS[property.city] ?? humanizeLocation(property.city) : null,
+                  property.state ? STATE_LABELS[property.state] ?? humanizeLocation(property.state) : null,
+                ]
                   .filter(Boolean)
                   .join(", ")}
               </span>
@@ -181,7 +189,7 @@ export function ListingCard({
             </div>
 
             <div className="text-xs text-muted-foreground mt-2 capitalize">
-              {property.property_type}
+              {propertyTypeLabels[property.property_type] ?? humanizeLocation(property.property_type)}
             </div>
           </div>
         </Card>

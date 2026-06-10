@@ -7,6 +7,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -18,6 +23,7 @@ export default function PropertyCarouselGallery({
 }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
 
   useEffect(() => {
     if (!api) return;
@@ -45,9 +51,10 @@ export default function PropertyCarouselGallery({
                 <Image
                   alt="property-image"
                   fill
-                  className="rounded-lg object-cover"
+                  className="rounded-lg object-cover cursor-zoom-in"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   src={image}
+                  onClick={() => setIsFullscreenOpen(true)}
                 />
               </div>
             </CarouselItem>
@@ -81,6 +88,23 @@ export default function PropertyCarouselGallery({
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
+
+      <Dialog open={isFullscreenOpen} onOpenChange={setIsFullscreenOpen}>
+        <DialogContent className="max-w-[95vw] w-[95vw] h-[92vh] p-2 bg-black border-black">
+          <DialogTitle className="sr-only">Galería de imágenes</DialogTitle>
+          <div className="relative w-full h-full">
+            {images[current - 1] ? (
+              <Image
+                alt="property-image-fullscreen"
+                fill
+                className="object-contain"
+                sizes="100vw"
+                src={images[current - 1]}
+              />
+            ) : null}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

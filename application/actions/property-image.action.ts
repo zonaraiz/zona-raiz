@@ -75,6 +75,7 @@ export const createPropertyImageAction = withServerAction(
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.DETAIL(propertyId), { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.PRINCIPAL, { expire: 0 });
   },
 );
 
@@ -108,6 +109,7 @@ export const updatePropertyImageAction = withServerAction(
     // Invalidar tags generales (sin propertyId específico)
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.PRINCIPAL, { expire: 0 });
   },
 );
 
@@ -133,6 +135,7 @@ export const deletePropertyImageAction = withServerAction(
     // Invalidar tags generales
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.PRINCIPAL, { expire: 0 });
   },
 );
 
@@ -173,6 +176,7 @@ export const updatePropertyImageFormAction = withServerAction(
     // Invalidar tags generales (sin propertyId específico)
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.PRINCIPAL, { expire: 0 });
   },
 );
 
@@ -203,6 +207,7 @@ export const deletePropertyImageFormAction = withServerAction(
     // Invalidar tags generales
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.PRINCIPAL, { expire: 0 });
   },
 );
 
@@ -238,6 +243,7 @@ export const reorderPropertyImagesAction = withServerAction(
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.DETAIL(propertyId), { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.PRINCIPAL, { expire: 0 });
   },
 );
 

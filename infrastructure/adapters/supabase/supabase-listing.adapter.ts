@@ -8,6 +8,8 @@ import {
 } from "@/domain/ports/listing.port";
 import { LandingCity, LandingStats } from "@/domain/types/landing.types";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { humanizeLocation } from "@/lib/locations";
+import { AmenitiesType } from "@/domain/entities/property.enums";
 
 interface ListingRow {
   created_at: string;
@@ -56,9 +58,6 @@ export class SupabaseListingAdapter implements ListingPort {
     if (filters?.property_id) {
       query = query.eq("property_id", filters.property_id);
     }
-    if (filters?.type) {
-      query = query.eq("property.property_type", filters.type);
-    }
     if (filters?.listing_type) {
       query = query.eq("listing_type", filters.listing_type);
     }
@@ -69,30 +68,6 @@ export class SupabaseListingAdapter implements ListingPort {
       query = query.eq("status", filters.status);
     }
 
-    if (filters?.street) {
-      query = query.ilike("property.street", `%${filters.street}%`);
-    }
-    if (filters?.city) {
-      query = query.ilike("property.city", `%${filters.city}%`);
-    }
-    if (filters?.state) {
-      query = query.ilike("property.state", `%${filters.state}%`);
-    }
-    if (filters?.postal_code) {
-      query = query.eq("property.postal_code", filters.postal_code);
-    }
-    if (filters?.country) {
-      query = query.eq("property.country", filters.country);
-    }
-    if (filters?.neighborhood) {
-      query = query.ilike("property.neighborhood", `%${filters.neighborhood}%`);
-    }
-    if (filters?.min_bedrooms) {
-      query = query.gte("property.bedrooms", filters.min_bedrooms);
-    }
-    if (filters?.min_bathrooms) {
-      query = query.gte("property.bathrooms", filters.min_bathrooms);
-    }
     if (filters?.min_price) {
       query = query.gte("price", filters.min_price);
     }
@@ -112,9 +87,133 @@ export class SupabaseListingAdapter implements ListingPort {
 
     if (error) throw new Error(error.message);
 
-    return (data || []).map(
+    const normalizedFilters = {
+      street: filters?.street?.trim().toLowerCase(),
+      city: filters?.city?.trim().toLowerCase(),
+      state: filters?.state?.trim().toLowerCase(),
+      postal_code: filters?.postal_code?.trim().toLowerCase(),
+      country: filters?.country?.trim().toLowerCase(),
+      neighborhood: filters?.neighborhood?.trim().toLowerCase(),
+      type: filters?.type,
+      q: filters?.q?.trim().toLowerCase(),
+      min_bedrooms: filters?.min_bedrooms,
+      min_bathrooms: filters?.min_bathrooms,
+      amenities: filters?.amenities ?? [],
+    };
+
+    const listings = ((data || []).map(
       (item) => mapListingRowToEntity(item)!,
-    ) as ListingEntity[];
+    ) as ListingEntity[]).filter((listing) => {
+      const property = listing.property;
+      if (!property) return false;
+
+      if (normalizedFilters.type && property.property_type !== normalizedFilters.type) {
+        return false;
+      }
+
+      if (normalizedFilters.q) {
+        const haystack = [
+          property.title,
+          property.description,
+          property.neighborhood,
+          property.city,
+          property.state,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        if (!haystack.includes(normalizedFilters.q)) {
+          return false;
+        }
+      }
+
+      if (
+        normalizedFilters.street &&
+        !property.street?.toLowerCase().includes(normalizedFilters.street)
+      ) {
+        return false;
+      }
+
+      if (
+        normalizedFilters.city &&
+        property.city?.toLowerCase() !== normalizedFilters.city
+      ) {
+        return false;
+      }
+
+      if (
+        normalizedFilters.state &&
+        property.state?.toLowerCase() !== normalizedFilters.state
+      ) {
+        return false;
+      }
+
+      if (
+        normalizedFilters.postal_code &&
+        property.postal_code?.toLowerCase() !== normalizedFilters.postal_code
+      ) {
+        return false;
+      }
+
+      if (
+        normalizedFilters.country &&
+        property.country?.toLowerCase() !== normalizedFilters.country
+      ) {
+        return false;
+      }
+
+      if (
+        normalizedFilters.neighborhood &&
+        !property.neighborhood?.toLowerCase().includes(normalizedFilters.neighborhood)
+      ) {
+        return false;
+      }
+
+      if (
+        normalizedFilters.min_bedrooms !== undefined &&
+        (property.bedrooms ?? 0) < normalizedFilters.min_bedrooms
+      ) {
+        return false;
+      }
+
+      if (
+        normalizedFilters.min_bathrooms !== undefined &&
+        (property.bathrooms ?? 0) < normalizedFilters.min_bathrooms
+      ) {
+        return false;
+      }
+
+      if (normalizedFilters.amenities.length > 0) {
+        const propertyAmenities = (property.amenities || []).map((amenity) =>
+          typeof amenity === "string"
+            ? amenity
+            : ((amenity as { value?: AmenitiesType }).value ?? ""),
+        );
+
+        const hasAllAmenities = normalizedFilters.amenities.every((amenity) =>
+          propertyAmenities.includes(amenity as AmenitiesType),
+        );
+
+        if (!hasAllAmenities) return false;
+      }
+
+      return true;
+    });
+
+    if (sortField === "price") {
+      listings.sort((a, b) =>
+        sortOrder ? a.price - b.price : b.price - a.price,
+      );
+    } else {
+      listings.sort((a, b) =>
+        sortOrder
+          ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          : new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
+    }
+
+    return listings;
   }
 
   async create(data: Partial<ListingEntity>): Promise<ListingEntity> {
@@ -445,8 +544,8 @@ export class SupabaseListingAdapter implements ListingPort {
     }
 
     return Array.from(cityMap.entries()).map(([city, data]) => ({
-      name: city,
-      slug: city.toLowerCase().replace(/\s+/g, "-"),
+      name: humanizeLocation(city),
+      slug: city,
       count: data.count,
       image: data.image,
     }));

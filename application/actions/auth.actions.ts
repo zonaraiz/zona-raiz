@@ -54,9 +54,11 @@ export const signUpAction = withServerAction(async (formData: FormData) => {
   });
   const lang = await getLangServerSide();
   const cookieStore = await cookies();
+  const routes = createRouter(lang);
   const { authService } = await appModule(lang, { cookies: cookieStore });
+  const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL}${routes.callback()}`;
 
-  await authService.signUp(input);
+  await authService.signUp(input, redirectTo);
 
   return { success: true };
 });
@@ -103,7 +105,9 @@ export const sentOtpAction = withServerAction(async (formData: FormData) => {
 
   const lang = await getLangServerSide();
   const cookieStore = await cookies();
+  const routes = createRouter(lang);
   const { authService } = await appModule(lang, { cookies: cookieStore });
+  const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL}${routes.callback()}`;
 
-  await authService.sendOtp(input.email);
+  await authService.sendOtp(input.email, redirectTo);
 });
