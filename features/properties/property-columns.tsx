@@ -36,7 +36,7 @@ import { toast } from "sonner"
 import { deletePropertyAction } from "@/application/actions/property.action"
 import { useServerMutation } from "@/shared/hooks/use-server-mutation.hook"
 import { EditPropertyDialog } from "@/features/properties/edit-property-dialog"
-import { humanizeLocation } from "@/app/lib/locations"
+import { humanizeLocation } from "@/lib/locations"
 
 export type PropertyRow = BaseRow & {
   created_at: string
