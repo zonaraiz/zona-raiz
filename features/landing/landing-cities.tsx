@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useRouter } from "next/navigation";
 import { buildSearchUrl, useRoutes } from "@/i18n/client-router";
+import { Lang } from "@/i18n/settings";
 import { Button } from "@/components/ui/button";
 import { LandingCity } from "@/domain/types/landing.types";
 
@@ -17,7 +18,7 @@ export function LandingCities({ cities }: LandingCitiesProps) {
   const params = useParams();
   const routes = useRoutes();
   const [hoveredCity, setHoveredCity] = useState<string | null>(null);
-  const lang = typeof params.lang === "string" ? params.lang : "es";
+  const lang: Lang = params.lang === "en" ? "en" : "es";
 
   return (
     <section className="py-16 bg-neutral-50">
