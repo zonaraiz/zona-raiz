@@ -29,13 +29,13 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import { Lang } from "@/i18n/settings";
-import { LISTINS_SLUG, PROPERTIES_SLUG } from "@/lib/search-config";
 import { ListingType } from "@/domain/entities/listing.enums";
 import { PropertyType } from "@/domain/entities/property.enums";
 import { buildUrl } from "./_search/helpers";
 import { LandingNav } from "@/features/landing/landing-nav";
 import { ProfileEntity, EUserRole } from "@/domain/entities/profile.entity";
 import { CITY_LABELS, STATE_LABELS, humanizeLocation } from "@/lib/locations";
+import { buildSearchUrl } from "@/i18n/client-router";
 
 interface SearchPageClientProps {
   filters: ListingSearchFiltersType;
@@ -85,27 +85,28 @@ export function SearchPageClient({
   const router = useRouter();
 
   const handleFiltersChange = (newFilters: ListingSearchFiltersType) => {
-    const parts: string[] = [];
+    const mergedFilters: ListingSearchFiltersType = {
+      ...filters,
+      ...newFilters,
+      country: newFilters.country ?? filters.country,
+      state: newFilters.state ?? filters.state,
+      city: newFilters.city ?? filters.city,
+      neighborhood: newFilters.neighborhood ?? filters.neighborhood,
+      street: newFilters.street ?? filters.street,
+    };
 
-    if (newFilters.listing_type) {
-      parts.push(
-        LISTINS_SLUG[newFilters.listing_type as ListingType]?.[lang] ??
-          newFilters.listing_type,
-      );
-    }
-    if (newFilters.type) {
-      parts.push(
-        PROPERTIES_SLUG[newFilters.type as PropertyType]?.[lang] ??
-          newFilters.type,
-      );
-    }
-    if (newFilters.city) parts.push(newFilters.city as string);
+    const newBasePath = buildSearchUrl({
+      lang,
+      listing_type: mergedFilters.listing_type as ListingType | string,
+      type: mergedFilters.type as PropertyType | string,
+      city: mergedFilters.city as string | undefined,
+      neighborhood: mergedFilters.neighborhood as string | undefined,
+    });
 
-    const newBasePath = `/${lang}${parts.length ? `/${parts.join("/")}` : ""}`;
     router.push(buildUrl(
-      { ...newFilters, page: 1 },
+      { ...mergedFilters, page: 1 },
       newBasePath,
-      newFilters,
+      mergedFilters,
     ), { scroll: false });
   };
 

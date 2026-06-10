@@ -64,7 +64,7 @@ export function ListingSearchFilters({
     mode: "onChange",
   });
 
-  const { control, setValue, reset, watch } = form;
+  const { control, setValue, reset, watch, register } = form;
   const values = useWatch({ control });
   const priceRange = watch(["min_price", "max_price"]);
 
@@ -92,6 +92,14 @@ export function ListingSearchFilters({
       reset(initialFilters);
     }
   }, [initialFilters, reset]);
+
+  useEffect(() => {
+    register("country");
+    register("state");
+    register("city");
+    register("neighborhood");
+    register("street");
+  }, [register]);
 
   const handleReset = () => {
     reset(defaultListingSearchFiltersValues);
