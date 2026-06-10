@@ -74,11 +74,6 @@ export class SupabaseListingAdapter implements ListingPort {
     if (filters?.max_price) {
       query = query.lte("price", filters.max_price);
     }
-    if (filters?.q) {
-      query = query.or(
-        `property.title.ilike.%${filters.q}%,property.description.ilike.%${filters.q}%`,
-      );
-    }
     if (filters?.search_query) {
       query = query.textSearch("property.search_vector", filters.search_query);
     }
