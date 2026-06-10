@@ -22,7 +22,7 @@ export const createListingSchema = yup.object({
   status: yup
     .mixed<ListingStatus>()
     .oneOf(Object.values(ListingStatus))
-    .default(ListingStatus.DRAFT),
+    .default(ListingStatus.ACTIVE),
   virtual_tour_url: yup
     .string()
     .url(
@@ -102,7 +102,7 @@ export const defaultPropertyValues: CreateListingInput = {
   price: 50000000,
   currency: Currency.COP,
   price_negotiable: false,
-  status: ListingStatus.DRAFT,
+  status: ListingStatus.ACTIVE,
   video_url: "",
   virtual_tour_url: "",
   available_from: new Date(),

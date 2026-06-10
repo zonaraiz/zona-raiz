@@ -35,6 +35,8 @@ import { useRoutes } from "@/i18n/client-router"
 import { toast } from "sonner"
 import { deletePropertyAction } from "@/application/actions/property.action"
 import { useServerMutation } from "@/shared/hooks/use-server-mutation.hook"
+import { EditPropertyDialog } from "@/features/properties/edit-property-dialog"
+import { humanizeLocation } from "@/app/lib/locations"
 
 export type PropertyRow = BaseRow & {
   created_at: string
@@ -54,10 +56,10 @@ export const propertyTypeIcons: Record<PropertyType, React.ReactNode> = {
   [PropertyType.Other]: <IconHome className="size-4" />,
 }
 
-function PropertyRowActions({ propertyId, latitude, longitude }: { propertyId: string; latitude: number | null; longitude: number | null }) {
+function PropertyRowActions({ property }: { property: PropertyRow }) {
   const { t } = useTranslation("properties")
   const routes = useRoutes()
-  const hasCoords = latitude && longitude
+  const hasCoords = property.latitude !== null && property.longitude !== null
 
   const mutation = useServerMutation({
     action: deletePropertyAction,
@@ -84,19 +86,18 @@ function PropertyRowActions({ propertyId, latitude, longitude }: { propertyId: s
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-40">
-        <Link href={routes.property(propertyId)} passHref>
-          <DropdownMenuItem>{t("properties:columns.actions.edit_property")}</DropdownMenuItem>
-        </Link>
-        <Link href={routes.propertyImages(propertyId)} passHref>
-          <DropdownMenuItem>{t("properties:columns.actions.edit_images")}</DropdownMenuItem>
-        </Link>
-        <Link href={routes.propertyListing(propertyId)} passHref>
+        <EditPropertyDialog property={property}>
+          <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+            {t("properties:columns.actions.edit_property")}
+          </DropdownMenuItem>
+        </EditPropertyDialog>
+        <Link href={routes.propertyListing(property.id)} passHref>
           <DropdownMenuItem>{t("properties:columns.actions.publish_property")}</DropdownMenuItem>
         </Link>
         {hasCoords ? (
           <DropdownMenuItem asChild>
             <a
-              href={`https://www.google.com/maps?q=${latitude},${longitude}`}
+              href={`https://www.google.com/maps?q=${property.latitude},${property.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -117,7 +118,7 @@ function PropertyRowActions({ propertyId, latitude, longitude }: { propertyId: s
             if (!confirmed) return
 
             const data = new FormData()
-            data.append("id", propertyId)
+            data.append("id", property.id)
             mutation.action(data)
           }}
         >
@@ -136,12 +137,11 @@ export const PropertyColumns: ColumnDef<PropertyRow>[] = [
       return t("properties:columns.headers.property")
     },
     cell: ({ row }) => {
-      const routes = useRoutes()
       const type = row.original.property_type
       const thumbnail = row.original.property_images && row.original.property_images[0]?.public_url
       return (
-        <Link href={routes.property(row.original.id)} passHref>
-          <div className="flex items-start gap-3">
+        <EditPropertyDialog property={row.original}>
+          <button type="button" className="flex items-start gap-3 text-left cursor-pointer">
             <Avatar className="size-12">
               <AvatarImage
                 src={
@@ -160,8 +160,8 @@ export const PropertyColumns: ColumnDef<PropertyRow>[] = [
                 {propertyTypeLabels[type]}
               </span>
             </div>
-          </div>
-        </Link>
+          </button>
+        </EditPropertyDialog>
       )
     },
   },
@@ -178,12 +178,12 @@ export const PropertyColumns: ColumnDef<PropertyRow>[] = [
           <div className="flex items-center gap-1.5 text-sm">
             <IconMapPin className="size-3.5 text-muted-foreground shrink-0" />
             <span className="truncate">
-              {neighborhood ? `${neighborhood}, ` : ""}
-              {city}
+              {neighborhood ? `${humanizeLocation(neighborhood)}, ` : ""}
+              {humanizeLocation(city)}
             </span>
           </div>
           <span className="text-xs text-muted-foreground pl-5 truncate max-w-45">
-            {state} {postal_code && `(${postal_code})`}
+            {humanizeLocation(state)} {postal_code && `(${postal_code})`}
           </span>
         </div>
       )
@@ -329,10 +329,10 @@ export const PropertyColumns: ColumnDef<PropertyRow>[] = [
     id: "actions",
     header: "",
     cell: ({ row }) => {
-      const { latitude, longitude, id } = row.original
+      const property = row.original
 
       return (
-        <PropertyRowActions propertyId={id} latitude={latitude} longitude={longitude} />
+        <PropertyRowActions property={property} />
       )
     },
   },

@@ -17,11 +17,15 @@ import { createPropertyAction, updatePropertyAction } from "@/application/action
 import { useRouter } from "next/navigation";
 import { useRoutes } from "@/i18n/client-router";
 import { UploadMultipleInput } from "@/features/image-manager/upload-multiple-input";
+import { PropertyImageList } from "@/features/image-manager/property-images-list";
+import { PropertyImageEntity } from "@/domain/entities/property-image.entity";
 
 interface PropertyFormProps extends ComponentProps<"form"> {
   realEstateId: string;
   defaultValues?: PropertyInput;
   id?: string;
+  initialImages?: PropertyImageEntity[];
+  onCompleted?: () => void;
 }
 
 export function PropertyForm({
@@ -29,6 +33,8 @@ export function PropertyForm({
   realEstateId,
   defaultValues,
   id,
+  initialImages = [],
+  onCompleted,
 }: PropertyFormProps) {
   const router = useRouter()
   const routes = useRoutes()
@@ -74,7 +80,10 @@ export function PropertyForm({
     }
   }, [defaultValues, reset]);
 
-  async function submitProperty(values: PropertyInput) {
+  async function submitProperty(
+    values: PropertyInput,
+    closeOnSuccess = true,
+  ) {
     wizardRef.current?.setBusy(true)
     try {
       const formData = new FormData();
@@ -109,9 +118,18 @@ export function PropertyForm({
       toast.success(t(`messages.${isUpdateMode ? "updated" : "created"}`))
 
       if (isUpdateMode) {
-        wizardRef.current?.complete()
-        router.push(routes.dashboard())
-        return "updated"
+        if (closeOnSuccess && onCompleted) {
+          onCompleted()
+          return "updated"
+        }
+
+        if (closeOnSuccess) {
+          wizardRef.current?.complete()
+          router.push(routes.dashboard())
+          return "updated"
+        }
+
+        return id ?? "updated"
       }
 
       const newPropertyId =
@@ -141,7 +159,7 @@ export function PropertyForm({
 
   async function handleValidSubmit(values: PropertyInput) {
     if (isUpdateMode) {
-      await submitProperty(values)
+      await submitProperty(values, true)
       return
     }
 
@@ -194,35 +212,40 @@ export function PropertyForm({
           id="features"
           title={t("sections.features")}
           canNext={() => trigger(stepFields.features)}
-          nextText={isUpdateMode ? undefined : t("actions.add_images")}
-          onNext={
-            isUpdateMode
-              ? undefined
-              : async () => {
-                  const propertyId = await submitProperty(form.getValues())
-                  return Boolean(propertyId)
-                }
-          }
+          nextText={t("actions.add_images")}
+          onNext={async () => {
+            const propertyId = await submitProperty(form.getValues(), false)
+            return Boolean(propertyId)
+          }}
         >
           <PropertyFeaturesForm />
         </WizardTab>
 
-        {!isUpdateMode && (
+        {(createdPropertyId || isUpdateMode) && (
           <WizardTab
             id="images"
             title={t("actions.add_images")}
-            canSubmit={() => Boolean(createdPropertyId)}
+            canSubmit={() => true}
           >
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold">{t("actions.add_images")}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Sube las imágenes del inmueble antes de finalizar.
+                  Sube y organiza las imágenes del inmueble antes de finalizar.
                 </p>
               </div>
 
               {createdPropertyId ? (
-                <UploadMultipleInput propertyId={createdPropertyId} />
+                <div className="space-y-6">
+                  <UploadMultipleInput
+                    propertyId={createdPropertyId}
+                    onSuccessAction={() => router.refresh()}
+                  />
+                  <PropertyImageList
+                    initialImages={initialImages}
+                    propertyId={createdPropertyId}
+                  />
+                </div>
               ) : (
                 <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
                   Primero guardamos la propiedad para habilitar la subida de imágenes.
