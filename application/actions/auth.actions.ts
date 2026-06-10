@@ -12,6 +12,7 @@ import { getLangServerSide } from "@/infrastructure/shared/utils/lang";
 import { createRouter } from "@/i18n/router";
 import { cookies } from "next/headers";
 import { appModule } from "@/application/modules/app.module";
+import { getAppOrigin } from "@/infrastructure/shared/utils/app-url";
 
 export const signInWithGoogleAction = withServerAction(
   async (formData: FormData) => {
@@ -30,7 +31,7 @@ export const signInWithGoogleAction = withServerAction(
 
     // Incluir role en la URL de callback (client o real-estate)
     // Esta URL params es el mecanismo principal para pasar el role
-    const baseRedirectTo = `${process.env.NEXT_PUBLIC_APP_URL}${routes.callback()}`;
+    const baseRedirectTo = `${getAppOrigin()}${routes.callback()}`;
     const redirectTo = userType
       ? `${baseRedirectTo}?role=${encodeURIComponent(userType)}`
       : baseRedirectTo;
@@ -56,7 +57,7 @@ export const signUpAction = withServerAction(async (formData: FormData) => {
   const cookieStore = await cookies();
   const routes = createRouter(lang);
   const { authService } = await appModule(lang, { cookies: cookieStore });
-  const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL}${routes.callback()}`;
+  const redirectTo = `${getAppOrigin()}${routes.callback()}`;
 
   await authService.signUp(input, redirectTo);
 
@@ -107,7 +108,7 @@ export const sentOtpAction = withServerAction(async (formData: FormData) => {
   const cookieStore = await cookies();
   const routes = createRouter(lang);
   const { authService } = await appModule(lang, { cookies: cookieStore });
-  const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL}${routes.callback()}`;
+  const redirectTo = `${getAppOrigin()}${routes.callback()}`;
 
   await authService.sendOtp(input.email, redirectTo);
 });

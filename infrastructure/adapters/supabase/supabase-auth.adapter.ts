@@ -2,6 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { AuthPort, SignUpData, OAuthProvider } from "@/domain/ports/auth.port";
 import { EUserRole } from "@/domain/entities/profile.entity";
 import { SupabaseAdminClient } from "@/infrastructure/db/supabase.server-admin";
+import { getAppOrigin } from "@/infrastructure/shared/utils/app-url";
 
 export class SupabaseAuthAdapter implements AuthPort {
   constructor(private readonly supabase: SupabaseClient) {}
@@ -59,7 +60,7 @@ export class SupabaseAuthAdapter implements AuthPort {
       options: {
         emailRedirectTo:
           redirectTo ??
-          `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/es/autenticacion/callback`,
+          `${getAppOrigin()}/es/autenticacion/callback`,
       },
     });
     if (error) throw error;
