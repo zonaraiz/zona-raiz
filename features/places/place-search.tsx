@@ -275,10 +275,17 @@ export function PlaceSearch({
   }, []);
 
   const fetchPredictions = useCallback((input: string) => {
-    if (!serviceRef.current || input.length < 2) {
+    if (input.length < 2) {
       setPredictions([]);
       return;
     }
+
+    if (!serviceRef.current) {
+      setPredictions(getLocalPredictions(input));
+      setLoading(false);
+      return;
+    }
+
     clearTimeout(debounceRef.current);
     setLoading(true);
 
@@ -298,7 +305,11 @@ export function PlaceSearch({
           clearTimeout(safetyTimer);
           if (!mountedRef.current) return;
           setLoading(false);
-          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+          if (
+            status === google.maps.places.PlacesServiceStatus.OK &&
+            results &&
+            results.length > 0
+          ) {
             setPredictions(results as unknown as Prediction[]);
           } else {
             setPredictions(getLocalPredictions(input));
@@ -397,18 +408,76 @@ export function PlaceSearch({
     onSelect?.({});
   };
 
-  // Si el script falló, mostrar input deshabilitado con mensaje
+  // Si Google Places falla, mantenemos el fallback local disponible
   if (scriptState === "error") {
     return (
       <div className={`relative ${className ?? ""}`}>
-        <Command shouldFilter={false} className="rounded-xl border shadow-sm opacity-60">
+        <Command shouldFilter={false} className="rounded-xl border shadow-sm">
           <div className="flex items-center px-3 gap-2 min-h-11">
-            <IconMapPin className="size-4 text-muted-foreground shrink-0" />
-            <span className="text-sm text-muted-foreground">
-              {t("places.unavailable", "Búsqueda no disponible")}
-            </span>
+            {loading ? (
+              <IconLoader2 className="size-4 text-muted-foreground animate-spin shrink-0" />
+            ) : (
+              <IconMapPin className="size-4 text-muted-foreground shrink-0" />
+            )}
+
+            {selected ? (
+              <div className="flex items-center gap-1.5 bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded-full border border-primary/20">
+                <IconMapPin className="size-3" />
+                <span>{selected.label}</span>
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="hover:text-destructive transition-colors ml-0.5"
+                >
+                  <IconX className="size-3" />
+                </button>
+              </div>
+            ) : (
+              <CommandInput
+                value={query}
+                onValueChange={handleInput}
+                placeholder={placeholder || t("places.loading", "Ciudad o barrio...")}
+                className="border-0 focus:ring-0 h-10 px-0 flex-1"
+              />
+            )}
           </div>
         </Command>
+
+        {open && (
+          <div className="absolute z-50 w-full bg-popover border rounded-xl shadow-lg mt-1 overflow-hidden">
+            <Command shouldFilter={false}>
+              <CommandList>
+                {predictions.length === 0 && !loading && (
+                  <CommandEmpty className="py-4 text-center text-sm text-muted-foreground">
+                    {t("places.no_results")}
+                  </CommandEmpty>
+                )}
+                {predictions.length > 0 && (
+                  <CommandGroup heading={t("places.results_heading")}>
+                    {predictions.map((p) => (
+                      <CommandItem
+                        key={p.place_id}
+                        value={p.place_id}
+                        onSelect={() => handleSelect(p)}
+                        className="flex items-start gap-2 py-2.5 cursor-pointer"
+                      >
+                        <IconMapPin className="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">
+                            {p.structured_formatting.main_text}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {p.structured_formatting.secondary_text}
+                          </span>
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+              </CommandList>
+            </Command>
+          </div>
+        )}
       </div>
     );
   }
