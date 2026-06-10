@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
-import { useRoutes } from "@/i18n/client-router";
+import { useParams, useRouter } from "next/navigation";
+import { buildSearchUrl, useRoutes } from "@/i18n/client-router";
 import { Button } from "@/components/ui/button";
 import { LandingCity } from "@/domain/types/landing.types";
 
@@ -14,8 +14,10 @@ interface LandingCitiesProps {
 export function LandingCities({ cities }: LandingCitiesProps) {
   const { t } = useTranslation("landing");
   const router = useRouter();
+  const params = useParams();
   const routes = useRoutes();
   const [hoveredCity, setHoveredCity] = useState<string | null>(null);
+  const lang = typeof params.lang === "string" ? params.lang : "es";
 
   return (
     <section className="py-16 bg-neutral-50">
@@ -49,34 +51,43 @@ export function LandingCities({ cities }: LandingCitiesProps) {
           {cities.slice(0, 4).map((city) => (
             <div
               key={city.slug}
-              className="flex flex-col items-center cursor-pointer group"
-              onClick={() => router.push(`${routes.search()}?city=${city.slug}`)}
+              className="cursor-pointer group"
+              onClick={() =>
+                router.push(
+                  buildSearchUrl({
+                    lang,
+                    city: city.slug,
+                  }),
+                )
+              }
               onMouseEnter={() => setHoveredCity(city.slug)}
               onMouseLeave={() => setHoveredCity(null)}
             >
               <div
-                className={`w-36 h-36 rounded-full overflow-hidden border-[3px] border-white shadow-md transition-all duration-300 mb-3 ${
+                className={`overflow-hidden rounded-3xl border border-white/80 bg-white shadow-md transition-all duration-300 ${
                   hoveredCity === city.slug
-                    ? "border-orange-400 scale-105 shadow-lg"
-                    : "group-hover:border-orange-300"
+                    ? "scale-[1.03] shadow-xl ring-2 ring-primary/30"
+                    : "group-hover:shadow-lg group-hover:-translate-y-1"
                 }`}
               >
                 <img
                   src={
                     city.image?.startsWith("http")
                       ? city.image
-                      : `https://images.unsplash.com/${city.image}?w=300&q=80`
+                      : `https://images.unsplash.com/${city.image}?w=700&q=80`
                   }
                   alt={city.name}
-                  className="w-full h-full object-cover transition-transform duration-500"
+                  className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+                <div className="px-4 py-4">
+                  <p className="text-[18px] font-bold text-neutral-800 leading-tight">
+                    {city.name}
+                  </p>
+                  <p className="text-[12px] text-neutral-400 mt-1">
+                    {city.count} {t("cities.listings")}
+                  </p>
+                </div>
               </div>
-              <p className="text-[15px] font-bold text-neutral-800">
-                {city.name}
-              </p>
-              <p className="text-[12px] text-neutral-400">
-                {city.count} {t("cities.listings")}
-              </p>
             </div>
           ))}
         </div>

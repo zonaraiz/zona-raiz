@@ -79,6 +79,10 @@ export const parseSearchParams = (
   location?: string[],
 ): ListingSearchFiltersType => {
   const parsed = parseLocation(location);
+  const queryState = typeof sp.state === "string" ? sp.state : undefined;
+  const queryCity = typeof sp.city === "string" ? sp.city : undefined;
+  const queryNeighborhood =
+    typeof sp.neighborhood === "string" ? sp.neighborhood : undefined;
   const amenities = sp.amenities
     ? String(sp.amenities).split(",").filter(Boolean)
     : [];
@@ -87,9 +91,9 @@ export const parseSearchParams = (
     q: (sp.q as string) || "",
     listing_type: parsed.type_listins,
     type: parsed.type_property,
-    state: parsed.state,
-    city: parsed.city,
-    neighborhood: parsed.neighborhood || (sp.neighborhood as string) || "",
+    state: parsed.state || queryState || "",
+    city: parsed.city || queryCity || "",
+    neighborhood: parsed.neighborhood || queryNeighborhood || "",
     street: (sp.street as string) || "",
     min_price: sp.min_price ? Number(sp.min_price) : 0,
     max_price: sp.max_price ? Number(sp.max_price) : 10000000000000,
