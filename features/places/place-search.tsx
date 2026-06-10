@@ -107,6 +107,26 @@ function getLocalPredictions(input: string): Prediction[] {
     .slice(0, 8) as unknown as Prediction[];
 }
 
+function mergePredictions(
+  localPredictions: Prediction[],
+  remotePredictions: Prediction[],
+): Prediction[] {
+  const seen = new Set<string>();
+  const merged: Prediction[] = [];
+
+  for (const prediction of [...remotePredictions, ...localPredictions]) {
+    const key =
+      prediction.place_id ||
+      `${prediction.structured_formatting.main_text}-${prediction.structured_formatting.secondary_text}`;
+
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(prediction);
+  }
+
+  return merged.slice(0, 8);
+}
+
 function useGooglePlaces() {
   const [state, setState] = useState<ScriptState>(() => {
     if (typeof window !== "undefined" && window.google?.maps?.places)
@@ -280,8 +300,10 @@ export function PlaceSearch({
       return;
     }
 
+    const localPredictions = getLocalPredictions(input);
+    setPredictions(localPredictions);
+
     if (!serviceRef.current) {
-      setPredictions(getLocalPredictions(input));
       setLoading(false);
       return;
     }
@@ -310,9 +332,14 @@ export function PlaceSearch({
             results &&
             results.length > 0
           ) {
-            setPredictions(results as unknown as Prediction[]);
+            setPredictions(
+              mergePredictions(
+                localPredictions,
+                results as unknown as Prediction[],
+              ),
+            );
           } else {
-            setPredictions(getLocalPredictions(input));
+            setPredictions(localPredictions);
           }
         },
       );
@@ -505,16 +532,15 @@ export function PlaceSearch({
               </button>
             </div>
           ) : (
-            <CommandInput
-              value={query}
-              onValueChange={handleInput}
-              placeholder={
-                scriptState !== "ready"
-                  ? t("places.loading", "Cargando…")
-                  : placeholder
+              <CommandInput
+                value={query}
+                onValueChange={handleInput}
+                placeholder={
+                  scriptState === "loading"
+                    ? t("places.loading", "Cargando…")
+                    : placeholder
               }
-              disabled={scriptState !== "ready"}
-              className="border-0 focus:ring-0 h-10 px-0 flex-1 disabled:opacity-50"
+              className="border-0 focus:ring-0 h-10 px-0 flex-1"
             />
           )}
         </div>
