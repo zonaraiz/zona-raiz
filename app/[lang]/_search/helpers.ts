@@ -116,13 +116,23 @@ export const buildUrl = (
 ): string => {
   const merged = { ...filters, ...overrides };
   const params = new URLSearchParams();
+  const country =
+    typeof merged.country === "string" ? merged.country : undefined;
+  const state = typeof merged.state === "string" ? merged.state : undefined;
+  const city = typeof merged.city === "string" ? merged.city : undefined;
+  const street =
+    typeof merged.street === "string" ? merged.street : undefined;
+  const neighborhood =
+    typeof merged.neighborhood === "string"
+      ? merged.neighborhood
+      : undefined;
 
   if (merged.q) params.set("q", merged.q);
-  if (merged.country) params.set("country", merged.country);
-  if (merged.state) params.set("state", merged.state);
-  if (merged.city) params.set("city", merged.city);
-  if (merged.street) params.set("street", merged.street);
-  if (merged.neighborhood) params.set("neighborhood", merged.neighborhood);
+  if (country) params.set("country", country);
+  if (state) params.set("state", state);
+  if (city) params.set("city", city);
+  if (street) params.set("street", street);
+  if (neighborhood) params.set("neighborhood", neighborhood);
   if (merged.min_price && merged.min_price > 0)
     params.set("min_price", String(merged.min_price));
   if (merged.max_price && merged.max_price < 10000000000000)

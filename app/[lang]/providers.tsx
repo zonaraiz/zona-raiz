@@ -9,10 +9,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 export function Providers({ children }: { children: ReactNode }) {
   const clientIdGoogle = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-
-  if (!clientIdGoogle) {
-    throw new Error("GOOGLE_CLIENT_ID is not defined");
-  }
+  const content = (
+    <>
+      <AppToaster />
+      <TooltipProvider>{children}</TooltipProvider>
+    </>
+  );
 
   return (
     <I18nProvider>
@@ -22,10 +24,13 @@ export function Providers({ children }: { children: ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <GoogleOAuthProvider clientId={clientIdGoogle}>
-          <AppToaster />
-          <TooltipProvider>{children}</TooltipProvider>
-        </GoogleOAuthProvider>
+        {clientIdGoogle ? (
+          <GoogleOAuthProvider clientId={clientIdGoogle}>
+            {content}
+          </GoogleOAuthProvider>
+        ) : (
+          content
+        )}
       </ThemeProvider>
     </I18nProvider>
   );
