@@ -20,6 +20,7 @@ export const PROPERTIES_MAP: Record<string, PropertyType> = {
   locales: PropertyType.Commercial,
   oficinas: PropertyType.Office,
   bodegas: PropertyType.Warehouse,
+  fincas: PropertyType.State,
   estados: PropertyType.State,
   otros: PropertyType.Other,
   // EN
