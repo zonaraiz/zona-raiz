@@ -118,6 +118,9 @@ export const buildUrl = (
   const params = new URLSearchParams();
 
   if (merged.q) params.set("q", merged.q);
+  if (merged.country) params.set("country", merged.country);
+  if (merged.state) params.set("state", merged.state);
+  if (merged.city) params.set("city", merged.city);
   if (merged.street) params.set("street", merged.street);
   if (merged.neighborhood) params.set("neighborhood", merged.neighborhood);
   if (merged.min_price && merged.min_price > 0)
@@ -170,7 +173,7 @@ export const buildCanonicalUrl = (
 // GET BREADCRUMB LABEL — UI
 // ─────────────────────────────────────────────
 export const getBreadcrumbLabel = (
-  parsed: ParsedLocation,
+  parsed: Pick<ParsedLocation, "city" | "state" | "neighborhood">,
   t: (key: string) => string,
 ): string => {
   const parts: string[] = [];

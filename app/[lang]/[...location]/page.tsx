@@ -149,13 +149,26 @@ export async function generateMetadata({
   const { t } = await getTranslation(lang);
   const sp = await searchParams;
   const parsed = parseLocation(location);
+  const filters = parseSearchParams(sp, location);
 
   const parts: string[] = [];
-  if (parsed.type_listins) parts.push(LISTINS_SLUG[parsed.type_listins][lang]);
-  if (parsed.type_property)
-    parts.push(PROPERTIES_SLUG[parsed.type_property][lang]);
-  if (parsed.city) parts.push(CITY_LABELS[parsed.city] ?? parsed.city);
-  else if (parsed.state) parts.push(STATE_LABELS[parsed.state] ?? parsed.state);
+  if (parsed.type_listins || filters.listing_type) {
+    parts.push(
+      LISTINS_SLUG[(parsed.type_listins ?? filters.listing_type) as ListingType][lang],
+    );
+  }
+  if (parsed.type_property || filters.type) {
+    parts.push(
+      PROPERTIES_SLUG[(parsed.type_property ?? filters.type) as PropertyType][lang],
+    );
+  }
+  if (filters.city) {
+    parts.push(CITY_LABELS[filters.city as string] ?? (filters.city as string));
+  } else if (filters.state) {
+    parts.push(
+      STATE_LABELS[filters.state as string] ?? (filters.state as string),
+    );
+  }
 
   const locationLabel =
     parts.length > 0 ? parts.join(" · ") : t("common:sections.all_properties");
@@ -243,7 +256,15 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
         total={total}
         totalPages={totalPages}
         currentPage={currentPage}
-        breadcrumb={getBreadcrumbLabel(parsed, t)}
+        breadcrumb={getBreadcrumbLabel(
+          {
+            city: (filters.city as string) || parsed.city,
+            state: (filters.state as string) || parsed.state,
+            neighborhood:
+              (filters.neighborhood as string) || parsed.neighborhood,
+          },
+          t,
+        )}
         basePath={basePath}
         favoriteIds={favoriteIds}
         isAuth={isAuth}
