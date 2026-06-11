@@ -3,7 +3,7 @@ import { SearchPageClient } from "../search-page-client";
 import { getTranslation } from "@/i18n/server";
 import { Lang } from "@/i18n/settings";
 import { LISTINS_SLUG, PROPERTIES_SLUG } from "@/lib/search-config";
-import { CITY_LABELS, STATE_LABELS } from "@/lib/locations";
+import { CITY_LABELS, STATE_LABELS, humanizeLocation } from "@/lib/locations";
 import {
   parseLocation,
   parseSearchParams,
@@ -150,24 +150,24 @@ export async function generateMetadata({
   const sp = await searchParams;
   const parsed = parseLocation(location);
   const filters = parseSearchParams(sp, location);
+  const resolvedListingType =
+    parsed.type_listins ?? (filters.listing_type as ListingType | undefined);
+  const resolvedPropertyType =
+    parsed.type_property ?? (filters.type as PropertyType | undefined);
+  const resolvedCity = filters.city as string | undefined;
+  const resolvedState = filters.state as string | undefined;
 
   const parts: string[] = [];
-  if (parsed.type_listins || filters.listing_type) {
-    parts.push(
-      LISTINS_SLUG[(parsed.type_listins ?? filters.listing_type) as ListingType][lang],
-    );
+  if (resolvedListingType) {
+    parts.push(LISTINS_SLUG[resolvedListingType][lang]);
   }
-  if (parsed.type_property || filters.type) {
-    parts.push(
-      PROPERTIES_SLUG[(parsed.type_property ?? filters.type) as PropertyType][lang],
-    );
+  if (resolvedPropertyType) {
+    parts.push(PROPERTIES_SLUG[resolvedPropertyType][lang]);
   }
-  if (filters.city) {
-    parts.push(CITY_LABELS[filters.city as string] ?? (filters.city as string));
-  } else if (filters.state) {
-    parts.push(
-      STATE_LABELS[filters.state as string] ?? (filters.state as string),
-    );
+  if (resolvedCity) {
+    parts.push(CITY_LABELS[resolvedCity] ?? humanizeLocation(resolvedCity));
+  } else if (resolvedState) {
+    parts.push(STATE_LABELS[resolvedState] ?? humanizeLocation(resolvedState));
   }
 
   const locationLabel =
