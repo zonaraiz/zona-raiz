@@ -85,6 +85,12 @@
     "property_gallery": "Property gallery"
   },
   "detail": {
+    "sections": {
+      "overview": "Property overview",
+      "key_features": "Key features",
+      "summary": "Key data",
+      "amenities": "Amenities"
+    },
     "labels": {
       "bedrooms": "Bed.",
       "bathrooms": "Baths",

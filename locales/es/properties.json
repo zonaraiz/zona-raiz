@@ -87,6 +87,12 @@
     "property_gallery": "Galería de la propiedad"
   },
   "detail": {
+    "sections": {
+      "overview": "Resumen del inmueble",
+      "key_features": "Características principales",
+      "summary": "Dato clave",
+      "amenities": "Adicionales"
+    },
     "labels": {
       "bedrooms": "Dorm.",
       "bathrooms": "Baños",
