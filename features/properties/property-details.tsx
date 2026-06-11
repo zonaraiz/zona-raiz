@@ -35,54 +35,6 @@ export const PropertyDetail = ({ data }: PropertyDetailProps) => {
           )}
         </header>
 
-        <section className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground/80">
-            {t("detail.sections.key_features")}
-          </h3>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {property.bedrooms! > 0 && (
-            <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-3 text-muted-foreground">
-                <Bed className="w-4 h-4 stroke-[1.5]" />
-              </div>
-              <span className="text-base font-semibold text-foreground">
-                {property.bedrooms} {t("properties:detail.labels.bedrooms")}
-              </span>
-            </div>
-          )}
-          {property.bathrooms! > 0 && (
-            <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-3 text-muted-foreground">
-                <Bath className="w-4 h-4 stroke-[1.5]" />
-              </div>
-              <span className="text-base font-semibold text-foreground">
-                {property.bathrooms} {t("properties:detail.labels.bathrooms")}
-              </span>
-            </div>
-          )}
-          {property.lot_area && (
-            <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-3 text-muted-foreground">
-                <Maximize2 className="w-4 h-4 stroke-[1.5]" />
-              </div>
-              <span className="text-base font-semibold text-foreground">
-                {property.lot_area} {t("properties:detail.labels.area_unit")}
-              </span>
-            </div>
-          )}
-          {property.parking_spots! > 0 && (
-            <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-3 text-muted-foreground">
-                <Car className="w-4 h-4 stroke-[1.5]" />
-              </div>
-              <span className="text-base font-semibold text-foreground">
-                {property.parking_spots} {t("properties:detail.labels.parking")}
-              </span>
-            </div>
-          )}
-          </div>
-        </section>
-
         {property.amenities.length > 0 && (
           <section className="pt-2">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-foreground/80">
