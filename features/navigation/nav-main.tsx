@@ -58,26 +58,34 @@ export const RenderMenu = ({ items }: { items: Items[] }) => {
   });
 };
 
-export function NavMain({ items }: { items: Items[] }) {
+export function NavMain({
+  items,
+  showCreateProperty = true,
+}: {
+  items: Items[];
+  showCreateProperty?: boolean;
+}) {
   const { t } = useTranslation("common");
   const routes = useRoutes();
 
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <Link href={routes.newProperty()}>
-              <SidebarMenuButton
-                tooltip="Quick Create"
-                className="bg-primary cursor-pointer text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
-              >
-                <IconCirclePlusFilled />
-                <span>{t("actions.create_property")}</span>
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        {showCreateProperty ? (
+          <SidebarMenu>
+            <SidebarMenuItem className="flex items-center gap-2">
+              <Link href={routes.newProperty()}>
+                <SidebarMenuButton
+                  tooltip="Quick Create"
+                  className="bg-primary cursor-pointer text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+                >
+                  <IconCirclePlusFilled />
+                  <span>{t("actions.create_property")}</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        ) : null}
         <SidebarMenu>
           <RenderMenu items={items} />
         </SidebarMenu>

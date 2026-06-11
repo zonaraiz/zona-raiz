@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { detectLang } from "@/i18n/detect-lang";
 import { createRouter } from "@/i18n/router";
+import { EUserRole, type ProfileEntity } from "@/domain/entities/profile.entity";
 import {
   COOKIE_NAMES,
   COOKIE_OPTIONS,
@@ -43,6 +44,35 @@ function createSupabaseRouteClient(
   );
 }
 
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function normalizeRole(role: unknown): EUserRole | null {
+  if (role === EUserRole.Admin) return EUserRole.Admin;
+  if (role === EUserRole.Client) return EUserRole.Client;
+  if (role === EUserRole.RealEstate) return EUserRole.RealEstate;
+  return null;
+}
+
+async function getProfileWithRetry(
+  profileAdapter: SupabaseProfileAdapter,
+  userId: string,
+): Promise<ProfileEntity | null> {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    try {
+      return await profileAdapter.getProfileByUserId(userId);
+    } catch {
+      if (attempt === 3) {
+        return null;
+      }
+      await wait(350);
+    }
+  }
+
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const lang = detectLang(request);
@@ -59,12 +89,14 @@ export async function GET(request: NextRequest) {
   const profileAdapter = new SupabaseProfileAdapter(supabase);
 
   let userId: string | null = null;
+  let authRole: EUserRole | null = null;
 
   try {
     if (code) {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) throw error;
       userId = data.user?.id ?? null;
+      authRole = normalizeRole(data.user?.user_metadata?.role);
     } else if (accessToken && refreshToken) {
       const { data, error } = await supabase.auth.setSession({
         access_token: accessToken,
@@ -72,6 +104,7 @@ export async function GET(request: NextRequest) {
       });
       if (error) throw error;
       userId = data.user?.id ?? null;
+      authRole = normalizeRole(data.user?.user_metadata?.role);
     } else if (tokenHash) {
       const { data, error } = await supabase.auth.verifyOtp({
         type: type as "signup" | "recovery" | "email_change" | "email",
@@ -79,6 +112,7 @@ export async function GET(request: NextRequest) {
       });
       if (error) throw error;
       userId = data.user?.id ?? null;
+      authRole = normalizeRole(data.user?.user_metadata?.role);
     }
 
     if (!userId) {
@@ -87,7 +121,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const profile = await profileAdapter.getProfileByUserId(userId);
+    const profile = await getProfileWithRetry(profileAdapter, userId);
     const redirectResponse = NextResponse.redirect(
       `${origin}${routes.onboarding()}`,
     );
@@ -96,8 +130,14 @@ export async function GET(request: NextRequest) {
       redirectResponse.cookies.set(cookie);
     });
 
-    if (profile.role) {
-      redirectResponse.cookies.set(COOKIE_NAMES.ROLE, profile.role, COOKIE_OPTIONS);
+    const resolvedRole = profile?.role ?? authRole;
+
+    if (resolvedRole) {
+      redirectResponse.cookies.set(
+        COOKIE_NAMES.ROLE,
+        resolvedRole,
+        COOKIE_OPTIONS,
+      );
     }
 
     return redirectResponse;

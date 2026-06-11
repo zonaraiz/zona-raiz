@@ -51,6 +51,6 @@ export const defaultSignUpValues: SignUpFormInput = {
   phone: '',
   password: '',
   password_confirmation: '',
-  type_register: false,
+  type_register: true,
   captchaToken: undefined,
 };

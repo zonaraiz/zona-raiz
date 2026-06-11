@@ -12,6 +12,7 @@ import { initI18n } from "@/i18n/server";
 import { cookies } from "next/headers";
 import { appModule } from "@/application/modules/app.module";
 import { redirect } from "next/navigation";
+import { ListingEntity } from "@/domain/entities/listing.entity";
 
 export default async function DashboardLayout({
   children,
@@ -49,7 +50,9 @@ export default async function DashboardLayout({
 
       if (realEstates && realEstates.length === 1) {
         real_estate_id = realEstates[0].real_estate.id;
-        // Opcional: intentar setearla aquí, aunque en Server Components es limitado
+        return redirect(
+          `/api/onboarding/set-real-estate?id=${encodeURIComponent(real_estate_id)}`,
+        );
       } else {
         // Si realmente no hay nada, entonces sí mandamos a onboarding
         return encodedRedirect(
@@ -84,7 +87,7 @@ export default async function DashboardLayout({
     id: string;
     listing_id: string;
     created_at: string;
-    listing?: any;
+    listing?: ListingEntity;
   }[] = [];
 
   try {

@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
 import { FavoritesList } from "@/features/favorites/favorites-list";
 import { ListingEntity } from "@/domain/entities/listing.entity";
+import { EUserRole } from "@/domain/entities/profile.entity";
 import Logo from "@/assets/svg/logo";
 import { DropwdownMenuUser } from "./dropdow-menu-user";
 
@@ -60,7 +61,10 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={props.menu} />
+        <NavMain
+          items={props.menu}
+          showCreateProperty={props.profile.role !== EUserRole.Client}
+        />
         <Separator className="my-2" />
         <FavoritesList favorites={favorites} />
       </SidebarContent>

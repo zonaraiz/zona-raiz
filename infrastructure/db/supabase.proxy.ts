@@ -21,7 +21,7 @@ export async function updateSession(request: NextRequest) {
 
   const supabase = SupabaseServerClient(request, response);
 
-  const { sessionService, cookiesService } = await appModule(lang, {
+  const { sessionService, cookiesService, profileService } = await appModule(lang, {
     request,
     response,
   });
@@ -42,10 +42,17 @@ export async function updateSession(request: NextRequest) {
     return redirectTo(routes.signin(), request);
   }
 
-  const role = await cookiesService.getProfileRole();
+  let role = await cookiesService.getProfileRole();
 
   if (!role) {
-    return redirectTo(routes.signin(), request);
+    const profile = await profileService.getProfileByUserId(user.id).catch(() => null);
+
+    if (!profile?.role) {
+      return redirectTo(routes.signin(), request);
+    }
+
+    role = profile.role;
+    cookiesService.setSession(COOKIE_NAMES.ROLE, role);
   }
 
   const realEstateId = await cookiesService.getRealEstateId();

@@ -70,7 +70,7 @@ export default async function page({ params }: props) {
   if (!realEstateId) {
     return encodedRedirect(
       "error",
-      routes.signin(),
+      routes.onboarding(),
       t("common:exceptions.data_not_found"),
     );
   }
