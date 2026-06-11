@@ -69,7 +69,7 @@ export function buildSearchUrl({
     parts.push(PROPERTIES_SLUG[type as PropertyType]?.[lang] ?? type);
   }
   if (city) parts.push(city);
-  if (neighborhood) parts.push(neighborhood);
+  if (city && neighborhood) parts.push(neighborhood);
 
   return `/${lang}${parts.length ? `/${parts.join("/")}` : ""}`;
 }
