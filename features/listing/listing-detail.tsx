@@ -94,11 +94,8 @@ export function ListingDetail({
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:min-w-[420px]">
                 {property.bedrooms ? (
                   <div className="rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
-                    <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                    <div className="mb-3 text-muted-foreground">
                       <Bed className="size-4" />
-                      <span className="text-[11px] uppercase tracking-[0.18em]">
-                        {t("detail.labels.features")}
-                      </span>
                     </div>
                     <div className="text-lg font-semibold text-foreground">
                       {property.bedrooms}
@@ -111,11 +108,8 @@ export function ListingDetail({
 
                 {property.bathrooms ? (
                   <div className="rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
-                    <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                    <div className="mb-3 text-muted-foreground">
                       <Bath className="size-4" />
-                      <span className="text-[11px] uppercase tracking-[0.18em]">
-                        {t("detail.labels.features")}
-                      </span>
                     </div>
                     <div className="text-lg font-semibold text-foreground">
                       {property.bathrooms}
@@ -128,11 +122,8 @@ export function ListingDetail({
 
                 {property.lot_area ? (
                   <div className="rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
-                    <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                    <div className="mb-3 text-muted-foreground">
                       <Maximize2 className="size-4" />
-                      <span className="text-[11px] uppercase tracking-[0.18em]">
-                        {t("detail.labels.features")}
-                      </span>
                     </div>
                     <div className="text-lg font-semibold text-foreground">
                       {property.lot_area}
@@ -143,11 +134,8 @@ export function ListingDetail({
 
                 {property.parking_spots ? (
                   <div className="rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
-                    <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+                    <div className="mb-3 text-muted-foreground">
                       <Car className="size-4" />
-                      <span className="text-[11px] uppercase tracking-[0.18em]">
-                        {t("detail.labels.features")}
-                      </span>
                     </div>
                     <div className="text-lg font-semibold text-foreground">
                       {property.parking_spots}

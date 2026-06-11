@@ -42,11 +42,8 @@ export const PropertyDetail = ({ data }: PropertyDetailProps) => {
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {property.bedrooms! > 0 && (
             <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+              <div className="mb-3 text-muted-foreground">
                 <Bed className="w-4 h-4 stroke-[1.5]" />
-                <span className="text-[11px] uppercase tracking-[0.18em]">
-                  {t("detail.sections.summary")}
-                </span>
               </div>
               <span className="text-base font-semibold text-foreground">
                 {property.bedrooms} {t("properties:detail.labels.bedrooms")}
@@ -55,11 +52,8 @@ export const PropertyDetail = ({ data }: PropertyDetailProps) => {
           )}
           {property.bathrooms! > 0 && (
             <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+              <div className="mb-3 text-muted-foreground">
                 <Bath className="w-4 h-4 stroke-[1.5]" />
-                <span className="text-[11px] uppercase tracking-[0.18em]">
-                  {t("detail.sections.summary")}
-                </span>
               </div>
               <span className="text-base font-semibold text-foreground">
                 {property.bathrooms} {t("properties:detail.labels.bathrooms")}
@@ -68,11 +62,8 @@ export const PropertyDetail = ({ data }: PropertyDetailProps) => {
           )}
           {property.lot_area && (
             <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+              <div className="mb-3 text-muted-foreground">
                 <Maximize2 className="w-4 h-4 stroke-[1.5]" />
-                <span className="text-[11px] uppercase tracking-[0.18em]">
-                  {t("detail.sections.summary")}
-                </span>
               </div>
               <span className="text-base font-semibold text-foreground">
                 {property.lot_area} {t("properties:detail.labels.area_unit")}
@@ -81,11 +72,8 @@ export const PropertyDetail = ({ data }: PropertyDetailProps) => {
           )}
           {property.parking_spots! > 0 && (
             <div className="rounded-2xl border border-border/60 bg-card/40 px-4 py-4">
-              <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+              <div className="mb-3 text-muted-foreground">
                 <Car className="w-4 h-4 stroke-[1.5]" />
-                <span className="text-[11px] uppercase tracking-[0.18em]">
-                  {t("detail.sections.summary")}
-                </span>
               </div>
               <span className="text-base font-semibold text-foreground">
                 {property.parking_spots} {t("properties:detail.labels.parking")}
