@@ -173,7 +173,7 @@ export const buildCanonicalUrl = (
 // GET BREADCRUMB LABEL — UI
 // ─────────────────────────────────────────────
 export const getBreadcrumbLabel = (
-  parsed: Pick<ParsedLocation, "city" | "state" | "neighborhood">,
+  parsed: ParsedLocation,
   t: (key: string) => string,
 ): string => {
   const parts: string[] = [];

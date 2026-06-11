@@ -3,7 +3,7 @@ import { SearchPageClient } from "../search-page-client";
 import { getTranslation } from "@/i18n/server";
 import { Lang } from "@/i18n/settings";
 import { LISTINS_SLUG, PROPERTIES_SLUG } from "@/lib/search-config";
-import { CITY_LABELS, STATE_LABELS, humanizeLocation } from "@/lib/locations";
+import { CITY_LABELS, STATE_LABELS } from "@/lib/locations";
 import {
   parseLocation,
   parseSearchParams,
@@ -149,26 +149,13 @@ export async function generateMetadata({
   const { t } = await getTranslation(lang);
   const sp = await searchParams;
   const parsed = parseLocation(location);
-  const filters = parseSearchParams(sp, location);
-  const resolvedListingType =
-    parsed.type_listins ?? (filters.listing_type as ListingType | undefined);
-  const resolvedPropertyType =
-    parsed.type_property ?? (filters.type as PropertyType | undefined);
-  const resolvedCity = filters.city as string | undefined;
-  const resolvedState = filters.state as string | undefined;
 
   const parts: string[] = [];
-  if (resolvedListingType) {
-    parts.push(LISTINS_SLUG[resolvedListingType][lang]);
-  }
-  if (resolvedPropertyType) {
-    parts.push(PROPERTIES_SLUG[resolvedPropertyType][lang]);
-  }
-  if (resolvedCity) {
-    parts.push(CITY_LABELS[resolvedCity] ?? humanizeLocation(resolvedCity));
-  } else if (resolvedState) {
-    parts.push(STATE_LABELS[resolvedState] ?? humanizeLocation(resolvedState));
-  }
+  if (parsed.type_listins) parts.push(LISTINS_SLUG[parsed.type_listins][lang]);
+  if (parsed.type_property)
+    parts.push(PROPERTIES_SLUG[parsed.type_property][lang]);
+  if (parsed.city) parts.push(CITY_LABELS[parsed.city] ?? parsed.city);
+  else if (parsed.state) parts.push(STATE_LABELS[parsed.state] ?? parsed.state);
 
   const locationLabel =
     parts.length > 0 ? parts.join(" · ") : t("common:sections.all_properties");
@@ -256,15 +243,7 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
         total={total}
         totalPages={totalPages}
         currentPage={currentPage}
-        breadcrumb={getBreadcrumbLabel(
-          {
-            city: (filters.city as string) || parsed.city,
-            state: (filters.state as string) || parsed.state,
-            neighborhood:
-              (filters.neighborhood as string) || parsed.neighborhood,
-          },
-          t,
-        )}
+        breadcrumb={getBreadcrumbLabel(parsed, t)}
         basePath={basePath}
         favoriteIds={favoriteIds}
         isAuth={isAuth}
