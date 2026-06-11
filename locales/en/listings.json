@@ -149,6 +149,12 @@
       "share": "Share",
       "contact": "Contact"
     },
+    "gallery": {
+      "title": "Property gallery",
+      "fullscreen": "Fullscreen",
+      "open_image": "Open image {{index}}",
+      "empty": "This property has no published images yet."
+    },
     "words": {
       "price_negotiable": "Negotiable price"
     },

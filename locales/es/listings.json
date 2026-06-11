@@ -144,6 +144,12 @@
       "share": "Compartir",
       "contact": "Contactar"
     },
+    "gallery": {
+      "title": "Galería del inmueble",
+      "fullscreen": "Pantalla completa",
+      "open_image": "Abrir imagen {{index}}",
+      "empty": "Este inmueble aún no tiene imágenes publicadas."
+    },
     "words": {
       "price_negotiable": "Precio negociable"
     },
