@@ -35,6 +35,8 @@ export function SignUpForm({ className, ...props }: ComponentProps<"form">) {
   });
 
   const {
+    watch,
+    setValue,
     setError,
     formState: { isSubmitting },
   } = form;
@@ -58,6 +60,15 @@ export function SignUpForm({ className, ...props }: ComponentProps<"form">) {
     });
     return () => subscription.unsubscribe();
   }, [form, mutation]);
+
+  const passwordValue = watch("password");
+
+  useEffect(() => {
+    setValue("password_confirmation", passwordValue || "", {
+      shouldValidate: false,
+      shouldDirty: false,
+    });
+  }, [passwordValue, setValue]);
 
   const onSubmit = async (values: SignUpFormInput) => {
     const formData = new FormData();
@@ -104,11 +115,15 @@ export function SignUpForm({ className, ...props }: ComponentProps<"form">) {
             autoComplete="email"
             disabled={isLoading}
           />,
-          <Form.Phone
+          <Form.Input
             key="phone"
             name="phone"
+            type="tel"
             label={t("labels.phone")}
             placeholder={t("placeholders.phone")}
+            autoComplete="tel"
+            inputMode="tel"
+            disabled={isLoading}
           />,
           <Form.Input
             key="password"
@@ -116,15 +131,6 @@ export function SignUpForm({ className, ...props }: ComponentProps<"form">) {
             type="password"
             label={t("labels.password")}
             placeholder={t("placeholders.password")}
-            autoComplete="new-password"
-            disabled={isLoading}
-          />,
-          <Form.Input
-            key="password_confirmation"
-            name="password_confirmation"
-            type="password"
-            label={t("labels.password_confirmation")}
-            placeholder={t("placeholders.password_confirmation")}
             autoComplete="new-password"
             disabled={isLoading}
           />,
@@ -136,6 +142,12 @@ export function SignUpForm({ className, ...props }: ComponentProps<"form">) {
             {field}
           </div>
         ))}
+
+        <div style={{ animation: "authFadeIn 0.4s ease 280ms both" }}>
+          <p className="text-xs text-muted-foreground px-1">
+            {t("help.password_simple")}
+          </p>
+        </div>
 
         {/* Checkbox */}
         <div style={{ animation: "authFadeIn 0.4s ease 320ms both" }}>
