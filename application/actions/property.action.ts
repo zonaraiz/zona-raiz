@@ -4,6 +4,8 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { propertySchema } from "@/application/validation/property.schema";
 import { PropertyType } from "@/domain/entities/property.enums";
+import { ListingType, ListingStatus } from "@/domain/entities/listing.enums";
+import { Currency } from "@/domain/entities/property-listing.entity";
 import { withServerAction } from "@/shared/hooks/with-server-action";
 import { getLangServerSide } from "@/infrastructure/shared/utils/lang";
 import { createRouter } from "@/i18n/router";
@@ -20,7 +22,7 @@ export const createPropertyAction = withServerAction(
     const i18n = await initI18n(lang);
     const t = i18n.getFixedT(lang);
 
-    const { sessionService, propertyService } = await appModule(lang, {
+    const { sessionService, propertyService, listingService } = await appModule(lang, {
       cookies: cookieStore,
     });
 
@@ -37,22 +39,40 @@ export const createPropertyAction = withServerAction(
 
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
+    const { price, listing_type, ...propertyFields } = input;
 
     const property = await propertyService.create(realEstateId, {
-      ...input,
+      ...propertyFields,
       property_type,
       amenities,
       created_by: userId,
     });
 
+    await listingService.create({
+      property_id: property.id,
+      listing_type: listing_type as ListingType,
+      price: price ?? 0,
+      currency: Currency.COP,
+      price_negotiable: false,
+      status: ListingStatus.ACTIVE,
+      featured: false,
+      expenses_included: false,
+      views_count: 0,
+      enquiries_count: 0,
+      whatsapp_clicks: 0,
+      published_at: new Date().toISOString(),
+    });
+
     revalidatePath(routes.dashboard());
     revalidatePath(routes.properties());
 
-    // Invalidar tags específicos del cache
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.ALL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.COUNT, { expire: 0 });
     revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(realEstateId), { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.PRINCIPAL, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.ALL, { expire: 0 });
+    revalidateTag(CACHE_TAGS.LISTING.COUNT, { expire: 0 });
 
     return property;
   },

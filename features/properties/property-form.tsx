@@ -12,6 +12,7 @@ import { WizardRef, WizardTab, WizardTabs } from "@/components/ui/wizard-form";
 import { PropertyCeoForm } from "./property-ceo-form";
 import { PropertyLocationForm } from "./property-location-form";
 import { PropertyFeaturesForm } from "./property-features-form";
+import { PropertyPricingForm } from "./property-pricing-form";
 import { defaultPropertyValues, PropertyInput, propertySchema } from "@/application/validation/property.schema";
 import { createPropertyAction, updatePropertyAction } from "@/application/actions/property.action";
 import { useRouter } from "next/navigation";
@@ -56,8 +57,9 @@ export function PropertyForm({
       "floors",
       "year_built",
       "parking_spots",
-      "amenities"
+      "amenities",
     ],
+    pricing: ["price", "listing_type"],
   } as const
 
   const form = useForm<PropertyInput>({
@@ -212,13 +214,21 @@ export function PropertyForm({
           id="features"
           title={t("sections.features")}
           canNext={() => trigger(stepFields.features)}
-          nextText={t("actions.add_images")}
-          onNext={async () => {
-            const propertyId = await submitProperty(form.getValues(), false)
-            return Boolean(propertyId)
-          }}
         >
           <PropertyFeaturesForm />
+        </WizardTab>
+
+        <WizardTab
+          id="pricing"
+          title="Precio"
+          canNext={() => trigger(stepFields.pricing)}
+          nextText={t("actions.add_images")}
+          onNext={async () => {
+            const propertyId = await submitProperty(form.getValues(), false);
+            return Boolean(propertyId);
+          }}
+        >
+          <PropertyPricingForm />
         </WizardTab>
 
         <WizardTab
