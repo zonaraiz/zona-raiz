@@ -6,6 +6,7 @@ import { propertySchema } from "@/application/validation/property.schema";
 import { PropertyType } from "@/domain/entities/property.enums";
 import { ListingType, ListingStatus } from "@/domain/entities/listing.enums";
 import { Currency } from "@/domain/entities/property-listing.entity";
+import { CreateListingInput } from "@/domain/services/listing.service";
 import { withServerAction } from "@/shared/hooks/with-server-action";
 import { getLangServerSide } from "@/infrastructure/shared/utils/lang";
 import { createRouter } from "@/i18n/router";
@@ -50,18 +51,16 @@ export const createPropertyAction = withServerAction(
 
     await listingService.create({
       property_id: property.id,
-      listing_type: listing_type as ListingType,
+      listing_type: (listing_type ?? ListingType.SALE) as ListingType,
       price: price ?? 0,
-      currency: Currency.COP,
+      currency: Currency.COP as string,
       price_negotiable: false,
       status: ListingStatus.ACTIVE,
       featured: false,
       expenses_included: false,
-      views_count: 0,
-      enquiries_count: 0,
-      whatsapp_clicks: 0,
-      published_at: new Date().toISOString(),
-    });
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    } as unknown as CreateListingInput);
 
     revalidatePath(routes.dashboard());
     revalidatePath(routes.properties());
