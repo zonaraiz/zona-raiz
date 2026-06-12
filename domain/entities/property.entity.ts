@@ -1,5 +1,6 @@
 import { PropertyImageEntity } from "./property-image.entity";
 import { AmenitiesType, PropertyType } from "./property.enums";
+import { ListingStatus, ListingType } from "./listing.enums";
 
 export interface AmenitieType {
   label: string;
@@ -35,6 +36,14 @@ export interface PropertyEntity {
   created_at: string;
   updated_at: string;
   property_images: PropertyImageEntity[];
+  listing?: {
+    id: string;
+    listing_type: ListingType;
+    status: ListingStatus;
+    price: number | null;
+    currency: string | null;
+    published_at: string | null;
+  } | null;
   real_estate?: {
     id: string;
     name: string;
