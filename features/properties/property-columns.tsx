@@ -57,7 +57,7 @@ export const propertyTypeIcons: Record<PropertyType, React.ReactNode> = {
 }
 
 function PropertyRowActions({ property }: { property: PropertyRow }) {
-  const { t } = useTranslation("properties")
+  const { t } = useTranslation(["properties", "listings"])
   const routes = useRoutes()
   const hasCoords = property.latitude !== null && property.longitude !== null
 
@@ -92,7 +92,7 @@ function PropertyRowActions({ property }: { property: PropertyRow }) {
           </DropdownMenuItem>
         </EditPropertyDialog>
         <Link href={routes.propertyListing(property.id)} passHref>
-          <DropdownMenuItem>{t("properties:columns.actions.publish_property")}</DropdownMenuItem>
+          <DropdownMenuItem>{t("listings:columns.actions.edit_listing")}</DropdownMenuItem>
         </Link>
         {hasCoords ? (
           <DropdownMenuItem asChild>

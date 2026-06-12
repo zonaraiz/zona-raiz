@@ -97,7 +97,7 @@
     },
     "actions": {
       "open_menu": "Abrir menú",
-      "edit_listing": "Editar listing",
+      "edit_listing": "Editar publicación",
       "view_public": "Ver público",
       "delete": "Eliminar"
     }

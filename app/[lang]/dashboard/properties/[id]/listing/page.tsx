@@ -7,6 +7,7 @@ import { initI18n } from "@/i18n/server";
 import { cookies } from "next/headers";
 import { createRouter } from "@/i18n/router";
 import { appModule } from "@/application/modules/app.module";
+import { redirect } from "next/navigation";
 
 interface props {
   params: Promise<{ lang: Lang, id: string }>
@@ -18,12 +19,18 @@ export default async function page({ params }: props) {
   const t = i18n.getFixedT(lang)
   const cookieStore = await cookies()
   const routes = createRouter(lang)
-  const { propertyService, propertyImageService } = await appModule(lang, { cookies: cookieStore })
+  const { propertyService, propertyImageService, listingService } = await appModule(lang, { cookies: cookieStore })
 
   const property = await propertyService.getCachedById(id)
 
   if (!property) {
     return encodedRedirect('error', routes.properties(), t("common:exceptions.data_not_found"))
+  }
+
+  const existingListing = await listingService.all({ property_id: id })
+
+  if (existingListing.length > 0) {
+    redirect(routes.listing(existingListing[0].id))
   }
 
   const images = await propertyImageService.getCachedByPropertyId(id)

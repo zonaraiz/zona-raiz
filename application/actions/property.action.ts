@@ -55,13 +55,14 @@ export const createPropertyAction = withServerAction(
       created_by: userId,
     });
 
-    await listingService.create({
+    const listing = await listingService.create({
       property_id: property.id,
       listing_type,
       price,
       currency: Currency.COP as string,
       price_negotiable: false,
       status: ListingStatus.ACTIVE,
+      published_at: new Date().toISOString(),
       featured: false,
       expenses_included: false,
       created_at: new Date().toISOString(),
@@ -70,6 +71,9 @@ export const createPropertyAction = withServerAction(
 
     revalidatePath(routes.dashboard());
     revalidatePath(routes.properties());
+    revalidatePath(routes.listings());
+    revalidatePath(routes.propertyListing(property.id));
+    revalidatePath(routes.listing(listing.id));
 
     revalidateTag(CACHE_TAGS.PROPERTY.PRINCIPAL, { expire: 0 });
     revalidateTag(CACHE_TAGS.PROPERTY.ALL, { expire: 0 });
