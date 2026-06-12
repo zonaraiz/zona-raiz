@@ -33,7 +33,7 @@ function statusVariant(status: EnquiryStatus) {
   }
 }
 
-export function getEnquiryColumns(
+export function useEnquiryColumns(
   realEstateId: string,
 ): ColumnDef<EnquiryRow>[] {
   const routes = useRoutes();

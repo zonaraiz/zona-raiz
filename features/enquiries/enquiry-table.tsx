@@ -4,7 +4,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { EnquiryRow } from "./enquiry-columns";
 import { use } from "react";
-import { getEnquiryColumns } from "./enquiry-columns";
+import { useEnquiryColumns } from "./enquiry-columns";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 
@@ -21,7 +21,8 @@ export default function InquiryTable({
 }: EnquiryTableProps) {
   const { t } = useTranslation("enquiries");
   const data = use(enquiries);
-  const cols = columns ?? getEnquiryColumns(realEstateId);
+  const defaultCols = useEnquiryColumns(realEstateId);
+  const cols = columns ?? defaultCols;
 
   if (data.length === 0) {
     return (
