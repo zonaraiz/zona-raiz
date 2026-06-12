@@ -95,13 +95,14 @@ export function SearchPageClient({
       street: newFilters.street ?? filters.street,
     };
 
-    const newBasePath = buildSearchUrl({
+    const computed = buildSearchUrl({
       lang,
       listing_type: mergedFilters.listing_type as ListingType | string,
       type: mergedFilters.type as PropertyType | string,
       city: mergedFilters.city as string | undefined,
       neighborhood: mergedFilters.neighborhood as string | undefined,
     });
+    const newBasePath = computed === `/${lang}` ? basePath : computed;
 
     router.push(buildUrl(
       { ...mergedFilters, page: 1 },

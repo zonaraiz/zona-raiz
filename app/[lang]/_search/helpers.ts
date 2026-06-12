@@ -96,7 +96,7 @@ export const parseSearchParams = (
     neighborhood: parsed.neighborhood || queryNeighborhood || "",
     street: (sp.street as string) || "",
     min_price: sp.min_price ? Number(sp.min_price) : 0,
-    max_price: sp.max_price ? Number(sp.max_price) : 10000000000000,
+    max_price: sp.max_price ? Number(sp.max_price) : 10_000_000_000,
     min_bedrooms: sp.min_bedrooms ? Number(sp.min_bedrooms) : undefined,
     min_bathrooms: sp.min_bathrooms ? Number(sp.min_bathrooms) : undefined,
     amenities: amenities.length > 0 ? amenities : [],
@@ -135,7 +135,7 @@ export const buildUrl = (
   if (neighborhood) params.set("neighborhood", neighborhood);
   if (merged.min_price && merged.min_price > 0)
     params.set("min_price", String(merged.min_price));
-  if (merged.max_price && merged.max_price < 10000000000000)
+  if (merged.max_price && merged.max_price < 10_000_000_000)
     params.set("max_price", String(merged.max_price));
   if (merged.min_bedrooms)
     params.set("min_bedrooms", String(merged.min_bedrooms));
