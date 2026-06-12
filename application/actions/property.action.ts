@@ -23,7 +23,13 @@ export const createPropertyAction = withServerAction(
     const i18n = await initI18n(lang);
     const t = i18n.getFixedT(lang);
 
-    const { sessionService, propertyService, listingService } = await appModule(lang, {
+    const {
+      sessionService,
+      propertyService,
+      listingService,
+      profileService,
+      realEstateService,
+    } = await appModule(lang, {
       cookies: cookieStore,
     });
 
@@ -45,6 +51,20 @@ export const createPropertyAction = withServerAction(
 
     if (!userId) throw new Error(t("common:exceptions.unauthorized"));
 
+    const [profile, realEstate] = await Promise.all([
+      profileService.getProfileByUserId(userId).catch(() => null),
+      realEstateService.getById(realEstateId).catch(() => null),
+    ]);
+
+    const whatsappContact =
+      profile?.phone?.trim() || realEstate?.whatsapp?.trim() || "";
+
+    if (!whatsappContact) {
+      throw new Error(
+        "Completa un teléfono de contacto en tu perfil o en la inmobiliaria antes de publicar la propiedad.",
+      );
+    }
+
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
 
@@ -59,6 +79,7 @@ export const createPropertyAction = withServerAction(
       property_id: property.id,
       listing_type,
       price,
+      whatsapp_contact: whatsappContact,
       currency: Currency.COP as string,
       price_negotiable: false,
       status: ListingStatus.ACTIVE,
