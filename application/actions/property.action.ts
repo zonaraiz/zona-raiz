@@ -29,6 +29,13 @@ export const createPropertyAction = withServerAction(
 
     const raw = Object.fromEntries(formData);
 
+    const price = raw.price ? Number(raw.price) : 0;
+    const listing_type = (
+      Object.values(ListingType).includes(raw.listing_type as ListingType)
+        ? raw.listing_type
+        : ListingType.SALE
+    ) as ListingType;
+
     const input = await propertySchema.validate(raw, {
       abortEarly: false,
       stripUnknown: true,
@@ -40,10 +47,9 @@ export const createPropertyAction = withServerAction(
 
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
-    const { price, listing_type, ...propertyFields } = input;
 
     const property = await propertyService.create(realEstateId, {
-      ...propertyFields,
+      ...input,
       property_type,
       amenities,
       created_by: userId,
@@ -51,8 +57,8 @@ export const createPropertyAction = withServerAction(
 
     await listingService.create({
       property_id: property.id,
-      listing_type: (listing_type ?? ListingType.SALE) as ListingType,
-      price: price ?? 0,
+      listing_type,
+      price,
       currency: Currency.COP as string,
       price_negotiable: false,
       status: ListingStatus.ACTIVE,
@@ -100,10 +106,9 @@ export const updatePropertyAction = withServerAction(
 
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
-    const { price: _price, listing_type: _listing_type, ...updateFields } = input;
 
     await propertyService.update(id, {
-      ...updateFields,
+      ...input,
       property_type,
       amenities,
     });

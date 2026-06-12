@@ -1,32 +1,36 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-import { PropertyInput } from "@/application/validation/property.schema";
 import { ListingType } from "@/domain/entities/listing.enums";
-import { Form } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { useTranslation } from "react-i18next";
+
+interface PropertyPricingFormProps {
+  price: number;
+  listingType: ListingType;
+  onPriceChange: (price: number) => void;
+  onListingTypeChange: (type: ListingType) => void;
+}
 
 const LISTING_TYPE_OPTIONS = [
   { value: ListingType.RENT, label: "Arriendo" },
   { value: ListingType.SALE, label: "Venta" },
 ];
 
-export function PropertyPricingForm() {
-  const { setValue, watch } = useFormContext<PropertyInput>();
-  const { t } = useTranslation("common");
-  const listingType = watch("listing_type");
-
+export function PropertyPricingForm({
+  price,
+  listingType,
+  onPriceChange,
+  onListingTypeChange,
+}: PropertyPricingFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <span className="text-sm font-medium">{t("words.listing_type") || "Tipo de publicación"}</span>
+        <span className="text-sm font-medium">Tipo de publicación</span>
         <div className="flex rounded-lg border overflow-hidden">
           {LISTING_TYPE_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               type="button"
-              onClick={() => setValue("listing_type", opt.value)}
+              onClick={() => onListingTypeChange(opt.value)}
               className={cn(
                 "flex-1 py-3 text-sm font-semibold transition-all",
                 listingType === opt.value
@@ -40,12 +44,20 @@ export function PropertyPricingForm() {
         </div>
       </div>
 
-      <Form.Input
-        name="price"
-        type="number"
-        label="Precio (COP)"
-        placeholder="Ej: 500000000"
-      />
+      <div className="space-y-2">
+        <label className="text-sm font-medium" htmlFor="pricing-price">
+          Precio (COP)
+        </label>
+        <input
+          id="pricing-price"
+          type="number"
+          min={0}
+          value={price || ""}
+          onChange={(e) => onPriceChange(Number(e.target.value))}
+          placeholder="Ej: 500000000"
+          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        />
+      </div>
     </div>
   );
 }

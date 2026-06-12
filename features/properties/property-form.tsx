@@ -13,6 +13,7 @@ import { PropertyCeoForm } from "./property-ceo-form";
 import { PropertyLocationForm } from "./property-location-form";
 import { PropertyFeaturesForm } from "./property-features-form";
 import { PropertyPricingForm } from "./property-pricing-form";
+import { ListingType } from "@/domain/entities/listing.enums";
 import { defaultPropertyValues, PropertyInput, propertySchema } from "@/application/validation/property.schema";
 import { createPropertyAction, updatePropertyAction } from "@/application/actions/property.action";
 import { useRouter } from "next/navigation";
@@ -46,6 +47,9 @@ export function PropertyForm({
     isUpdateMode ? id ?? null : null,
   );
 
+  const [price, setPrice] = useState(0);
+  const [listingType, setListingType] = useState<ListingType>(ListingType.SALE);
+
   const stepFields = {
     ceo: ["title", "description", "property_type"],
     location: ["street", "city", "state", "postal_code", "country", "latitude", "longitude"],
@@ -59,7 +63,6 @@ export function PropertyForm({
       "parking_spots",
       "amenities",
     ],
-    pricing: ["price", "listing_type"],
   } as const
 
   const form = useForm<PropertyInput>({
@@ -94,6 +97,9 @@ export function PropertyForm({
       if (values.amenities) {
         data.set("amenities", JSON.stringify(values.amenities));
       }
+
+      data.set("price", String(price));
+      data.set("listing_type", listingType);
 
       const result =
         isUpdateMode && id
@@ -221,14 +227,19 @@ export function PropertyForm({
         <WizardTab
           id="pricing"
           title="Precio"
-          canNext={() => trigger(stepFields.pricing)}
+          canNext={() => Promise.resolve(price > 0)}
           nextText={t("actions.add_images")}
           onNext={async () => {
             const propertyId = await submitProperty(form.getValues(), false);
             return Boolean(propertyId);
           }}
         >
-          <PropertyPricingForm />
+          <PropertyPricingForm
+            price={price}
+            listingType={listingType}
+            onPriceChange={setPrice}
+            onListingTypeChange={setListingType}
+          />
         </WizardTab>
 
         <WizardTab

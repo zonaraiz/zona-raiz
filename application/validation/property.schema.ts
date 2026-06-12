@@ -3,7 +3,6 @@ import * as yup from "yup";
 import { requiredAddressSchema } from "./base/address.schema";
 import { slugSchema } from "./base/slug.schema";
 import { PropertyType } from "@/domain/entities/property.enums";
-import { ListingType } from "@/domain/entities/listing.enums";
 import { propertyTypeSchema } from "./base/property_type.schema";
 import { latitudeSchema } from "./base/latitude.schema";
 import { descriptionSchema } from "./base/description.schema";
@@ -18,7 +17,6 @@ import { floorsSchema } from "./base/floors.schema";
 import { yearBuiltSchema } from "./base/year_built.schema";
 import { parkingSpotsSchema } from "./base/parking_spots.schema";
 import { amenitiesSchema } from "./base/amenities.schema";
-import { priceSchema } from "./base/price.schema";
 
 // ============================================
 // SCHEMAS DE PROPIEDADES
@@ -44,13 +42,6 @@ export const propertySchema = yup
     year_built: yearBuiltSchema.nullable(),
     parking_spots: parkingSpotsSchema.nullable(),
     amenities: amenitiesSchema,
-    price: priceSchema.required(
-      i18next.t("validations:required", { attribute: "price" }),
-    ),
-    listing_type: yup
-      .mixed<ListingType>()
-      .oneOf(Object.values(ListingType) as ListingType[])
-      .required(i18next.t("validations:required", { attribute: "listing_type" })),
   })
   .concat(requiredAddressSchema);
 
@@ -76,8 +67,6 @@ export const defaultPropertyValues: PropertyInput = {
   year_built: 2000,
   parking_spots: 0,
   amenities: [],
-  price: 0,
-  listing_type: ListingType.SALE,
 };
 
 export const PropertyImageSchema = yup.object({
