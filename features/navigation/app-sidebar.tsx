@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { NavMain } from "@/features/navigation/nav-main";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +20,7 @@ import { ListingEntity } from "@/domain/entities/listing.entity";
 import { EUserRole } from "@/domain/entities/profile.entity";
 import Logo from "@/assets/svg/logo";
 import { DropwdownMenuUser } from "./dropdow-menu-user";
+import { useRoutes } from "@/i18n/client-router";
 
 interface FavoriteWithListing {
   id: string;
@@ -35,17 +37,22 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     icon?: IconName | string;
   }[];
   favorites?: FavoriteWithListing[];
+  showCreateProperty?: boolean;
 }
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
   const { t } = useTranslation("common");
+  const routes = useRoutes();
   const favorites = props.favorites || [];
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <div className="p-3 group-data-[collapsible=icon]:p-0">
-          <div className="flex items-center gap-3">
+          <Link
+            href={routes.home()}
+            className="flex items-center gap-3 rounded-xl transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
             <div className="size-10 group-data-[collapsible=icon]:size-9 p-2 rounded-xl bg-linear-to-br from-gray-900 to-gray-700 flex items-center justify-center">
               <Logo />
             </div>
@@ -57,13 +64,15 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                 {t("words.dashboard")}
               </p>
             </div>
-          </div>
+          </Link>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <NavMain
           items={props.menu}
-          showCreateProperty={props.profile.role !== EUserRole.Client}
+          showCreateProperty={
+            props.showCreateProperty ?? props.profile.role !== EUserRole.Client
+          }
         />
         <Separator className="my-2" />
         <FavoritesList favorites={favorites} />

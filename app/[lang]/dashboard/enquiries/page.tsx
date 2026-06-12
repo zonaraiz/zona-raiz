@@ -1,7 +1,5 @@
 import InquiryTable from "@/features/enquiries/enquiry-table";
-import { Suspense } from "react";
-import { Spinner } from "@/components/ui/spinner";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EnquiryFiltersForm } from "@/features/enquiries/enquiry-filters-form";
 import { Button } from "@/components/ui/button";
 import { IconFilter } from "@tabler/icons-react";
@@ -18,6 +16,7 @@ import { appModule } from "@/application/modules/app.module";
 import { encodedRedirect } from "@/shared/redirect";
 import { createRouter } from "@/i18n/router";
 import { initI18n } from "@/i18n/server";
+import { EnquiryStatus } from "@/domain/entities/enquiry.enums";
 
 interface props {
   params: Promise<{ lang: Lang }>;
@@ -47,12 +46,54 @@ export default async function page({ params, searchParams }: props) {
     return;
   }
 
-  const enquiries = enquiryService.all(filters);
+  const enquiryRows = await enquiryService.all(filters);
+  const newCount = enquiryRows.filter(
+    (enquiry) => enquiry.status === EnquiryStatus.NEW,
+  ).length;
+  const contactedCount = enquiryRows.filter(
+    (enquiry) => enquiry.status === EnquiryStatus.CONTACTED,
+  ).length;
+  const unassignedCount = enquiryRows.filter(
+    (enquiry) => !enquiry.assigned_to,
+  ).length;
 
   return (
     <main className="flex-col items-center justify-center space-y-4 px-4 lg:px-6">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardDescription>{t("dashboard.cards.total")}</CardDescription>
+            <CardTitle className="text-3xl">{enquiryRows.length}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardDescription>{t("dashboard.cards.new")}</CardDescription>
+            <CardTitle className="text-3xl">{newCount}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardDescription>{t("dashboard.cards.contacted")}</CardDescription>
+            <CardTitle className="text-3xl">{contactedCount}</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardDescription>{t("dashboard.cards.unassigned")}</CardDescription>
+            <CardTitle className="text-3xl">{unassignedCount}</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
       <Card>
         <CardContent className="space-y-4">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold">{t("title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("dashboard.helper")}
+            </p>
+          </div>
           <Collapsible className="flex-col space-y-4 space-x-1 justify-end">
             <CollapsibleTrigger asChild>
               <Button>
@@ -64,9 +105,10 @@ export default async function page({ params, searchParams }: props) {
               <Separator />
             </CollapsibleContent>
           </Collapsible>
-          <Suspense fallback={<Spinner />}>
-            <InquiryTable enquiries={enquiries} realEstateId={realEstateId} />
-          </Suspense>
+          <InquiryTable
+            enquiries={Promise.resolve(enquiryRows)}
+            realEstateId={realEstateId}
+          />
         </CardContent>
       </Card>
     </main>

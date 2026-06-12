@@ -1,6 +1,15 @@
 {
-  "title": "Enquiries",
-  "subtitle": "Manage property enquiries",
+  "title": "Contacts",
+  "subtitle": "Manage leads and messages coming from your listings",
+  "dashboard": {
+    "helper": "Review incoming contacts, see which listing they came from, and keep your follow-up organized.",
+    "cards": {
+      "total": "Total contacts",
+      "new": "New",
+      "contacted": "Contacted",
+      "unassigned": "Unassigned"
+    }
+  },
   "labels": {
     "enquiry": "Enquiry",
     "new-enquiries": "New enquiries",
@@ -18,6 +27,10 @@
   },
   "actions": {
     "assign": "Assign agent"
+  },
+  "empty": {
+    "title": "You do not have contacts yet",
+    "description": "When a user writes from a listing or contact form, this view will show their details, the related listing, and their follow-up status."
   },
   "columns": {
     "headers": {

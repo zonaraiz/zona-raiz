@@ -28,16 +28,25 @@ export default async function DashboardLayout({
   const routes = createRouter(lang);
   const i18n = await initI18n(lang);
   const t = i18n.getFixedT(lang);
-  const { cookiesService, sessionService } = await appModule(lang, {
-    cookies: cookieStore,
-  });
+  const { cookiesService, sessionService, favoriteService, listingService } =
+    await appModule(lang, { cookies: cookieStore });
   const isAuth = await sessionService.isAuth();
 
   if (!isAuth) {
     return redirect(routes.signin());
   }
 
-  const role = await cookiesService.getProfileRole()
+  const profile = await sessionService.getCachedCurrentUser();
+
+  if (!profile) {
+    return encodedRedirect(
+      "error",
+      routes.signin(),
+      t("common:exceptions.data_not_found"),
+    );
+  }
+
+  const role = profile.role;
 
   if (role !== EUserRole.Client) {
     const real_estate_id_cookie =
@@ -72,16 +81,11 @@ export default async function DashboardLayout({
     }
   }
 
-  const profile = await sessionService.getCachedCurrentUser();
   const menu = await sessionService.getMenuByRol();
-
-  if (!profile) {
-    return encodedRedirect(
-      "error",
-      routes.signin(),
-      t("common:exceptions.data_not_found"),
-    );
-  }
+  const hasActiveRealEstate =
+    role === EUserRole.Client
+      ? false
+      : Boolean(await cookiesService.getRealEstateId());
 
   let favorites: {
     id: string;
@@ -91,23 +95,17 @@ export default async function DashboardLayout({
   }[] = [];
 
   try {
-    const { favoriteService, listingService } = await appModule(lang, {
-      cookies: cookieStore,
-    });
-    const isAuth = await sessionService.isAuth();
-    if (isAuth) {
-      const userId = await sessionService.getCurrentUserId();
-      if (userId) {
-        const userFavorites = await favoriteService.findByProfileId(userId);
-        if (userFavorites.length > 0) {
-          const listingIds = userFavorites.map((f) => f.listing_id);
-          const listings = await listingService.findByIds(listingIds);
-          const listingsMap = new Map(listings.map((l) => [l.id, l]));
-          favorites = userFavorites.map((fav) => ({
-            ...fav,
-            listing: listingsMap.get(fav.listing_id),
-          }));
-        }
+    const userId = await sessionService.getCurrentUserId();
+    if (userId) {
+      const userFavorites = await favoriteService.findByProfileId(userId);
+      if (userFavorites.length > 0) {
+        const listingIds = userFavorites.map((f) => f.listing_id);
+        const listings = await listingService.findByIds(listingIds);
+        const listingsMap = new Map(listings.map((l) => [l.id, l]));
+        favorites = userFavorites.map((fav) => ({
+          ...fav,
+          listing: listingsMap.get(fav.listing_id),
+        }));
       }
     }
   } catch {
@@ -128,6 +126,7 @@ export default async function DashboardLayout({
         menu={menu}
         profile={profile}
         favorites={favorites}
+        showCreateProperty={hasActiveRealEstate}
       />
       <SidebarInset>
         {role !== EUserRole.Client ? <SiteHeader /> : null}

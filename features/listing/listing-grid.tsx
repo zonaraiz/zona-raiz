@@ -52,12 +52,13 @@ export function ListingGrid({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {listings.map((listing) => (
+      {listings.map((listing, i) => (
         <ListingCard
           key={listing.id}
           listing={listing}
           isPublic={true}
           isFavInitial={favoriteIds.includes(listing.id)}
+          index={i}
         />
       ))}
     </div>

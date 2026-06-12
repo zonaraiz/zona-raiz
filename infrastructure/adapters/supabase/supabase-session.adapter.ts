@@ -3,6 +3,7 @@ import {
   RealEstateEntity,
   RealEstateWithRoleEntity,
 } from "@/domain/entities/real-estate.entity";
+import { EAgentRole } from "@/domain/entities/real-estate-agent.entity";
 import { ProfilePort } from "@/domain/ports/profile.port";
 import { SessionPort } from "@/domain/ports/sesion.port";
 import { SupabaseClient } from "@supabase/supabase-js";
@@ -89,9 +90,24 @@ export class SupabaseSessionAdapter implements SessionPort {
       .eq("profile_id", userId);
     if (error) throw new Error(error.message);
 
-    return data.map((item: any) => ({
-      real_estate: item.real_estates as RealEstateEntity,
-      role: item.role,
+    type RealEstateAgentRow = {
+      role: EAgentRole;
+      real_estates: RealEstateEntity | RealEstateEntity[] | null;
+    };
+
+    return (data as RealEstateAgentRow[]).flatMap((item) => {
+      const realEstate = Array.isArray(item.real_estates)
+        ? item.real_estates[0]
+        : item.real_estates;
+
+      if (!realEstate) {
+        return [];
+      }
+
+      return {
+        real_estate: realEstate,
+        role: item.role,
+      };
     }));
   }
 

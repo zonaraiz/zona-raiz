@@ -84,8 +84,9 @@ export class SessionService {
     const i18n = await initI18n(this.lang);
     const t = i18n.getFixedT(this.lang);
 
-    const id = await this.sessionPort.getCurrentUserId();
-    const roleProfile = await this.cookiesPort.getProfileRole();
+    const roleProfile =
+      (await this.cookiesPort.getProfileRole()) ??
+      (await this.sessionPort.getCurrentUser())?.role;
 
     const basicRoutes = [
       {
@@ -135,8 +136,12 @@ export class SessionService {
       ]);
     }
 
-    const role = await this.profiles.getRoleByUserId(id as string);
-    switch (role) {
+    const realEstateId = await this.cookiesPort.getRealEstateId();
+    const currentAgentRole = realEstateId
+      ? await this.getCurrentUserAgentRole(realEstateId)
+      : ((await this.cookiesPort.getAgentRole()) as EAgentRole | null);
+
+    switch (currentAgentRole) {
       case EAgentRole.Agent:
         return basicRoutes;
       case EAgentRole.Coordinator:

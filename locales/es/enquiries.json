@@ -1,6 +1,15 @@
 {
-  "title": "Consultas",
-  "subtitle": "Gestiona las consultas de tus propiedades",
+  "title": "Contactos",
+  "subtitle": "Gestiona los leads y mensajes que llegan desde tus publicaciones",
+  "dashboard": {
+    "helper": "Aquí puedes revisar nuevos contactos, ver a qué publicación llegaron y organizar el seguimiento comercial.",
+    "cards": {
+      "total": "Total de contactos",
+      "new": "Nuevos",
+      "contacted": "Contactados",
+      "unassigned": "Sin asignar"
+    }
+  },
   "labels": {
     "enquiry": "Consulta",
     "new-enquiries": "Nuevas consultas",
@@ -16,6 +25,10 @@
   },
   "actions": {
     "assign": "Asignar agente"
+  },
+  "empty": {
+    "title": "Aún no tienes contactos",
+    "description": "Cuando un usuario escriba desde una publicación o formulario, aquí verás su nombre, medio de contacto, publicación relacionada y estado de seguimiento."
   },
   "columns": {
     "headers": {

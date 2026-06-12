@@ -163,6 +163,7 @@ export function ListingCard({
                   property.state ? STATE_LABELS[property.state] ?? humanizeLocation(property.state) : null,
                 ]
                   .filter(Boolean)
+                  .filter((v, i, arr) => arr.indexOf(v) === i)
                   .join(", ")}
               </span>
             </div>

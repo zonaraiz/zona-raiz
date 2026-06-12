@@ -45,7 +45,9 @@ export async function updateSession(request: NextRequest) {
   let role = await cookiesService.getProfileRole();
 
   if (!role) {
-    const profile = await profileService.getProfileByUserId(user.id).catch(() => null);
+    const profile = await profileService
+      .getProfileByUserId(user.id)
+      .catch(() => null);
 
     if (!profile?.role) {
       return redirectTo(routes.signin(), request);

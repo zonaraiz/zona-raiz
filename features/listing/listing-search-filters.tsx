@@ -225,18 +225,18 @@ export function ListingSearchFilters({
       >
         <div className="space-y-2">
           <Slider
-            value={[values.min_price || 0, values.max_price || 100000000]}
+            value={[values.min_price || 0, values.max_price || 10_000_000_000]}
             onValueChange={([min, max]) => {
               setValue("min_price", min);
               setValue("max_price", max);
             }}
-            max={100000000}
-            step={1000000}
+            max={10_000_000_000}
+            step={10_000_000}
           />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>${(priceRange[0] || 0).toLocaleString(i18n.language)}</span>
             <span>
-              ${(priceRange[1] || 100000000).toLocaleString(i18n.language)}
+              ${(priceRange[1] || 10_000_000_000).toLocaleString(i18n.language)}
             </span>
           </div>
         </div>

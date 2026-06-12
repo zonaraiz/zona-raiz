@@ -145,7 +145,7 @@ export function getEnquiryColumns(
         const date = new Date(row.original.created_at);
         return (
           <span className="text-xs text-muted-foreground">
-            {date.toLocaleDateString()}
+            {date.toLocaleDateString()} · {date.toLocaleTimeString()}
           </span>
         );
       },

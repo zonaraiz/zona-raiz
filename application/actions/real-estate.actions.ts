@@ -25,7 +25,7 @@ export const createRealEstateAction = withServerAction(
     const i18n = await initI18n(lang);
     const t = i18n.getFixedT(lang);
 
-    const { realEstateService, cookiesService, sessionService } =
+    const { realEstateService, cookiesService, sessionService, agentService } =
       await appModule(lang, {
         cookies: cookieStore,
       });
@@ -46,6 +46,8 @@ export const createRealEstateAction = withServerAction(
     const id = await realEstateService.create(mapRealEstateRowToDomain(input));
 
     if (!id) throw new Error(t("real-estates:exceptions.register_error"));
+
+    await agentService.addAgent(id, profileId, EAgentRole.Coordinator);
 
     cookiesService.setSession(COOKIE_NAMES.REAL_ESTATE, id);
     cookiesService.setSession(
