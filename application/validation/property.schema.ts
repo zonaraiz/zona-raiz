@@ -49,7 +49,7 @@ export const propertySchema = yup
     ),
     listing_type: yup
       .mixed<ListingType>()
-      .oneOf(Object.values(ListingType))
+      .oneOf(Object.values(ListingType) as ListingType[])
       .required(i18next.t("validations:required", { attribute: "listing_type" })),
   })
   .concat(requiredAddressSchema);
