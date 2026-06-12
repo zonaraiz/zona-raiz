@@ -100,9 +100,10 @@ export const updatePropertyAction = withServerAction(
 
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
+    const { price: _price, listing_type: _listing_type, ...updateFields } = input;
 
     await propertyService.update(id, {
-      ...input,
+      ...updateFields,
       property_type,
       amenities,
     });
