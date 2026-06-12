@@ -12,6 +12,7 @@ import {
 import { PropertyForm } from "@/features/properties/property-form";
 import { PropertyInput } from "@/application/validation/property.schema";
 import { PropertyEntity } from "@/domain/entities/property.entity";
+import { ListingType } from "@/domain/entities/listing.enums";
 
 type EditableProperty = PropertyEntity & {
   created_at: string;
@@ -50,6 +51,8 @@ export function EditPropertyDialog({
       year_built: property.year_built ?? 2000,
       parking_spots: property.parking_spots ?? 0,
       amenities: property.amenities ?? [],
+      price: 0,
+      listing_type: ListingType.SALE,
     }),
     [property],
   );
