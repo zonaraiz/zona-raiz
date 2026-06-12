@@ -221,39 +221,37 @@ export function PropertyForm({
           <PropertyFeaturesForm />
         </WizardTab>
 
-        {(createdPropertyId || isUpdateMode) && (
-          <WizardTab
-            id="images"
-            title={t("actions.add_images")}
-            canSubmit={() => true}
-          >
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold">{t("actions.add_images")}</h3>
-                <p className="text-sm text-muted-foreground">
-                  Sube y organiza las imágenes del inmueble antes de finalizar.
-                </p>
-              </div>
-
-              {createdPropertyId ? (
-                <div className="space-y-6">
-                  <UploadMultipleInput
-                    propertyId={createdPropertyId}
-                    onSuccessAction={() => router.refresh()}
-                  />
-                  <PropertyImageList
-                    initialImages={initialImages}
-                    propertyId={createdPropertyId}
-                  />
-                </div>
-              ) : (
-                <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
-                  Primero guardamos la propiedad para habilitar la subida de imágenes.
-                </div>
-              )}
+        <WizardTab
+          id="images"
+          title={t("actions.add_images")}
+          canSubmit={() => true}
+        >
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold">{t("actions.add_images")}</h3>
+              <p className="text-sm text-muted-foreground">
+                Sube y organiza las imágenes del inmueble antes de finalizar.
+              </p>
             </div>
-          </WizardTab>
-        )}
+
+            {createdPropertyId ? (
+              <div className="space-y-6">
+                <UploadMultipleInput
+                  propertyId={createdPropertyId}
+                  onSuccessAction={() => router.refresh()}
+                />
+                <PropertyImageList
+                  initialImages={initialImages}
+                  propertyId={createdPropertyId}
+                />
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
+                Primero guardamos la propiedad para habilitar la subida de imágenes.
+              </div>
+            )}
+          </div>
+        </WizardTab>
       </WizardTabs>
     </Form>
   );
