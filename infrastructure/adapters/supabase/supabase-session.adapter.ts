@@ -108,7 +108,7 @@ export class SupabaseSessionAdapter implements SessionPort {
         real_estate: realEstate,
         role: item.role,
       };
-    }));
+    });
   }
 
   async getCurrentRealEstateId(): Promise<string | null> {

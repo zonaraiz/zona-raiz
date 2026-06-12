@@ -59,9 +59,9 @@ export const createRealEstateAction = withServerAction(
     revalidatePath(routes.realEstates());
 
     // Invalidar tags específicos del cache
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.COUNT);
   },
 );
 
@@ -90,10 +90,10 @@ export const updateRealEstateAction = withServerAction(
     revalidatePath(routes.realEstate(id));
 
     // Invalidar tags específicos del cache
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(id), { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(id));
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.COUNT);
   },
 );
 
@@ -119,10 +119,10 @@ export const deleteRealEstateAction = withServerAction(
     revalidatePath(routes.dashboard());
 
     // Invalidar tags específicos del cache
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(id), { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.COUNT, { expire: 0 });
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(id));
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.COUNT);
   },
 );
 
@@ -150,9 +150,9 @@ export const uploadRealEstateLogoAction = withServerAction(
     revalidatePath(routes.dashboard());
 
     // Invalidar tags específicos del cache
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL, { expire: 0 });
-    revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(id), { expire: 0 });
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.PRINCIPAL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.ALL);
+    revalidateTag(CACHE_TAGS.REAL_ESTATE.DETAIL(id));
   },
 );
 
