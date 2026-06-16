@@ -1,5 +1,7 @@
 import { OTPForm } from '@/features/auth/otp-form'
 
+export const dynamic = "force-dynamic";
+
 export default function page() {
 
   return (
