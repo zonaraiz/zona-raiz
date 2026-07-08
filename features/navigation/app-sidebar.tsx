@@ -54,7 +54,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             className="flex items-center gap-3 rounded-xl transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <div className="size-10 group-data-[collapsible=icon]:size-9 p-2 rounded-xl bg-linear-to-br from-gray-900 to-gray-700 flex items-center justify-center">
-              <Logo />
+              <Logo className="size-6" />
             </div>
             <div>
               <h1 className="font-bold text-lg text-foreground group-data-[collapsible=icon]:hidden">
