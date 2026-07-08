@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
 import { ListingEntity } from "@/domain/entities/listing.entity";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,32 +13,13 @@ import { useListingOptions } from "./hooks/use-listing-options";
 import Image from "next/image";
 import { CITY_LABELS, STATE_LABELS, humanizeLocation } from "@/lib/locations";
 import { propertyTypeLabels } from "@/domain/entities/property.entity";
+import { useInView } from "@/hooks/use-in-view";
 
 interface ListingCardProps {
   listing: ListingEntity;
   isFavInitial?: boolean;
   isPublic?: boolean;
   index?: number; // para stagger delay
-}
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setInView(true);
-      },
-      { threshold },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [threshold]);
-
-  return { ref, inView };
 }
 
 export function ListingCard({

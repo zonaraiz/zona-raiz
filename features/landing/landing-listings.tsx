@@ -4,6 +4,7 @@ import { useRoutes } from "@/i18n/client-router";
 import { ListingCard } from "@/features/listing/listing-card";
 import { ListingEntity } from "@/domain/entities/listing.entity";
 import { CtaButton } from "./button-cta";
+import { useInView } from "@/hooks/use-in-view";
 
 interface LandingListingsProps {
   listings: ListingEntity[];
@@ -16,11 +17,20 @@ export function LandingListings({
 }: LandingListingsProps) {
   const { t } = useTranslation("landing");
   const routes = useRoutes();
+  const { ref, inView } = useInView();
 
   return (
     <section className="py-16">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="flex items-end justify-between mb-10">
+        <div
+          ref={ref}
+          className="flex items-end justify-between mb-10"
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(20px)",
+            transition: "opacity 0.5s ease, transform 0.5s ease",
+          }}
+        >
           <div>
             <h2 className="mb-1 line-clamp-3 font-bold">
               {t("listings.title")}
