@@ -100,9 +100,9 @@ export function LandingHero({ lang = "es" }: LandingHeroProps) {
           </p>
         </div>
 
-        {/* Search bar */}
+        {/* Search bar — siempre en apariencia clara, sin importar el tema del sitio */}
         <div
-          className="w-full max-w-3xl"
+          className="theme-light w-full max-w-3xl"
           style={{ animation: "fadeSlideUp 0.8s ease 0.2s both" }}
         >
           <div className="rounded-2xl overflow-hidden shadow-2xl">
