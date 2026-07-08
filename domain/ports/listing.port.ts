@@ -13,6 +13,13 @@ export interface ListingCountFilters {
   end_date?: string;
 }
 
+export interface ListingBounds {
+  min_lat: number;
+  max_lat: number;
+  min_lng: number;
+  max_lng: number;
+}
+
 export interface ListingSearchFilters {
   q?: string;
   listing_type?: string;
@@ -36,6 +43,7 @@ export interface ListingSearchFilters {
   property_id?: string;
   status?: string;
   price?: number;
+  bounds?: ListingBounds;
 }
 
 export interface ListingPort {

@@ -193,6 +193,20 @@ export class SupabaseListingAdapter implements ListingPort {
         if (!hasAllAmenities) return false;
       }
 
+      if (filters?.bounds) {
+        const { min_lat, max_lat, min_lng, max_lng } = filters.bounds;
+        if (
+          property.latitude === null ||
+          property.longitude === null ||
+          property.latitude < min_lat ||
+          property.latitude > max_lat ||
+          property.longitude < min_lng ||
+          property.longitude > max_lng
+        ) {
+          return false;
+        }
+      }
+
       return true;
     });
 

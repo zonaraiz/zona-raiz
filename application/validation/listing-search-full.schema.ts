@@ -13,6 +13,15 @@ import { listingTypeSchema } from "./base/listing_type.schema";
 import { ListingType } from "@/domain/entities/listing.enums";
 import { PropertyType } from "@/domain/entities/property.enums";
 
+const boundsSchema = yup
+  .object({
+    min_lat: yup.number().required(),
+    max_lat: yup.number().required(),
+    min_lng: yup.number().required(),
+    max_lng: yup.number().required(),
+  })
+  .optional();
+
 export const listingSearchFiltersSchema = yup.object({
   q: searchSchema.optional(),
   listing_type: listingTypeSchema.optional(),
@@ -28,6 +37,7 @@ export const listingSearchFiltersSchema = yup.object({
   sort_by: yup.string().optional(),
   page: yup.number().min(1).optional(),
   limit: yup.number().min(1).max(100).optional(),
+  bounds: boundsSchema,
 });
 
 export type ListingSearchFiltersInput = yup.InferType<

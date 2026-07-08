@@ -87,6 +87,17 @@ export const parseSearchParams = (
     ? String(sp.amenities).split(",").filter(Boolean)
     : [];
 
+  const hasBounds =
+    sp.min_lat && sp.max_lat && sp.min_lng && sp.max_lng;
+  const bounds = hasBounds
+    ? {
+        min_lat: Number(sp.min_lat),
+        max_lat: Number(sp.max_lat),
+        min_lng: Number(sp.min_lng),
+        max_lng: Number(sp.max_lng),
+      }
+    : undefined;
+
   return {
     q: (sp.q as string) || "",
     listing_type: parsed.type_listins,
@@ -103,6 +114,7 @@ export const parseSearchParams = (
     sort_by: (sp.sort_by as string) || "created_at_desc",
     page: sp.page ? Number(sp.page) : 1,
     limit: sp.limit ? Number(sp.limit) : 12,
+    bounds,
   };
 };
 
@@ -146,6 +158,12 @@ export const buildUrl = (
   if (merged.sort_by && merged.sort_by !== "created_at_desc")
     params.set("sort_by", merged.sort_by);
   if (merged.page && merged.page > 1) params.set("page", String(merged.page));
+  if (merged.bounds) {
+    params.set("min_lat", String(merged.bounds.min_lat));
+    params.set("max_lat", String(merged.bounds.max_lat));
+    params.set("min_lng", String(merged.bounds.min_lng));
+    params.set("max_lng", String(merged.bounds.max_lng));
+  }
 
   const qs = params.toString();
   return `${basePath}${qs ? `?${qs}` : ""}`;

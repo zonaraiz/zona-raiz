@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { ListingSearchFiltersInput as ListingSearchFiltersType } from "@/application/validation/listing-search-full.schema";
 import { ListingSearchFilters } from "@/features/listing/listing-search-filters";
 import { ListingGrid } from "@/features/listing/listing-grid";
+import { PropertyMap, MapBounds } from "@/features/listing/property-map";
 import { ListingEntity } from "@/domain/entities/listing.entity";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +26,8 @@ import {
   IconChevronRight,
   IconMapPin,
   IconAdjustmentsHorizontal,
+  IconMap,
+  IconList,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -36,6 +40,7 @@ import { LandingNav } from "@/features/landing/landing-nav";
 import { ProfileEntity, EUserRole } from "@/domain/entities/profile.entity";
 import { CITY_LABELS, STATE_LABELS, humanizeLocation } from "@/lib/locations";
 import { buildSearchUrl } from "@/i18n/client-router";
+import { cn } from "@/lib/utils";
 
 interface SearchPageClientProps {
   filters: ListingSearchFiltersType;
@@ -83,8 +88,15 @@ export function SearchPageClient({
 }: SearchPageClientProps) {
   const { t } = useTranslation(["listings", "common"]);
   const router = useRouter();
+  const [mobileView, setMobileView] = useState<"list" | "map">("list");
 
   const handleFiltersChange = (newFilters: ListingSearchFiltersType) => {
+    const locationChanged =
+      (newFilters.city !== undefined && newFilters.city !== filters.city) ||
+      (newFilters.state !== undefined && newFilters.state !== filters.state) ||
+      (newFilters.neighborhood !== undefined &&
+        newFilters.neighborhood !== filters.neighborhood);
+
     const mergedFilters: ListingSearchFiltersType = {
       ...filters,
       ...newFilters,
@@ -93,6 +105,8 @@ export function SearchPageClient({
       city: newFilters.city ?? filters.city,
       neighborhood: newFilters.neighborhood ?? filters.neighborhood,
       street: newFilters.street ?? filters.street,
+      // Un cambio de ubicación invalida el recorte del mapa anterior
+      bounds: locationChanged ? undefined : filters.bounds,
     };
 
     const computed = buildSearchUrl({
@@ -113,6 +127,12 @@ export function SearchPageClient({
 
   const handleSortChange = (value: string) => {
     router.push(buildUrl({ sort_by: value, page: 1 }, basePath, filters), {
+      scroll: false,
+    });
+  };
+
+  const handleSearchThisArea = (bounds: MapBounds) => {
+    router.push(buildUrl({ bounds, page: 1 }, basePath, filters), {
       scroll: false,
     });
   };
@@ -166,6 +186,28 @@ export function SearchPageClient({
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
+                {/* List/Map toggle — hidden on xl (split view is always visible there) */}
+                <div className="flex items-center rounded-md border xl:hidden">
+                  <Button
+                    type="button"
+                    variant={mobileView === "list" ? "secondary" : "ghost"}
+                    size="sm"
+                    className="rounded-r-none"
+                    onClick={() => setMobileView("list")}
+                  >
+                    <IconList className="size-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={mobileView === "map" ? "secondary" : "ghost"}
+                    size="sm"
+                    className="rounded-l-none"
+                    onClick={() => setMobileView("map")}
+                  >
+                    <IconMap className="size-4" />
+                  </Button>
+                </div>
+
                 {/* Filter trigger — mobile only */}
                 <Sheet>
                   <SheetTrigger asChild>
@@ -222,41 +264,76 @@ export function SearchPageClient({
               </div>
             </div>
 
-            <ListingGrid listings={listings} favoriteIds={favoriteIds} />
+            <div className="flex flex-col xl:flex-row gap-6">
+              {/* Grilla de resultados */}
+              <div
+                className={cn(
+                  "flex-1 min-w-0",
+                  mobileView === "map" && "hidden xl:block",
+                )}
+              >
+                <ListingGrid listings={listings} favoriteIds={favoriteIds} />
 
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-8">
-                <Link
-                  href={buildUrl({ page: currentPage - 1 }, basePath, filters)}
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={currentPage <= 1}
-                  >
-                    <IconChevronLeft className="size-4" />
-                    {t("words:back")}
-                  </Button>
-                </Link>
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-8">
+                    <Link
+                      href={buildUrl(
+                        { page: currentPage - 1 },
+                        basePath,
+                        filters,
+                      )}
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={currentPage <= 1}
+                      >
+                        <IconChevronLeft className="size-4" />
+                        {t("words:back")}
+                      </Button>
+                    </Link>
 
-                <span className="text-sm text-muted-foreground capitalize">
-                  {t("words:page")} {currentPage} {t("words:of")} {totalPages}
-                </span>
+                    <span className="text-sm text-muted-foreground capitalize">
+                      {t("words:page")} {currentPage} {t("words:of")}{" "}
+                      {totalPages}
+                    </span>
 
-                <Link
-                  href={buildUrl({ page: currentPage + 1 }, basePath, filters)}
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={currentPage >= totalPages}
-                  >
-                    {t("words:next")}
-                    <IconChevronRight className="size-4" />
-                  </Button>
-                </Link>
+                    <Link
+                      href={buildUrl(
+                        { page: currentPage + 1 },
+                        basePath,
+                        filters,
+                      )}
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={currentPage >= totalPages}
+                      >
+                        {t("words:next")}
+                        <IconChevronRight className="size-4" />
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Mapa */}
+              <div
+                className={cn(
+                  "xl:w-[420px] xl:shrink-0",
+                  mobileView === "list" ? "hidden xl:block" : "block",
+                )}
+              >
+                <div className="sticky top-4 h-[70vh] xl:h-[calc(100vh-8rem)]">
+                  <PropertyMap
+                    listings={listings}
+                    onSearchThisArea={handleSearchThisArea}
+                    className="h-full"
+                  />
+                </div>
+              </div>
+            </div>
           </main>
         </div>
       </div>

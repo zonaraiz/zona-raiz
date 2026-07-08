@@ -1,6 +1,10 @@
 {
   "title": "Publicar propiedad",
   "subtitle": "Gestiona las publicaciones de tus propiedades",
+  "map": {
+    "search_this_area": "Buscar en esta área",
+    "no_coordinates": "Ninguna de estas propiedades tiene ubicación registrada en el mapa"
+  },
   "labels": {
     "listing_type": "Tipo de listado",
     "price_negotiable": "Precio negociable",

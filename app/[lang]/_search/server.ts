@@ -31,6 +31,7 @@ export async function getListings(
     sort_by: filters.sort_by as string | undefined,
     page: filters.page as number | undefined,
     limit: filters.limit as number | undefined,
+    bounds: filters.bounds,
   };
 
   const clean = pickDefined(searchFilters);
@@ -40,7 +41,8 @@ export async function getListings(
     !filters.q &&
     !filters.min_price &&
     (!filters.max_price || filters.max_price >= 100000000) &&
-    !filters.amenities?.length;
+    !filters.amenities?.length &&
+    !filters.bounds;
 
   if (isSimple) {
     return listingService.getCachedSearchWithCount(clean);

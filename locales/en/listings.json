@@ -1,6 +1,10 @@
 {
   "title": "Publish property",
   "subtitle": "Manage your property listings",
+  "map": {
+    "search_this_area": "Search this area",
+    "no_coordinates": "None of these properties have a location set on the map"
+  },
   "labels": {
     "listing_type": "Listing type",
     "price_negotiable": "Negotiable price",
