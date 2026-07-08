@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/command";
 import { buildSearchUrl } from "@/i18n/client-router";
 import { Lang } from "@/i18n/settings";
-import { slugify } from "@/lib/utils";
+import { cn, slugify } from "@/lib/utils";
 import countries from "@/lib/countries.json";
 
 type Prediction = {
@@ -43,6 +43,7 @@ interface PlaceSearchProps {
   lang: Lang;
   placeholder?: string;
   className?: string;
+  commandClassName?: string;
   navigate?: boolean;
   onSelect?: (place: ParsedPlace) => void;
 }
@@ -262,6 +263,7 @@ export function PlaceSearch({
   lang,
   placeholder = "",
   className,
+  commandClassName,
   navigate = true,
   onSelect,
 }: PlaceSearchProps) {
@@ -439,7 +441,7 @@ export function PlaceSearch({
   if (scriptState === "error") {
     return (
       <div className={`relative ${className ?? ""}`}>
-        <Command shouldFilter={false} className="rounded-xl border shadow-sm">
+        <Command shouldFilter={false} className={cn("rounded-xl border shadow-sm", commandClassName)}>
           <div className="flex items-center px-3 gap-2 min-h-11">
             {loading ? (
               <IconLoader2 className="size-4 text-muted-foreground animate-spin shrink-0" />
@@ -511,7 +513,7 @@ export function PlaceSearch({
 
   return (
     <div className={`relative ${className ?? ""}`}>
-      <Command shouldFilter={false} className="rounded-xl border shadow-sm">
+      <Command shouldFilter={false} className={cn("rounded-xl border shadow-sm", commandClassName)}>
         <div className="flex items-center px-3 gap-2 min-h-11">
           {loading ? (
             <IconLoader2 className="size-4 text-muted-foreground animate-spin shrink-0" />
