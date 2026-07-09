@@ -18,6 +18,17 @@ const COLOMBIA_CENTER: [number, number] = [-74.08, 4.61];
 // (ej. lat/lng en 0, o invertidas) para que no arruinen el encuadre del mapa.
 const COLOMBIA_BOUNDS = { minLat: -5, maxLat: 13, minLng: -80, maxLng: -66 };
 
+// Formatea el precio para el pin del mapa siguiendo la convención local
+// ("720 millones", "1.680 millones") en vez de cortarlo con un "k" que no
+// tiene sentido a la escala de precios en COP.
+function formatPinPrice(price: number, currency: string): string {
+  if (price >= 1_000_000) {
+    const millions = Math.round(price / 1_000_000);
+    return `${currency} ${millions.toLocaleString("es-CO")}M`;
+  }
+  return `${currency} ${price.toLocaleString("es-CO")}`;
+}
+
 function isPlausible(lat: number, lng: number): boolean {
   return (
     lat >= COLOMBIA_BOUNDS.minLat &&
@@ -221,7 +232,7 @@ export function PropertyMap({
       el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.25)";
       el.style.cursor = "pointer";
       el.style.whiteSpace = "nowrap";
-      el.textContent = `${listing.currency} ${Math.round(listing.price / 1000)}k`;
+      el.textContent = formatPinPrice(listing.price, listing.currency);
 
       const href = routes.listings_public(listing.property.slug);
       const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
