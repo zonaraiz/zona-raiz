@@ -84,6 +84,7 @@ export function PropertyMap({
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [ready, setReady] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
 
   const withCoords = listings.filter(
     (l) => l.property.latitude !== null && l.property.longitude !== null,
@@ -92,13 +93,20 @@ export function PropertyMap({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: MAP_STYLE,
-      center: COLOMBIA_CENTER,
-      zoom: 5,
-      attributionControl: false,
-    });
+    let map: maplibregl.Map;
+    try {
+      map = new maplibregl.Map({
+        container: containerRef.current,
+        style: MAP_STYLE,
+        center: COLOMBIA_CENTER,
+        zoom: 5,
+        attributionControl: false,
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      queueMicrotask(() => setMapError(message));
+      return;
+    }
 
     map.addControl(
       new maplibregl.NavigationControl({ showCompass: false }),
@@ -108,6 +116,10 @@ export function PropertyMap({
     map.on("dragend", () => setShowSearchButton(true));
     map.on("zoomend", () => setShowSearchButton(true));
     map.on("load", () => setReady(true));
+    map.on("error", (e) => {
+      console.error("MapLibre error:", e.error);
+      setMapError(e.error?.message ?? "Error desconocido cargando el mapa");
+    });
 
     mapRef.current = map;
 
@@ -211,6 +223,12 @@ export function PropertyMap({
       {ready && withCoords.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/80 text-sm text-muted-foreground text-center px-4">
           {t("map.no_coordinates")}
+        </div>
+      )}
+
+      {mapError && (
+        <div className="absolute bottom-2 left-2 right-2 rounded-md bg-destructive/90 text-white text-xs px-3 py-2 font-mono break-words">
+          Map error: {mapError}
         </div>
       )}
     </div>
