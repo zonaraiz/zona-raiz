@@ -85,6 +85,34 @@ export function PropertyMap({
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [ready, setReady] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [diagnostic, setDiagnostic] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch(MAP_STYLE, { cache: "no-store" });
+        const contentType = res.headers.get("content-type") ?? "?";
+        const bodyPreview = (await res.clone().text()).slice(0, 120);
+        if (!cancelled) {
+          setDiagnostic(
+            `style fetch → status ${res.status}, content-type: ${contentType}, body: ${bodyPreview}`,
+          );
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setDiagnostic(
+            `style fetch → threw: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const withCoords = listings.filter(
     (l) => l.property.latitude !== null && l.property.longitude !== null,
@@ -229,6 +257,12 @@ export function PropertyMap({
       {mapError && (
         <div className="absolute bottom-2 left-2 right-2 rounded-md bg-destructive/90 text-white text-xs px-3 py-2 font-mono break-words">
           Map error: {mapError}
+        </div>
+      )}
+
+      {diagnostic && (
+        <div className="absolute top-2 left-2 right-2 rounded-md bg-black/90 text-white text-[10px] px-3 py-2 font-mono break-words">
+          {diagnostic}
         </div>
       )}
     </div>
