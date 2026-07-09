@@ -14,6 +14,7 @@ import { initI18n } from "@/i18n/server";
 import { appModule } from "../modules/app.module";
 import { CACHE_TAGS } from "@/infrastructure/config/constants";
 import { AmenitieType } from "@/domain/entities/property.entity";
+import { geocodeAddress, needsGeocoding } from "@/shared/utils/geocode";
 
 export const createPropertyAction = withServerAction(
   async (realEstateId: string, formData: FormData) => {
@@ -68,10 +69,25 @@ export const createPropertyAction = withServerAction(
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
 
+    let { latitude, longitude } = input;
+    if (needsGeocoding(latitude, longitude)) {
+      const geocoded = await geocodeAddress({
+        street: input.street,
+        city: input.city,
+        state: input.state,
+      });
+      if (geocoded) {
+        latitude = geocoded.latitude;
+        longitude = geocoded.longitude;
+      }
+    }
+
     const property = await propertyService.create(realEstateId, {
       ...input,
       property_type,
       amenities,
+      latitude,
+      longitude,
       created_by: userId,
     });
 
@@ -132,10 +148,25 @@ export const updatePropertyAction = withServerAction(
     const property_type = input.property_type as PropertyType;
     const amenities = input.amenities.map((a) => a as AmenitieType);
 
+    let { latitude, longitude } = input;
+    if (needsGeocoding(latitude, longitude)) {
+      const geocoded = await geocodeAddress({
+        street: input.street,
+        city: input.city,
+        state: input.state,
+      });
+      if (geocoded) {
+        latitude = geocoded.latitude;
+        longitude = geocoded.longitude;
+      }
+    }
+
     await propertyService.update(id, {
       ...input,
       property_type,
       amenities,
+      latitude,
+      longitude,
     });
 
     revalidatePath(routes.dashboard());

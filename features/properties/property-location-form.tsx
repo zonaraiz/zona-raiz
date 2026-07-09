@@ -123,23 +123,6 @@ export function PropertyLocationForm() {
           placeholder={t("placeholders.street")}
         />
       </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <Form.Input
-          name="latitude"
-          type="number"
-          step="any"
-          label={t("labels.latitude")}
-          placeholder={t("placeholders.latitude")}
-        />
-        <Form.Input
-          name="longitude"
-          type="number"
-          step="any"
-          label={t("labels.longitude")}
-          placeholder={t("placeholders.longitude")}
-        />
-      </div>
     </Form.Set>
   );
 }
