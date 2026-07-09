@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { IconSearch } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { CITY_COORDINATES } from "@/lib/city-coordinates";
 
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 const COLOMBIA_CENTER: [number, number] = [-74.08, 4.61];
@@ -17,15 +18,51 @@ const COLOMBIA_CENTER: [number, number] = [-74.08, 4.61];
 // (ej. lat/lng en 0, o invertidas) para que no arruinen el encuadre del mapa.
 const COLOMBIA_BOUNDS = { minLat: -5, maxLat: 13, minLng: -80, maxLng: -66 };
 
-function hasPlausibleCoords(lat: number | null, lng: number | null): boolean {
+function isPlausible(lat: number, lng: number): boolean {
   return (
-    lat !== null &&
-    lng !== null &&
     lat >= COLOMBIA_BOUNDS.minLat &&
     lat <= COLOMBIA_BOUNDS.maxLat &&
     lng >= COLOMBIA_BOUNDS.minLng &&
     lng <= COLOMBIA_BOUNDS.maxLng
   );
+}
+
+// Hash simple y determinístico para desplazar levemente (jitter) los pines
+// que caen en el mismo centro de ciudad, así no quedan apilados uno sobre otro.
+function hashOffset(id: string, salt: number): number {
+  let hash = salt;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash << 5) - hash + id.charCodeAt(i);
+    hash |= 0;
+  }
+  return ((hash % 1000) / 1000) * 0.03 - 0.015; // ±0.015° (~1.5km)
+}
+
+/**
+ * Resuelve la posición a usar para un listing en el mapa:
+ * 1. lat/lng propios de la propiedad, si son plausibles (dentro de Colombia).
+ * 2. Centro aproximado de la ciudad (con jitter), si la propiedad no tiene
+ *    coordenadas propias pero sí ciudad reconocida.
+ * 3. null si no hay forma de ubicarlo.
+ */
+function resolveListingCoords(
+  listing: ListingEntity,
+): { lat: number; lng: number } | null {
+  const { latitude, longitude, city } = listing.property;
+
+  if (latitude !== null && longitude !== null && isPlausible(latitude, longitude)) {
+    return { lat: latitude, lng: longitude };
+  }
+
+  const cityCenter = city ? CITY_COORDINATES[city] : undefined;
+  if (cityCenter) {
+    return {
+      lat: cityCenter.lat + hashOffset(listing.id, 1),
+      lng: cityCenter.lng + hashOffset(listing.id, 7),
+    };
+  }
+
+  return null;
 }
 
 export interface MapBounds {
@@ -101,9 +138,12 @@ export function PropertyMap({
   const [ready, setReady] = useState(false);
   const [mapError, setMapError] = useState(false);
 
-  const withCoords = listings.filter((l) =>
-    hasPlausibleCoords(l.property.latitude, l.property.longitude),
-  );
+  const withCoords = listings
+    .map((listing) => ({ listing, coords: resolveListingCoords(listing) }))
+    .filter(
+      (item): item is { listing: ListingEntity; coords: { lat: number; lng: number } } =>
+        item.coords !== null,
+    );
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -168,9 +208,8 @@ export function PropertyMap({
 
     const bounds = new maplibregl.LngLatBounds();
 
-    withCoords.forEach((listing) => {
-      const { latitude, longitude } = listing.property;
-      if (latitude === null || longitude === null) return;
+    withCoords.forEach(({ listing, coords }) => {
+      const { lat: latitude, lng: longitude } = coords;
 
       const el = document.createElement("div");
       el.style.background = "var(--primary)";
