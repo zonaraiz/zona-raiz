@@ -13,6 +13,21 @@ import { cn } from "@/lib/utils";
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 const COLOMBIA_CENTER: [number, number] = [-74.08, 4.61];
 
+// Bounding box amplio de Colombia — descarta coordenadas corruptas/placeholder
+// (ej. lat/lng en 0, o invertidas) para que no arruinen el encuadre del mapa.
+const COLOMBIA_BOUNDS = { minLat: -5, maxLat: 13, minLng: -80, maxLng: -66 };
+
+function hasPlausibleCoords(lat: number | null, lng: number | null): boolean {
+  return (
+    lat !== null &&
+    lng !== null &&
+    lat >= COLOMBIA_BOUNDS.minLat &&
+    lat <= COLOMBIA_BOUNDS.maxLat &&
+    lng >= COLOMBIA_BOUNDS.minLng &&
+    lng <= COLOMBIA_BOUNDS.maxLng
+  );
+}
+
 export interface MapBounds {
   min_lat: number;
   max_lat: number;
@@ -84,38 +99,10 @@ export function PropertyMap({
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [ready, setReady] = useState(false);
-  const [mapError, setMapError] = useState<string | null>(null);
-  const [diagnostic, setDiagnostic] = useState<string | null>(null);
+  const [mapError, setMapError] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const res = await fetch(MAP_STYLE, { cache: "no-store" });
-        const contentType = res.headers.get("content-type") ?? "?";
-        const bodyPreview = (await res.clone().text()).slice(0, 120);
-        if (!cancelled) {
-          setDiagnostic(
-            `style fetch → status ${res.status}, content-type: ${contentType}, body: ${bodyPreview}`,
-          );
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setDiagnostic(
-            `style fetch → threw: ${err instanceof Error ? err.message : String(err)}`,
-          );
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const withCoords = listings.filter(
-    (l) => l.property.latitude !== null && l.property.longitude !== null,
+  const withCoords = listings.filter((l) =>
+    hasPlausibleCoords(l.property.latitude, l.property.longitude),
   );
 
   useEffect(() => {
@@ -131,8 +118,8 @@ export function PropertyMap({
         attributionControl: false,
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      queueMicrotask(() => setMapError(message));
+      console.error("MapLibre init error:", err);
+      queueMicrotask(() => setMapError(true));
       return;
     }
 
@@ -145,8 +132,9 @@ export function PropertyMap({
     map.on("zoomend", () => setShowSearchButton(true));
     map.on("load", () => setReady(true));
     map.on("error", (e) => {
+      // Errores de tiles individuales son comunes/recuperables — solo se
+      // loguean. El banner visible queda para la falla fatal (WebGL, etc.)
       console.error("MapLibre error:", e.error);
-      setMapError(e.error?.message ?? "Error desconocido cargando el mapa");
     });
 
     mapRef.current = map;
@@ -255,14 +243,8 @@ export function PropertyMap({
       )}
 
       {mapError && (
-        <div className="absolute bottom-2 left-2 right-2 rounded-md bg-destructive/90 text-white text-xs px-3 py-2 font-mono break-words">
-          Map error: {mapError}
-        </div>
-      )}
-
-      {diagnostic && (
-        <div className="absolute top-2 left-2 right-2 rounded-md bg-black/90 text-white text-[10px] px-3 py-2 font-mono break-words">
-          {diagnostic}
+        <div className="absolute inset-0 flex items-center justify-center bg-background text-sm text-muted-foreground text-center px-4">
+          {t("map.load_error")}
         </div>
       )}
     </div>

@@ -3,7 +3,8 @@
   "subtitle": "Gestiona las publicaciones de tus propiedades",
   "map": {
     "search_this_area": "Buscar en esta área",
-    "no_coordinates": "Ninguna de estas propiedades tiene ubicación registrada en el mapa"
+    "no_coordinates": "Ninguna de estas propiedades tiene ubicación registrada en el mapa",
+    "load_error": "No pudimos cargar el mapa"
   },
   "labels": {
     "listing_type": "Tipo de listado",
