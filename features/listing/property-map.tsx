@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { IconSearch } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { CITY_COORDINATES } from "@/lib/city-coordinates";
+import { CITY_LABELS, humanizeLocation } from "@/lib/locations";
 
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 const COLOMBIA_CENTER: [number, number] = [-74.08, 4.61];
@@ -89,48 +90,77 @@ interface PropertyMapProps {
   className?: string;
 }
 
+// El popup de MapLibre siempre tiene fondo blanco fijo (no sigue el tema del
+// sitio), así que acá los colores van hardcodeados — usar variables del tema
+// (que en modo oscuro dan texto blanco) dejaría el contenido invisible.
 function buildPopupContent(
   listing: ListingEntity,
   href: string,
 ): HTMLElement {
+  const { property } = listing;
+
   const wrapper = document.createElement("a");
   wrapper.href = href;
-  wrapper.style.display = "flex";
-  wrapper.style.flexDirection = "column";
-  wrapper.style.gap = "2px";
+  wrapper.style.display = "block";
   wrapper.style.textDecoration = "none";
-  wrapper.style.color = "inherit";
-  wrapper.style.minWidth = "160px";
+  wrapper.style.width = "200px";
+  wrapper.style.fontFamily = "inherit";
 
-  const image = listing.property.property_images?.[0]?.public_url;
+  const image = property.property_images?.[0]?.public_url;
   if (image) {
     const img = document.createElement("img");
     img.src = image;
-    img.alt = listing.property.title;
+    img.alt = property.title;
     img.style.width = "100%";
-    img.style.height = "100px";
+    img.style.height = "110px";
     img.style.objectFit = "cover";
     img.style.borderRadius = "8px";
-    img.style.marginBottom = "6px";
+    img.style.display = "block";
     wrapper.appendChild(img);
+  } else {
+    const placeholder = document.createElement("div");
+    placeholder.style.width = "100%";
+    placeholder.style.height = "110px";
+    placeholder.style.borderRadius = "8px";
+    placeholder.style.background = "#f1f5f9";
+    wrapper.appendChild(placeholder);
   }
 
-  const title = document.createElement("p");
-  title.textContent = listing.property.title;
-  title.style.fontWeight = "600";
-  title.style.fontSize = "13px";
-  title.style.margin = "0";
-  title.style.overflow = "hidden";
-  title.style.textOverflow = "ellipsis";
-  title.style.whiteSpace = "nowrap";
-  wrapper.appendChild(title);
+  const body = document.createElement("div");
+  body.style.padding = "8px 2px 2px";
 
-  const price = document.createElement("p");
-  price.textContent = `${listing.currency} ${listing.price.toLocaleString("es-ES")}`;
-  price.style.fontSize = "13px";
-  price.style.fontWeight = "700";
-  price.style.margin = "0";
-  wrapper.appendChild(price);
+  const title = document.createElement("p");
+  title.textContent = property.title;
+  title.style.cssText =
+    "font-weight:600;font-size:13px;line-height:1.3;margin:0 0 3px;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+  body.appendChild(title);
+
+  const cityLabel = property.city
+    ? (CITY_LABELS[property.city] ?? humanizeLocation(property.city))
+    : "";
+  if (cityLabel) {
+    const location = document.createElement("p");
+    location.textContent = cityLabel;
+    location.style.cssText = "font-size:11px;margin:0 0 8px;color:#64748b;";
+    body.appendChild(location);
+  }
+
+  const footer = document.createElement("div");
+  footer.style.cssText =
+    "display:flex;align-items:center;justify-content:space-between;gap:8px;";
+
+  const price = document.createElement("span");
+  price.textContent = formatPinPrice(listing.price, listing.currency);
+  price.style.cssText = "font-size:14px;font-weight:700;color:#13679e;";
+  footer.appendChild(price);
+
+  const cta = document.createElement("span");
+  cta.textContent = "Ver →";
+  cta.style.cssText = "font-size:11px;font-weight:600;color:#00b3b9;";
+  footer.appendChild(cta);
+
+  body.appendChild(footer);
+  wrapper.appendChild(body);
 
   return wrapper;
 }
