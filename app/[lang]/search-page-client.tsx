@@ -45,6 +45,7 @@ import { cn } from "@/lib/utils";
 interface SearchPageClientProps {
   filters: ListingSearchFiltersType;
   listings: ListingEntity[];
+  mapListings: ListingEntity[];
   total: number;
   totalPages: number;
   currentPage: number;
@@ -75,6 +76,7 @@ function FiltersContent({
 export function SearchPageClient({
   filters,
   listings,
+  mapListings,
   total,
   totalPages,
   currentPage,
@@ -327,7 +329,7 @@ export function SearchPageClient({
               >
                 <div className="sticky top-4 h-[70vh] xl:h-[calc(100vh-8rem)]">
                   <PropertyMap
-                    listings={listings}
+                    listings={mapListings}
                     onSearchThisArea={handleSearchThisArea}
                     className="h-full"
                   />

@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { IconSearch } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { CITY_COORDINATES } from "@/lib/city-coordinates";
+import { CITY_COORDINATES, STATE_COORDINATES } from "@/lib/city-coordinates";
 import { CITY_LABELS, humanizeLocation } from "@/lib/locations";
 
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
@@ -53,24 +53,29 @@ function hashOffset(id: string, salt: number): number {
 /**
  * Resuelve la posición a usar para un listing en el mapa:
  * 1. lat/lng propios de la propiedad, si son plausibles (dentro de Colombia).
- * 2. Centro aproximado de la ciudad (con jitter), si la propiedad no tiene
- *    coordenadas propias pero sí ciudad reconocida.
- * 3. null si no hay forma de ubicarlo.
+ * 2. Centro aproximado de la ciudad (con jitter), si es una de las
+ *    principales capitales.
+ * 3. Centro aproximado del departamento (con jitter), para el resto de los
+ *    ~1120 municipios que no están hardcodeados individualmente.
+ * 4. null si no hay forma de ubicarlo.
  */
 function resolveListingCoords(
   listing: ListingEntity,
 ): { lat: number; lng: number } | null {
-  const { latitude, longitude, city } = listing.property;
+  const { latitude, longitude, city, state } = listing.property;
 
   if (latitude !== null && longitude !== null && isPlausible(latitude, longitude)) {
     return { lat: latitude, lng: longitude };
   }
 
-  const cityCenter = city ? CITY_COORDINATES[city] : undefined;
-  if (cityCenter) {
+  const fallbackCenter =
+    (city ? CITY_COORDINATES[city] : undefined) ??
+    (state ? STATE_COORDINATES[state] : undefined);
+
+  if (fallbackCenter) {
     return {
-      lat: cityCenter.lat + hashOffset(listing.id, 1),
-      lng: cityCenter.lng + hashOffset(listing.id, 7),
+      lat: fallbackCenter.lat + hashOffset(listing.id, 1),
+      lng: fallbackCenter.lng + hashOffset(listing.id, 7),
     };
   }
 

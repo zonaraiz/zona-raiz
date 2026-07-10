@@ -12,7 +12,11 @@ import { AmenitiesType } from "@/domain/entities/property.enums";
 export async function getListings(
   filters: ListingSearchFiltersType,
   lang: Lang,
-): Promise<{ listings: ListingEntity[]; total: number }> {
+): Promise<{
+  listings: ListingEntity[];
+  total: number;
+  mapListings: ListingEntity[];
+}> {
   const cookieStore = await cookies();
   const { listingService } = await appModule(lang, { cookies: cookieStore });
 

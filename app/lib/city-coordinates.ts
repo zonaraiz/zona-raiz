@@ -32,3 +32,42 @@ export const CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
   leticia: { lat: -4.2153, lng: -69.9406 },
   san_jose_del_guaviare: { lat: 2.5709, lng: -72.6448 },
 };
+
+// Centro aproximado de cada departamento — segundo nivel de fallback para
+// ciudades/municipios que no están en CITY_COORDINATES (la mayoría de los
+// ~1120 municipios de Colombia no son capitales de departamento).
+export const STATE_COORDINATES: Record<string, { lat: number; lng: number }> = {
+  antioquia: { lat: 6.6, lng: -75.6 },
+  atlantico: { lat: 10.7, lng: -74.9 },
+  bogota_dc: { lat: 4.711, lng: -74.0721 },
+  bolivar: { lat: 9.0, lng: -74.4 },
+  boyaca: { lat: 5.6, lng: -73.2 },
+  caldas: { lat: 5.3, lng: -75.4 },
+  caqueta: { lat: 0.9, lng: -74.5 },
+  cauca: { lat: 2.5, lng: -76.9 },
+  cesar: { lat: 9.5, lng: -73.5 },
+  cordoba: { lat: 8.3, lng: -75.7 },
+  cundinamarca: { lat: 5.0, lng: -74.1 },
+  choco: { lat: 5.8, lng: -76.8 },
+  huila: { lat: 2.5, lng: -75.6 },
+  la_guajira: { lat: 11.4, lng: -72.4 },
+  magdalena: { lat: 10.2, lng: -74.2 },
+  meta: { lat: 3.5, lng: -73.2 },
+  nariño: { lat: 1.3, lng: -77.4 },
+  norte_de_santander: { lat: 8.0, lng: -72.9 },
+  quindio: { lat: 4.5, lng: -75.7 },
+  risaralda: { lat: 5.1, lng: -75.9 },
+  santander: { lat: 6.9, lng: -73.3 },
+  sucre: { lat: 9.1, lng: -75.3 },
+  tolima: { lat: 4.2, lng: -75.2 },
+  valle_del_cauca: { lat: 3.8, lng: -76.5 },
+  arauca: { lat: 6.9, lng: -70.9 },
+  casanare: { lat: 5.5, lng: -71.9 },
+  putumayo: { lat: 0.7, lng: -76.4 },
+  san_andres: { lat: 12.55, lng: -81.7 },
+  amazonas: { lat: -1.5, lng: -71.5 },
+  guainia: { lat: 3.0, lng: -68.8 },
+  guaviare: { lat: 2.1, lng: -72.5 },
+  vaupes: { lat: 0.5, lng: -70.5 },
+  vichada: { lat: 5.0, lng: -69.0 },
+};

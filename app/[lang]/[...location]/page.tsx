@@ -192,7 +192,7 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
   const parsed = parseLocation(location);
   const filters = parseSearchParams(sp, location);
 
-  const { listings, total } = await getListings(filters, lang);
+  const { listings, total, mapListings } = await getListings(filters, lang);
 
 // Auth + favorites
   let favoriteIds: string[] = [];
@@ -240,6 +240,7 @@ export default async function Page({ params, searchParams }: SearchPageProps) {
         lang={lang}
         filters={filters}
         listings={listings}
+        mapListings={mapListings}
         total={total}
         totalPages={totalPages}
         currentPage={currentPage}

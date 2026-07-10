@@ -30,6 +30,8 @@ export interface ListingSearchResult {
 }
 
 export class ListingService {
+  private static readonly MAP_LISTINGS_LIMIT = 200;
+
   constructor(
     private readonly listingPort: ListingPort,
     private lang: Lang = "es",
@@ -125,7 +127,11 @@ export class ListingService {
 
   async searchWithCount(
     filters: ListingSearchFilters,
-  ): Promise<{ listings: ListingEntity[]; total: number }> {
+  ): Promise<{
+    listings: ListingEntity[];
+    total: number;
+    mapListings: ListingEntity[];
+  }> {
     const page = filters.page || 1;
     const limit = filters.limit || 12;
     const from = (page - 1) * limit;
@@ -139,9 +145,15 @@ export class ListingService {
 
     const paginatedListings = allListings.slice(from, to + 1);
 
+    // El mapa necesita ver todos los resultados de la búsqueda, no solo la
+    // página actual — se limita para no mandar un payload gigante si la
+    // búsqueda no tiene filtros y trae miles de propiedades.
+    const mapListings = allListings.slice(0, ListingService.MAP_LISTINGS_LIMIT);
+
     return {
       listings: paginatedListings,
       total,
+      mapListings,
     };
   }
 
