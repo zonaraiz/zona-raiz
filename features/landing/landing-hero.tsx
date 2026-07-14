@@ -21,13 +21,17 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { IconSearch } from "@tabler/icons-react";
 import { CtaButton } from "./button-cta";
+import { ListingEntity } from "@/domain/entities/listing.entity";
 
 interface LandingHeroProps {
   cities?: LandingCity[];
   lang?: Lang;
+  listings?: ListingEntity[];
 }
 
-export function LandingHero({ lang = "es" }: LandingHeroProps) {
+const HERO_MOSAIC_SIZE = 6;
+
+export function LandingHero({ lang = "es", listings = [] }: LandingHeroProps) {
   const { t } = useTranslation("landing");
   const router = useRouter();
   const routes = useRoutes();
@@ -36,6 +40,21 @@ export function LandingHero({ lang = "es" }: LandingHeroProps) {
   const [propertyType, setPropertyType] = useState<PropertyType | null>(null);
   const [place, setPlace] = useState<ParsedPlace | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Mosaico de fotos reales de propiedades en vez de una foto de stock —
+  // si faltan fotos, repite las que hay; solo cae a la de stock si no hay
+  // ninguna disponible.
+  const propertyImages = listings
+    .map((listing) => listing.property.property_images?.[0]?.public_url)
+    .filter((url): url is string => Boolean(url));
+
+  const mosaicImages =
+    propertyImages.length > 0
+      ? Array.from(
+          { length: HERO_MOSAIC_SIZE },
+          (_, i) => propertyImages[i % propertyImages.length],
+        )
+      : null;
 
   const handleSearch = () => {
     setIsSearching(true);
@@ -55,16 +74,33 @@ export function LandingHero({ lang = "es" }: LandingHeroProps) {
     <section className="relative w-full min-h-screen pt-16 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        <Image
-          src="/images/hero.jpeg"
-          alt="Hero property"
-          fill
-          className="object-cover"
-          priority
-        />
+        {mosaicImages ? (
+          <div className="grid grid-cols-3 grid-rows-2 w-full h-full gap-0.5">
+            {mosaicImages.map((src, i) => (
+              <div key={i} className="relative w-full h-full">
+                <Image
+                  src={src}
+                  alt="Propiedad publicada en Zonaraíz"
+                  fill
+                  sizes="34vw"
+                  className="object-cover"
+                  priority={i < 3}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Image
+            src="/images/hero.jpeg"
+            alt="Hero property"
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
         {/* Overlay más oscuro en mobile para que el texto sea legible */}
-        <div className="absolute inset-0 bg-linear-to-r from-black/30 via-black/20 to-black/10 lg:from-black/5 lg:via-black/8 lg:to-black/0" />
-        <div className="absolute inset-0 bg-linear-to-t from-black/50 via-black/20 to-black/0 lg:from-black/8 lg:via-black/10 lg:to-black/0" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/50 via-black/35 to-black/25 lg:from-black/20 lg:via-black/25 lg:to-black/10" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/30 to-black/10 lg:from-black/20 lg:via-black/20 lg:to-black/5" />
       </div>
 
       {/* Content */}

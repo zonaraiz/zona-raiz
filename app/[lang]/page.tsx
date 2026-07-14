@@ -1,6 +1,7 @@
 import { Lang } from "@/i18n/settings";
 import { LandingNav } from "@/features/landing/landing-nav";
 import { LandingHero } from "@/features/landing/landing-hero";
+import { LandingPublishCta } from "@/features/landing/landing-publish-cta";
 import { LandingTrust } from "@/features/landing/landing-trust";
 import { LandingListings } from "@/features/landing/landing-listings";
 import { LandingCities } from "@/features/landing/landing-cities";
@@ -52,8 +53,9 @@ export default async function HomePage({ params }: HomePageProps) {
       <LandingNav isAuth={isAuth} role={role} profile={profile} />
       <main className="flex-1">
         <Suspense fallback={<HeroSkeleton />}>
-          <LandingHero lang={lang} />
+          <LandingHero lang={lang} listings={landingData.listings} />
         </Suspense>
+        <LandingPublishCta />
         <Suspense fallback={<TrustSectionSkeleton />}>
           <LandingTrust
             stats={landingData.stats}

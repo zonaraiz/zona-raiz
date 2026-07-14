@@ -11,6 +11,7 @@
     "terms": "Terms of Service",
     "faq": "FAQ",
     "login": "Login / Sign Up",
+    "publish_free": "Publish for free",
     "dashboard": "Dashboard",
     "cta": "Publish Property"
   },
@@ -50,6 +51,25 @@
       "commercial": "Local",
       "office": "Office",
       "state": "State"
+    }
+  },
+  "publish_cta": {
+    "badge": "100% free",
+    "title": "Publish your property in minutes",
+    "subtitle": "No cost, no hidden fees. Reach thousands of people looking to buy or rent across Colombia.",
+    "steps": {
+      "publish": {
+        "title": "Publish for free",
+        "description": "Upload your property's photos and details in minutes, at no cost."
+      },
+      "reach": {
+        "title": "Thousands will see it",
+        "description": "Your property becomes visible to active buyers and renters across Colombia."
+      },
+      "contact": {
+        "title": "Get contacted directly",
+        "description": "Receive WhatsApp messages straight from interested people, no middlemen."
+      }
     }
   },
   "trust": {

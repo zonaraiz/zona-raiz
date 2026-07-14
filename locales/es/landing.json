@@ -11,6 +11,7 @@
     "terms": "Términos de Servicio",
     "faq": "Preguntas Frecuentes",
     "login": "Iniciar sesión / Registrarse",
+    "publish_free": "Publicar gratis",
     "dashboard": "Dashboard",
     "cta": "Buscar Propiedades"
   },
@@ -50,6 +51,25 @@
       "commercial": "Local",
       "office": "Oficina",
       "state": "Finca"
+    }
+  },
+  "publish_cta": {
+    "badge": "100% gratis",
+    "title": "Publica tu propiedad en minutos",
+    "subtitle": "Sin costos, sin comisiones ocultas. Llega a miles de personas buscando comprar o arrendar en toda Colombia.",
+    "steps": {
+      "publish": {
+        "title": "Publica gratis",
+        "description": "Sube las fotos y los datos de tu propiedad en minutos, sin ningún costo."
+      },
+      "reach": {
+        "title": "Miles de personas la verán",
+        "description": "Tu propiedad queda visible para compradores y arrendatarios activos en toda Colombia."
+      },
+      "contact": {
+        "title": "Te contactan directo",
+        "description": "Recibe mensajes por WhatsApp directamente de los interesados, sin intermediarios."
+      }
     }
   },
   "trust": {

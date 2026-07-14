@@ -160,7 +160,7 @@ export function LandingNav({ isAuth, role, profile }: LandingNavProps) {
                 </div>
               ) : (
                 <AuthButton
-                  text={isAuth ? t("nav.dashboard") : t("nav.login")}
+                  text={isAuth ? t("nav.dashboard") : t("nav.publish_free")}
                   href={isAuth ? routes.dashboard() : routes.signin()}
                   className="hidden lg:flex"
                 />
