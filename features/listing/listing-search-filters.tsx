@@ -20,7 +20,6 @@ import {
 
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CardHeader } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
@@ -49,7 +48,7 @@ export function ListingSearchFilters({
   onFiltersChange,
   debounceMs = 300,
 }: ListingSearchFiltersProps) {
-  const { t, i18n } = useTranslation("listings");
+  const { t } = useTranslation("listings");
   // Namespace separado para traducciones de landing (hero.property_types.*)
   const { t: tLanding } = useTranslation("landing");
   const isExternalUpdate = useRef(false);
@@ -64,9 +63,8 @@ export function ListingSearchFilters({
     mode: "onChange",
   });
 
-  const { control, setValue, reset, watch, register } = form;
+  const { control, setValue, reset, register } = form;
   const values = useWatch({ control });
-  const priceRange = watch(["min_price", "max_price"]);
 
   // Determinar si es tipo terreno/lote
   const isLandType = values.type && LAND_TYPES.includes(values.type as PropertyType);
@@ -158,10 +156,11 @@ export function ListingSearchFilters({
             navigate={false}
             placeholder={t("common:words.search") || "Ciudad o barrio..."}
             onSelect={(place: ParsedPlace) => {
-              if (place.city) setValue("city", place.city);
-              if (place.state) setValue("state", place.state);
-              if (place.neighborhood)
-                setValue("neighborhood", place.neighborhood);
+              // Siempre pisar el valor (incluso a undefined) — así el botón
+              // "x" del buscador también limpia el filtro correctamente.
+              setValue("city", place.city || undefined);
+              setValue("state", place.state || undefined);
+              setValue("neighborhood", place.neighborhood || undefined);
             }}
           />
           {/* Mostrar chips de lo seleccionado */}
@@ -223,22 +222,17 @@ export function ListingSearchFilters({
           </span>
         }
       >
-        <div className="space-y-2">
-          <Slider
-            value={[values.min_price || 0, values.max_price || 10_000_000_000]}
-            onValueChange={([min, max]) => {
-              setValue("min_price", min);
-              setValue("max_price", max);
-            }}
-            max={10_000_000_000}
-            step={10_000_000}
+        <div className="grid grid-cols-2 gap-2">
+          <Form.Input
+            name="min_price"
+            type="currency"
+            placeholder={t("placeholders.min_price") || "Mínimo"}
           />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>${(priceRange[0] || 0).toLocaleString(i18n.language)}</span>
-            <span>
-              ${(priceRange[1] || 10_000_000_000).toLocaleString(i18n.language)}
-            </span>
-          </div>
+          <Form.Input
+            name="max_price"
+            type="currency"
+            placeholder={t("placeholders.max_price") || "Máximo"}
+          />
         </div>
       </Form.Set>
 

@@ -93,20 +93,19 @@ export function SearchPageClient({
   const [mobileView, setMobileView] = useState<"list" | "map">("list");
 
   const handleFiltersChange = (newFilters: ListingSearchFiltersType) => {
+    // newFilters ya es el snapshot completo del formulario de filtros (no un
+    // diff parcial), así que alcanza con pisar filters con él. Ojo: NO hacer
+    // `newFilters.city ?? filters.city` acá — eso deshace cualquier intento
+    // de borrar la ciudad/barrio, porque un valor limpiado (undefined) caía
+    // siempre de vuelta al valor anterior y quedabas pegado en esa ciudad.
     const locationChanged =
-      (newFilters.city !== undefined && newFilters.city !== filters.city) ||
-      (newFilters.state !== undefined && newFilters.state !== filters.state) ||
-      (newFilters.neighborhood !== undefined &&
-        newFilters.neighborhood !== filters.neighborhood);
+      newFilters.city !== filters.city ||
+      newFilters.state !== filters.state ||
+      newFilters.neighborhood !== filters.neighborhood;
 
     const mergedFilters: ListingSearchFiltersType = {
       ...filters,
       ...newFilters,
-      country: newFilters.country ?? filters.country,
-      state: newFilters.state ?? filters.state,
-      city: newFilters.city ?? filters.city,
-      neighborhood: newFilters.neighborhood ?? filters.neighborhood,
-      street: newFilters.street ?? filters.street,
       // Un cambio de ubicación invalida el recorte del mapa anterior
       bounds: locationChanged ? undefined : filters.bounds,
     };
