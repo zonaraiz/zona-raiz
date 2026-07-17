@@ -11,50 +11,46 @@ import { IconMapPin } from "@tabler/icons-react";
 const MAX_MAP_CITIES = 8;
 const MAX_LIST_CITIES = 7;
 
-// Bbox del país completo (con margen) — un recorte más ajustado al
-// corredor andino se veía irreconocible, como una tira sin forma. Con el
-// país completo la silueta (Guajira arriba, cola del Amazonas abajo) sí
-// se lee como "Colombia", aunque las burbujas queden concentradas en la
-// zona centro-occidental (donde de hecho vive casi toda la población).
-const PROJECTION_BOUNDS = { minLat: -4.5, maxLat: 12.7, minLng: -79, maxLng: -66.5 };
+// Bbox del país completo, calculado a partir del contorno real (con
+// margen). Un recorte al corredor andino se veía irreconocible, como
+// una tira sin forma — con el país completo (Guajira arriba, cola del
+// Amazonas abajo) sí se lee como "Colombia", aunque las burbujas queden
+// concentradas en la zona centro-occidental (donde vive casi toda la
+// población real).
+const PROJECTION_BOUNDS = { minLat: -4.6, maxLat: 12.7, minLng: -79.3, maxLng: -66.6 };
 
-// Silueta simplificada de la costa/frontera colombiana — no es
-// geográficamente exacta, solo lo bastante reconocible (península de
-// la Guajira, golfo de Urabá, costa Pacífica, cola del Amazonas hasta
-// Leticia, frontera oriental) para que el widget se lea como "mapa de
-// Colombia" y no como una forma genérica.
+// Contorno real del país: disuelto de los 33 departamentos (shapefile
+// de Maurix Suárez, vía github.com/john-guerra/43c7656821069d00dcbc)
+// con mapshaper (-dissolve -simplify 0.3%), quedándonos solo con el
+// anillo exterior del continente (se descartan las islas menores).
 const COLOMBIA_OUTLINE: [number, number][] = [
-  [12.4, -71.7],
-  [11.9, -72.9],
-  [11.2, -74.2],
-  [11.0, -74.8],
-  [10.4, -75.5],
-  [9.6, -75.7],
-  [9.3, -76.3],
-  [8.6, -76.9],
-  [8.0, -77.3],
-  [7.2, -77.5],
-  [6.0, -77.4],
-  [4.4, -77.5],
-  [3.0, -77.6],
-  [1.6, -78.8],
-  [1.4, -77.0],
-  [0.5, -75.2],
-  [-1.0, -74.0],
-  [-4.2, -70.0],
-  [-4.0, -69.4],
-  [-1.5, -69.6],
-  [1.0, -69.9],
-  [2.8, -67.9],
-  [4.0, -67.5],
-  [5.5, -67.9],
-  [6.2, -67.5],
-  [6.9, -68.0],
-  [7.0, -70.7],
-  [7.8, -72.4],
-  [8.3, -72.6],
-  [10.0, -72.7],
-  [11.0, -72.7],
+  [8.27, -77.0], [8.27, -77.02], [8.65, -77.39], [8.51, -77.47], [8.19, -77.28],
+  [7.89, -77.22], [7.52, -77.59], [7.47, -77.83], [7.25, -77.92], [6.87, -77.69],
+  [6.57, -77.35], [6.23, -77.5], [5.79, -77.28], [5.51, -77.48], [4.7, -77.35],
+  [4.19, -77.41], [3.82, -77.17], [3.25, -77.52], [2.85, -77.77], [2.66, -78.03],
+  [2.48, -78.61], [2.15, -78.71], [1.79, -78.62], [1.83, -78.92], [1.59, -79.06],
+  [1.27, -78.69], [0.81, -78.02], [0.84, -77.71], [0.35, -77.44], [0.36, -77.12],
+  [0.24, -76.9], [0.25, -76.45], [0.42, -76.34], [0.3, -76.04], [0.06, -75.85],
+  [-0.26, -74.77], [-0.59, -74.41], [-1.02, -74.29], [-1.29, -73.71], [-1.54, -73.52],
+  [-1.78, -73.55], [-1.95, -73.12], [-2.39, -73.11], [-2.5, -72.9], [-2.43, -72.65],
+  [-2.47, -72.17], [-2.17, -71.74], [-2.4, -71.39], [-2.28, -70.85], [-2.8, -70.08],
+  [-3.84, -70.71], [-3.86, -70.23], [-4.25, -69.95], [-3.11, -69.74], [-1.36, -69.41],
+  [-1.11, -69.44], [-0.78, -69.63], [-0.53, -69.63], [-0.15, -70.07], [0.49, -70.05],
+  [0.68, -69.49], [0.6, -69.22], [0.98, -69.24], [1.04, -69.85], [1.67, -69.86],
+  [1.69, -69.41], [1.65, -68.19], [1.68, -67.93], [2.07, -67.51], [1.96, -67.37],
+  [1.36, -67.1], [1.26, -66.88], [2.2, -67.24], [2.72, -67.6], [2.79, -67.86],
+  [3.27, -67.35], [3.71, -67.51], [3.86, -67.69], [3.97, -67.73], [4.55, -67.92],
+  [5.33, -67.85], [5.44, -67.68], [5.75, -67.64], [5.99, -67.46], [6.26, -67.59],
+  [6.28, -67.8], [6.17, -68.0], [6.1, -68.7], [6.18, -69.14], [6.07, -69.45],
+  [6.96, -70.14], [6.92, -70.36], [7.06, -70.7], [6.96, -71.04], [7.04, -71.79],
+  [6.95, -71.99], [7.02, -72.1], [7.38, -72.27], [7.48, -72.51], [8.33, -72.43],
+  [8.59, -72.69], [9.07, -72.81], [9.13, -73.02], [9.14, -73.38], [9.75, -73.03],
+  [10.25, -72.94], [10.41, -72.83], [11.08, -72.5], [11.14, -72.25], [11.65, -71.98],
+  [11.79, -71.42], [12.04, -71.2], [12.3, -71.31], [12.42, -71.62], [12.21, -72.21],
+  [11.88, -72.3], [11.69, -72.76], [11.26, -73.37], [11.25, -73.61], [11.33, -74.09],
+  [10.97, -74.32], [11.07, -74.85], [10.78, -75.26], [10.56, -75.52], [10.08, -75.58],
+  [9.39, -75.69], [9.42, -75.82], [9.35, -76.07], [8.88, -76.45], [8.63, -76.89],
+  [8.36, -76.77], [8.27, -77.0],
 ];
 
 function clamp(value: number, min: number, max: number): number {
@@ -99,7 +95,7 @@ export function LandingCityMap({ cities }: LandingCityMapProps) {
       {/* aspect-ratio calcado de PROJECTION_BOUNDS (lngRange/latRange) para
           que la silueta no se estire — si esto no coincide con el bbox,
           el mapa se ve como una tira angosta en vez de Colombia. */}
-      <div className="relative w-full lg:w-2/3 aspect-[125/172] lg:self-start">
+      <div className="relative w-full lg:w-2/3 aspect-[127/173] lg:self-start">
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="0 0 100 100"
