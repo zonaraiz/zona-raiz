@@ -11,40 +11,50 @@ import { IconMapPin } from "@tabler/icons-react";
 const MAX_MAP_CITIES = 8;
 const MAX_LIST_CITIES = 7;
 
-// Recorte del corredor andino/caribe donde vive la gran mayoría de los
-// listings — un bbox de todo el país (incluida la Amazonía) dejaría las
-// burbujas apretadas en una esquina. No es una proyección cartográfica
-// real, solo un mapeo lineal lat/lng -> % pensado para verse bien acá.
-const PROJECTION_BOUNDS = { minLat: 1, maxLat: 11.5, minLng: -77.5, maxLng: -71.5 };
+// Bbox del país completo (con margen) — un recorte más ajustado al
+// corredor andino se veía irreconocible, como una tira sin forma. Con el
+// país completo la silueta (Guajira arriba, cola del Amazonas abajo) sí
+// se lee como "Colombia", aunque las burbujas queden concentradas en la
+// zona centro-occidental (donde de hecho vive casi toda la población).
+const PROJECTION_BOUNDS = { minLat: -4.5, maxLat: 12.7, minLng: -79, maxLng: -66.5 };
 
-// Silueta simplificada de la costa/frontera colombiana recortada a
-// PROJECTION_BOUNDS — no es geográficamente exacta, solo lo bastante
-// reconocible (golfo de Urabá, costa Caribe, frontera oriental) para que
-// el widget se lea como "mapa de Colombia" y no como puntos flotando.
+// Silueta simplificada de la costa/frontera colombiana — no es
+// geográficamente exacta, solo lo bastante reconocible (península de
+// la Guajira, golfo de Urabá, costa Pacífica, cola del Amazonas hasta
+// Leticia, frontera oriental) para que el widget se lea como "mapa de
+// Colombia" y no como una forma genérica.
 const COLOMBIA_OUTLINE: [number, number][] = [
-  [8.6, -77.3],
-  [8.9, -76.8],
-  [9.3, -76.2],
-  [9.9, -75.9],
-  [10.4, -75.5],
-  [10.6, -75.0],
+  [12.4, -71.7],
+  [11.9, -72.9],
+  [11.2, -74.2],
   [11.0, -74.8],
-  [11.2, -74.3],
-  [11.5, -73.8],
-  [11.5, -72.8],
-  [11.3, -72.5],
-  [10.5, -72.8],
-  [9.5, -72.9],
-  [8.2, -72.5],
-  [7.0, -71.6],
-  [4.0, -71.5],
-  [1.0, -71.5],
-  [1.0, -75.0],
-  [1.3, -77.3],
-  [1.5, -77.5],
-  [3.9, -77.5],
-  [5.5, -77.4],
-  [6.8, -77.3],
+  [10.4, -75.5],
+  [9.6, -75.7],
+  [9.3, -76.3],
+  [8.6, -76.9],
+  [8.0, -77.3],
+  [7.2, -77.5],
+  [6.0, -77.4],
+  [4.4, -77.5],
+  [3.0, -77.6],
+  [1.6, -78.8],
+  [1.4, -77.0],
+  [0.5, -75.2],
+  [-1.0, -74.0],
+  [-4.2, -70.0],
+  [-4.0, -69.4],
+  [-1.5, -69.6],
+  [1.0, -69.9],
+  [2.8, -67.9],
+  [4.0, -67.5],
+  [5.5, -67.9],
+  [6.2, -67.5],
+  [6.9, -68.0],
+  [7.0, -70.7],
+  [7.8, -72.4],
+  [8.3, -72.6],
+  [10.0, -72.7],
+  [11.0, -72.7],
 ];
 
 function clamp(value: number, min: number, max: number): number {
@@ -89,7 +99,7 @@ export function LandingCityMap({ cities }: LandingCityMapProps) {
       {/* aspect-ratio calcado de PROJECTION_BOUNDS (lngRange/latRange) para
           que la silueta no se estire — si esto no coincide con el bbox,
           el mapa se ve como una tira angosta en vez de Colombia. */}
-      <div className="relative w-full lg:w-3/5 aspect-[6/10.5] lg:self-start">
+      <div className="relative w-full lg:w-3/5 aspect-[125/172] lg:self-start">
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="0 0 100 100"
