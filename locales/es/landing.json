@@ -19,9 +19,26 @@
     "title_1": "Compra",
     "title_2": "Arrienda",
     "title_3": "Vende Propiedades",
-    "badge": "Propiedades en Colombia",
+    "title_line1": "Encuentra, arrienda o vende inmuebles",
+    "title_highlight": "en Colombia",
+    "badge": "Tu próximo hogar está aquí",
     "subtitle": "Encuentra el hogar de tus sueños entre miles de propiedades disponibles.",
+    "subtitle_v2": "Miles de propiedades verificadas en todo el país. Fácil, rápido y 100% seguro.",
     "see_all": "Ver todas las propiedades",
+    "stats": {
+      "listings": {
+        "title": "Inmuebles publicados",
+        "caption": "Nuevos cada día"
+      },
+      "coverage": {
+        "title": "Cobertura nacional",
+        "caption": "En todas las ciudades de Colombia"
+      },
+      "security": {
+        "title": "Transacciones seguras",
+        "caption": "Tu tranquilidad es nuestra prioridad"
+      }
+    },
     "explore": "Explorar Propiedades",
     "search_title": "Encuentra tu Mejor",
     "search_subtitle": "Propiedad ideal!",

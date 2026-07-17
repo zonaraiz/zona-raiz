@@ -19,19 +19,19 @@ import { ListingType } from "@/domain/entities/listing.enums";
 import { PROPERTY_TYPES, LISTING_TYPES } from "@/config/listing-selectors";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { IconSearch } from "@tabler/icons-react";
+import { IconSearch, IconHome, IconMapPin, IconShieldCheck } from "@tabler/icons-react";
 import { CtaButton } from "./button-cta";
 import { ListingEntity } from "@/domain/entities/listing.entity";
+import { LandingStats } from "@/domain/types/landing.types";
 
 interface LandingHeroProps {
   cities?: LandingCity[];
   lang?: Lang;
   listings?: ListingEntity[];
+  stats?: LandingStats;
 }
 
-const HERO_MOSAIC_SIZE = 6;
-
-export function LandingHero({ lang = "es", listings = [] }: LandingHeroProps) {
+export function LandingHero({ lang = "es", listings = [], stats }: LandingHeroProps) {
   const { t } = useTranslation("landing");
   const router = useRouter();
   const routes = useRoutes();
@@ -41,20 +41,31 @@ export function LandingHero({ lang = "es", listings = [] }: LandingHeroProps) {
   const [place, setPlace] = useState<ParsedPlace | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Mosaico de fotos reales de propiedades en vez de una foto de stock —
-  // si faltan fotos, repite las que hay; solo cae a la de stock si no hay
-  // ninguna disponible.
-  const propertyImages = listings
-    .map((listing) => listing.property.property_images?.[0]?.public_url)
-    .filter((url): url is string => Boolean(url));
+  // Una sola foto real de propiedad de fondo (no un mosaico) para que el
+  // hero se sienta como la marca: oscuro, con acento teal, no un collage.
+  const heroImage =
+    listings
+      .map((listing) => listing.property.property_images?.[0]?.public_url)
+      .find((url): url is string => Boolean(url)) ?? "/images/hero.jpeg";
 
-  const mosaicImages =
-    propertyImages.length > 0
-      ? Array.from(
-          { length: HERO_MOSAIC_SIZE },
-          (_, i) => propertyImages[i % propertyImages.length],
-        )
-      : null;
+  const trustStats = [
+    {
+      icon: IconHome,
+      value: stats ? `+${new Intl.NumberFormat("es-CO").format(stats.totalListings)}` : undefined,
+      title: t("hero.stats.listings.title"),
+      caption: t("hero.stats.listings.caption"),
+    },
+    {
+      icon: IconMapPin,
+      title: t("hero.stats.coverage.title"),
+      caption: t("hero.stats.coverage.caption"),
+    },
+    {
+      icon: IconShieldCheck,
+      title: t("hero.stats.security.title"),
+      caption: t("hero.stats.security.caption"),
+    },
+  ];
 
   const handleSearch = () => {
     setIsSearching(true);
@@ -73,34 +84,17 @@ export function LandingHero({ lang = "es", listings = [] }: LandingHeroProps) {
   return (
     <section className="relative w-full min-h-screen pt-16 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0">
-        {mosaicImages ? (
-          <div className="grid grid-cols-3 grid-rows-2 w-full h-full gap-0.5">
-            {mosaicImages.map((src, i) => (
-              <div key={i} className="relative w-full h-full">
-                <Image
-                  src={src}
-                  alt="Propiedad publicada en Zonaraíz"
-                  fill
-                  sizes="34vw"
-                  className="object-cover"
-                  priority={i < 3}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <Image
-            src="/images/hero.jpeg"
-            alt="Hero property"
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
-        {/* Overlay más oscuro en mobile para que el texto sea legible */}
-        <div className="absolute inset-0 bg-linear-to-r from-black/50 via-black/35 to-black/25 lg:from-black/20 lg:via-black/25 lg:to-black/10" />
-        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/30 to-black/10 lg:from-black/20 lg:via-black/20 lg:to-black/5" />
+      <div className="absolute inset-0 bg-[#040a18]">
+        <Image
+          src={heroImage}
+          alt="Propiedad publicada en Zonaraíz"
+          fill
+          className="object-cover opacity-60"
+          priority
+        />
+        {/* Overlay navy de marca para que el hero se sienta oscuro/premium, no un collage de fotos */}
+        <div className="absolute inset-0 bg-linear-to-r from-[#040a18]/95 via-[#040a18]/70 to-[#040a18]/50 lg:via-[#040a18]/55 lg:to-[#040a18]/30" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#040a18]/90 via-[#040a18]/20 to-transparent" />
       </div>
 
       {/* Content */}
@@ -124,16 +118,47 @@ export function LandingHero({ lang = "es", listings = [] }: LandingHeroProps) {
               animation: "fadeSlideUp 0.7s ease 0.1s both",
             }}
           >
-            {t("hero.title_1")},<br />
-            {t("hero.title_2")},<br />& {t("hero.title_3")}
+            {t("hero.title_line1")}
+            <br />
+            <span className="bg-linear-to-r from-[#00d6be] to-[#008bba] bg-clip-text text-transparent">
+              {t("hero.title_highlight")}
+            </span>
           </h1>
 
           <p
-            className="text-white text-base sm:text-xl font-semibold max-w-sm leading-relaxed"
+            className="text-white/80 text-base sm:text-xl font-semibold max-w-sm leading-relaxed"
             style={{ animation: "fadeSlideUp 0.7s ease 0.2s both" }}
           >
-            {t("hero.subtitle")}
+            {t("hero.subtitle_v2")}
           </p>
+        </div>
+
+        {/* Tarjetas de confianza */}
+        <div
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl"
+          style={{ animation: "fadeSlideUp 0.75s ease 0.15s both" }}
+        >
+          {trustStats.map(({ icon: Icon, value, title, caption }, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-sm px-4 py-3"
+            >
+              <span className="shrink-0 size-9 rounded-xl bg-[#00d6be]/15 text-[#00d6be] flex items-center justify-center">
+                <Icon className="size-5" />
+              </span>
+              <div className="min-w-0">
+                {value && (
+                  <p className="text-white font-bold leading-tight">{value}</p>
+                )}
+                <p className="text-white text-sm font-semibold leading-tight">
+                  {title}
+                </p>
+                <p className="text-white/60 text-xs leading-tight mt-0.5">
+                  {caption}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Search bar — siempre en apariencia clara, sin importar el tema del sitio */}

@@ -19,8 +19,25 @@
     "title_1": "Buy",
     "title_2": "Rent",
     "title_3": "Sell Property",
-    "badge": "Properties in Colombia",
+    "title_line1": "Find, rent, or sell property",
+    "title_highlight": "in Colombia",
+    "badge": "Your next home is here",
     "subtitle": "Find your dream home among thousands of available properties.",
+    "subtitle_v2": "Thousands of verified properties across the country. Easy, fast, and 100% secure.",
+    "stats": {
+      "listings": {
+        "title": "Listed properties",
+        "caption": "New ones every day"
+      },
+      "coverage": {
+        "title": "Nationwide coverage",
+        "caption": "In every city in Colombia"
+      },
+      "security": {
+        "title": "Secure transactions",
+        "caption": "Your peace of mind is our priority"
+      }
+    },
     "see_all": "View all properties",
     "explore": "Explore Properties",
     "search_title": "Find Your Perfect",

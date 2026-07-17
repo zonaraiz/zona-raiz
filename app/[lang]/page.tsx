@@ -53,7 +53,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <LandingNav isAuth={isAuth} role={role} profile={profile} />
       <main className="flex-1">
         <Suspense fallback={<HeroSkeleton />}>
-          <LandingHero lang={lang} listings={landingData.listings} />
+          <LandingHero lang={lang} listings={landingData.listings} stats={landingData.stats} />
         </Suspense>
         <LandingPublishCta />
         <Suspense fallback={<TrustSectionSkeleton />}>
