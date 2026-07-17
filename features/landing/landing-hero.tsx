@@ -243,9 +243,9 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
             </div>
           </div>
 
-          {/* Columna derecha: mapa de ciudades, a toda la altura de la columna izquierda */}
+          {/* Columna derecha: mapa de ciudades — alineado arriba, alto propio (aspect-ratio) */}
           {cities.length > 0 && (
-            <div className="w-full h-64 lg:h-auto">
+            <div className="w-full lg:self-start">
               <LandingCityMap cities={cities} />
             </div>
           )}

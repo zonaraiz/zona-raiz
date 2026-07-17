@@ -85,8 +85,11 @@ export function LandingCityMap({ cities }: LandingCityMapProps) {
   };
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#040a18] shadow-2xl h-full flex flex-col lg:flex-row">
-      <div className="relative w-full lg:w-3/5 h-full min-h-40">
+    <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#040a18] shadow-2xl flex flex-col lg:flex-row">
+      {/* aspect-ratio calcado de PROJECTION_BOUNDS (lngRange/latRange) para
+          que la silueta no se estire — si esto no coincide con el bbox,
+          el mapa se ve como una tira angosta en vez de Colombia. */}
+      <div className="relative w-full lg:w-3/5 aspect-[6/10.5] lg:self-start">
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="0 0 100 100"
