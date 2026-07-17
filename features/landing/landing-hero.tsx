@@ -100,7 +100,7 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 min-h-[calc(100vh-64px)] flex flex-col justify-center py-6 lg:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 lg:gap-8 lg:items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-6 lg:gap-8 lg:items-stretch">
           {/* Columna izquierda: texto, tarjetas de confianza, buscador */}
           <div className="flex flex-col gap-4 lg:gap-5 min-w-0">
             {/* Texto hero */}

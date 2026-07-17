@@ -99,7 +99,7 @@ export function LandingCityMap({ cities }: LandingCityMapProps) {
       {/* aspect-ratio calcado de PROJECTION_BOUNDS (lngRange/latRange) para
           que la silueta no se estire — si esto no coincide con el bbox,
           el mapa se ve como una tira angosta en vez de Colombia. */}
-      <div className="relative w-full lg:w-3/5 aspect-[125/172] lg:self-start">
+      <div className="relative w-full lg:w-2/3 aspect-[125/172] lg:self-start">
         <svg
           className="absolute inset-0 w-full h-full"
           viewBox="0 0 100 100"
@@ -151,7 +151,7 @@ export function LandingCityMap({ cities }: LandingCityMapProps) {
         </button>
       </div>
 
-      <div className="w-full lg:w-2/5 p-3 flex flex-col overflow-hidden">
+      <div className="w-full lg:w-1/3 p-3 flex flex-col overflow-hidden">
         <p className="text-white/60 text-xs font-semibold uppercase tracking-wide mb-1.5">
           {t("hero.map.by_city")}
         </p>
