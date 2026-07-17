@@ -9,7 +9,7 @@ import { CITY_COORDINATES } from "@/lib/city-coordinates";
 import { IconMapPin } from "@tabler/icons-react";
 
 const MAX_MAP_CITIES = 8;
-const MAX_LIST_CITIES = 5;
+const MAX_LIST_CITIES = 7;
 
 // Recorte del corredor andino/caribe donde vive la gran mayoría de los
 // listings — un bbox de todo el país (incluida la Amazonía) dejaría las

@@ -99,150 +99,153 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 min-h-[calc(100vh-64px)] flex flex-col justify-center lg:justify-start gap-4 lg:gap-5 py-6 lg:py-8">
-        {/* Texto hero */}
-        <div
-          className="max-w-xl"
-          style={{ animation: "fadeSlideUp 0.6s ease both" }}
-        >
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-3 lg:mb-4">
-            <span className="size-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-white/90 text-xs font-medium tracking-wide">
-              {t("hero.badge")}
-            </span>
-          </div>
-
-          <h1
-            className="text-white font-bold leading-none mb-2 lg:mb-3"
-            style={{
-              fontSize: "clamp(1.6rem, 4.2vw, 3.1rem)",
-              animation: "fadeSlideUp 0.7s ease 0.1s both",
-            }}
-          >
-            {t("hero.title_line1")}
-            <br />
-            <span className="bg-linear-to-r from-[#00d6be] to-[#008bba] bg-clip-text text-transparent">
-              {t("hero.title_highlight")}
-            </span>
-          </h1>
-
-          <p
-            className="text-white/80 text-base sm:text-xl font-semibold max-w-sm leading-relaxed"
-            style={{ animation: "fadeSlideUp 0.7s ease 0.2s both" }}
-          >
-            {t("hero.subtitle_v2")}
-          </p>
-        </div>
-
-        {/* Tarjetas de confianza */}
-        <div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl"
-          style={{ animation: "fadeSlideUp 0.75s ease 0.15s both" }}
-        >
-          {trustStats.map(({ icon: Icon, value, title, caption }, i) => (
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 min-h-[calc(100vh-64px)] flex flex-col justify-center py-6 lg:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 lg:gap-8 lg:items-stretch">
+          {/* Columna izquierda: texto, tarjetas de confianza, buscador */}
+          <div className="flex flex-col gap-4 lg:gap-5 min-w-0">
+            {/* Texto hero */}
             <div
-              key={i}
-              className="flex items-start gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-sm px-3.5 py-2.5"
+              className="max-w-xl"
+              style={{ animation: "fadeSlideUp 0.6s ease both" }}
             >
-              <span className="shrink-0 size-9 rounded-xl bg-[#00d6be]/15 text-[#00d6be] flex items-center justify-center">
-                <Icon className="size-5" />
-              </span>
-              <div className="min-w-0">
-                {value && (
-                  <p className="text-white font-bold leading-tight">{value}</p>
-                )}
-                <p className="text-white text-sm font-semibold leading-tight">
-                  {title}
-                </p>
-                <p className="text-white/60 text-xs leading-tight mt-0.5">
-                  {caption}
-                </p>
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-3 lg:mb-4">
+                <span className="size-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-white/90 text-xs font-medium tracking-wide">
+                  {t("hero.badge")}
+                </span>
               </div>
-            </div>
-          ))}
-        </div>
 
-        {/* Search bar + mapa de ciudades */}
-        <div
-          className="flex flex-col lg:flex-row gap-6 items-stretch w-full max-w-5xl"
-          style={{ animation: "fadeSlideUp 0.8s ease 0.2s both" }}
-        >
-          {/* Search bar — siempre en apariencia clara, sin importar el tema del sitio */}
-          <div className="theme-light w-full lg:flex-1">
-            <div className="rounded-2xl overflow-hidden shadow-2xl">
-              {/* Listing type tabs */}
-              <div className="flex bg-black/30 backdrop-blur-sm p-1.5 gap-1">
-                {LISTING_TYPES.map((lt) => (
-                  <button
-                    key={lt.value}
-                    type="button"
-                    onClick={() => setListingType(lt.value)}
-                    className={cn(
-                      "flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-200",
-                      listingType === lt.value
-                        ? "bg-white text-foreground shadow-sm"
-                        : "text-white/80 hover:text-white",
+              <h1
+                className="text-white font-bold leading-none mb-2 lg:mb-3"
+                style={{
+                  fontSize: "clamp(1.6rem, 4.2vw, 3.1rem)",
+                  animation: "fadeSlideUp 0.7s ease 0.1s both",
+                }}
+              >
+                {t("hero.title_line1")}
+                <br />
+                <span className="bg-linear-to-r from-[#00d6be] to-[#008bba] bg-clip-text text-transparent">
+                  {t("hero.title_highlight")}
+                </span>
+              </h1>
+
+              <p
+                className="text-white/80 text-base sm:text-xl font-semibold max-w-sm leading-relaxed"
+                style={{ animation: "fadeSlideUp 0.7s ease 0.2s both" }}
+              >
+                {t("hero.subtitle_v2")}
+              </p>
+            </div>
+
+            {/* Tarjetas de confianza */}
+            <div
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+              style={{ animation: "fadeSlideUp 0.75s ease 0.15s both" }}
+            >
+              {trustStats.map(({ icon: Icon, value, title, caption }, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-sm px-3.5 py-2.5"
+                >
+                  <span className="shrink-0 size-9 rounded-xl bg-[#00d6be]/15 text-[#00d6be] flex items-center justify-center">
+                    <Icon className="size-5" />
+                  </span>
+                  <div className="min-w-0">
+                    {value && (
+                      <p className="text-white font-bold leading-tight">{value}</p>
                     )}
-                  >
-                    {t(lt.label)}
-                  </button>
-                ))}
-              </div>
-
-              {/* Search row */}
-              <div className="bg-white flex flex-col sm:flex-row items-stretch gap-2 p-2">
-                <Select
-                  value={propertyType ?? undefined}
-                  onValueChange={(value) => setPropertyType(value as PropertyType)}
-                >
-                  <SelectTrigger className="sm:w-44 border-0 shadow-none focus-visible:ring-0">
-                    <SelectValue placeholder={t("hero.property_placeholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PROPERTY_TYPES.map(({ value, label }) => (
-                      <SelectItem key={value} value={value}>
-                        {t(label)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <div className="hidden sm:block w-px bg-border" />
-
-                <PlaceSearch
-                  lang={lang}
-                  navigate={false}
-                  placeholder={t("hero.location_placeholder")}
-                  onSelect={(p) => setPlace(p)}
-                  className="flex-1"
-                  commandClassName="border-0 shadow-none rounded-none"
-                />
-
-                <button
-                  type="button"
-                  onClick={handleSearch}
-                  disabled={isSearching}
-                  aria-label={t("hero.search_btn")}
-                  className="shrink-0 self-center sm:self-auto size-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center transition-colors disabled:opacity-50"
-                >
-                  {isSearching ? (
-                    <span className="size-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
-                  ) : (
-                    <IconSearch className="size-5" />
-                  )}
-                </button>
-              </div>
+                    <p className="text-white text-sm font-semibold leading-tight">
+                      {title}
+                    </p>
+                    <p className="text-white/60 text-xs leading-tight mt-0.5">
+                      {caption}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <CtaButton
-              href={routes.search()}
-              className="w-full sm:w-auto justify-center mt-4"
-              text={t("hero.see_all")}
-            />
+            {/* Search bar — siempre en apariencia clara, sin importar el tema del sitio */}
+            <div
+              className="theme-light w-full"
+              style={{ animation: "fadeSlideUp 0.8s ease 0.2s both" }}
+            >
+              <div className="rounded-2xl overflow-hidden shadow-2xl">
+                {/* Listing type tabs */}
+                <div className="flex bg-black/30 backdrop-blur-sm p-1.5 gap-1">
+                  {LISTING_TYPES.map((lt) => (
+                    <button
+                      key={lt.value}
+                      type="button"
+                      onClick={() => setListingType(lt.value)}
+                      className={cn(
+                        "flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-200",
+                        listingType === lt.value
+                          ? "bg-white text-foreground shadow-sm"
+                          : "text-white/80 hover:text-white",
+                      )}
+                    >
+                      {t(lt.label)}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Search row */}
+                <div className="bg-white flex flex-col sm:flex-row items-stretch gap-2 p-2">
+                  <Select
+                    value={propertyType ?? undefined}
+                    onValueChange={(value) => setPropertyType(value as PropertyType)}
+                  >
+                    <SelectTrigger className="sm:w-44 border-0 shadow-none focus-visible:ring-0">
+                      <SelectValue placeholder={t("hero.property_placeholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROPERTY_TYPES.map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>
+                          {t(label)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <div className="hidden sm:block w-px bg-border" />
+
+                  <PlaceSearch
+                    lang={lang}
+                    navigate={false}
+                    placeholder={t("hero.location_placeholder")}
+                    onSelect={(p) => setPlace(p)}
+                    className="flex-1"
+                    commandClassName="border-0 shadow-none rounded-none"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={handleSearch}
+                    disabled={isSearching}
+                    aria-label={t("hero.search_btn")}
+                    className="shrink-0 self-center sm:self-auto size-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center transition-colors disabled:opacity-50"
+                  >
+                    {isSearching ? (
+                      <span className="size-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
+                    ) : (
+                      <IconSearch className="size-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <CtaButton
+                href={routes.search()}
+                className="w-full sm:w-auto justify-center mt-4"
+                text={t("hero.see_all")}
+              />
+            </div>
           </div>
 
+          {/* Columna derecha: mapa de ciudades, a toda la altura de la columna izquierda */}
           {cities.length > 0 && (
-            <div className="w-full lg:w-[380px] shrink-0 h-64 lg:h-auto">
+            <div className="w-full h-64 lg:h-auto">
               <LandingCityMap cities={cities} />
             </div>
           )}
