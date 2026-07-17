@@ -99,7 +99,7 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 min-h-[calc(100vh-64px)] flex flex-col justify-center gap-5 lg:gap-6 py-8 lg:py-10">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 min-h-[calc(100vh-64px)] flex flex-col justify-center lg:justify-start gap-4 lg:gap-5 py-6 lg:py-8">
         {/* Texto hero */}
         <div
           className="max-w-xl"
@@ -113,9 +113,9 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
           </div>
 
           <h1
-            className="text-white font-bold leading-none mb-3 lg:mb-4"
+            className="text-white font-bold leading-none mb-2 lg:mb-3"
             style={{
-              fontSize: "clamp(1.75rem, 5vw, 3.75rem)",
+              fontSize: "clamp(1.6rem, 4.2vw, 3.1rem)",
               animation: "fadeSlideUp 0.7s ease 0.1s both",
             }}
           >
@@ -242,7 +242,7 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
           </div>
 
           {cities.length > 0 && (
-            <div className="w-full lg:w-[380px] shrink-0 h-72 lg:h-auto">
+            <div className="w-full lg:w-[380px] shrink-0 h-64 lg:h-auto">
               <LandingCityMap cities={cities} />
             </div>
           )}
