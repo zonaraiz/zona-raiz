@@ -38,6 +38,11 @@
         "caption": "Your peace of mind is our priority"
       }
     },
+    "map": {
+      "by_city": "Properties by city",
+      "view_on_map": "View properties on map",
+      "load_error": "Couldn't load the map"
+    },
     "see_all": "View all properties",
     "explore": "Explore Properties",
     "search_title": "Find Your Perfect",
@@ -99,9 +104,27 @@
     "logos_label": "Thousands of owners"
   },
   "listings": {
-    "title": "Popular Listings",
+    "title": "Featured properties",
     "subtitle": "Explore the best properties for rent, buy, and mortgage.",
-    "explore": "Explore all"
+    "explore": "View all"
+  },
+  "value_props": {
+    "free": {
+      "title": "100% free",
+      "caption": "List your property with no hidden costs"
+    },
+    "fast": {
+      "title": "Easy and fast",
+      "caption": "Publish in under 3 minutes"
+    },
+    "visibility": {
+      "title": "More visibility",
+      "caption": "We reach thousands of interested buyers"
+    },
+    "support": {
+      "title": "Personalized support",
+      "caption": "We guide you through the whole process"
+    }
   },
   "cities": {
     "title": "Popular Cities",

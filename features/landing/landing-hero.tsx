@@ -23,6 +23,7 @@ import { IconSearch, IconHome, IconMapPin, IconShieldCheck } from "@tabler/icons
 import { CtaButton } from "./button-cta";
 import { ListingEntity } from "@/domain/entities/listing.entity";
 import { LandingStats } from "@/domain/types/landing.types";
+import { LandingCityMap } from "./landing-city-map";
 
 interface LandingHeroProps {
   cities?: LandingCity[];
@@ -31,7 +32,7 @@ interface LandingHeroProps {
   stats?: LandingStats;
 }
 
-export function LandingHero({ lang = "es", listings = [], stats }: LandingHeroProps) {
+export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: LandingHeroProps) {
   const { t } = useTranslation("landing");
   const router = useRouter();
   const routes = useRoutes();
@@ -161,81 +162,90 @@ export function LandingHero({ lang = "es", listings = [], stats }: LandingHeroPr
           ))}
         </div>
 
-        {/* Search bar — siempre en apariencia clara, sin importar el tema del sitio */}
+        {/* Search bar + mapa de ciudades */}
         <div
-          className="theme-light w-full max-w-3xl"
+          className="flex flex-col lg:flex-row gap-6 items-stretch w-full max-w-5xl"
           style={{ animation: "fadeSlideUp 0.8s ease 0.2s both" }}
         >
-          <div className="rounded-2xl overflow-hidden shadow-2xl">
-            {/* Listing type tabs */}
-            <div className="flex bg-black/30 backdrop-blur-sm p-1.5 gap-1">
-              {LISTING_TYPES.map((lt) => (
-                <button
-                  key={lt.value}
-                  type="button"
-                  onClick={() => setListingType(lt.value)}
-                  className={cn(
-                    "flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-200",
-                    listingType === lt.value
-                      ? "bg-white text-foreground shadow-sm"
-                      : "text-white/80 hover:text-white",
-                  )}
+          {/* Search bar — siempre en apariencia clara, sin importar el tema del sitio */}
+          <div className="theme-light w-full lg:flex-1">
+            <div className="rounded-2xl overflow-hidden shadow-2xl">
+              {/* Listing type tabs */}
+              <div className="flex bg-black/30 backdrop-blur-sm p-1.5 gap-1">
+                {LISTING_TYPES.map((lt) => (
+                  <button
+                    key={lt.value}
+                    type="button"
+                    onClick={() => setListingType(lt.value)}
+                    className={cn(
+                      "flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-200",
+                      listingType === lt.value
+                        ? "bg-white text-foreground shadow-sm"
+                        : "text-white/80 hover:text-white",
+                    )}
+                  >
+                    {t(lt.label)}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search row */}
+              <div className="bg-white flex flex-col sm:flex-row items-stretch gap-2 p-2">
+                <Select
+                  value={propertyType ?? undefined}
+                  onValueChange={(value) => setPropertyType(value as PropertyType)}
                 >
-                  {t(lt.label)}
+                  <SelectTrigger className="sm:w-44 border-0 shadow-none focus-visible:ring-0">
+                    <SelectValue placeholder={t("hero.property_placeholder")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROPERTY_TYPES.map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>
+                        {t(label)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <div className="hidden sm:block w-px bg-border" />
+
+                <PlaceSearch
+                  lang={lang}
+                  navigate={false}
+                  placeholder={t("hero.location_placeholder")}
+                  onSelect={(p) => setPlace(p)}
+                  className="flex-1"
+                  commandClassName="border-0 shadow-none rounded-none"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleSearch}
+                  disabled={isSearching}
+                  aria-label={t("hero.search_btn")}
+                  className="shrink-0 self-center sm:self-auto size-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center transition-colors disabled:opacity-50"
+                >
+                  {isSearching ? (
+                    <span className="size-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
+                  ) : (
+                    <IconSearch className="size-5" />
+                  )}
                 </button>
-              ))}
+              </div>
             </div>
 
-            {/* Search row */}
-            <div className="bg-white flex flex-col sm:flex-row items-stretch gap-2 p-2">
-              <Select
-                value={propertyType ?? undefined}
-                onValueChange={(value) => setPropertyType(value as PropertyType)}
-              >
-                <SelectTrigger className="sm:w-44 border-0 shadow-none focus-visible:ring-0">
-                  <SelectValue placeholder={t("hero.property_placeholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {PROPERTY_TYPES.map(({ value, label }) => (
-                    <SelectItem key={value} value={value}>
-                      {t(label)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <div className="hidden sm:block w-px bg-border" />
-
-              <PlaceSearch
-                lang={lang}
-                navigate={false}
-                placeholder={t("hero.location_placeholder")}
-                onSelect={(p) => setPlace(p)}
-                className="flex-1"
-                commandClassName="border-0 shadow-none rounded-none"
-              />
-
-              <button
-                type="button"
-                onClick={handleSearch}
-                disabled={isSearching}
-                aria-label={t("hero.search_btn")}
-                className="shrink-0 self-center sm:self-auto size-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center transition-colors disabled:opacity-50"
-              >
-                {isSearching ? (
-                  <span className="size-4 border-2 border-primary-foreground/40 border-t-primary-foreground rounded-full animate-spin" />
-                ) : (
-                  <IconSearch className="size-5" />
-                )}
-              </button>
-            </div>
+            <CtaButton
+              href={routes.search()}
+              className="w-full sm:w-auto justify-center mt-4"
+              text={t("hero.see_all")}
+            />
           </div>
 
-          <CtaButton
-            href={routes.search()}
-            className="w-full sm:w-auto justify-center mt-4"
-            text={t("hero.see_all")}
-          />
+          {cities.length > 0 && (
+            <div className="w-full lg:w-[380px] shrink-0 min-h-72 lg:min-h-0">
+              <LandingCityMap cities={cities} />
+            </div>
+          )}
         </div>
       </div>
 

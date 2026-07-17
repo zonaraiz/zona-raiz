@@ -39,6 +39,11 @@
         "caption": "Tu tranquilidad es nuestra prioridad"
       }
     },
+    "map": {
+      "by_city": "Inmuebles por ciudad",
+      "view_on_map": "Ver inmuebles en el mapa",
+      "load_error": "No se pudo cargar el mapa"
+    },
     "explore": "Explorar Propiedades",
     "search_title": "Encuentra tu Mejor",
     "search_subtitle": "Propiedad ideal!",
@@ -99,9 +104,27 @@
     "logos_label": "Miles de propietarios"
   },
   "listings": {
-    "title": "Listados Populares",
+    "title": "Inmuebles destacados",
     "subtitle": "Explora las mejores propiedades para arrendar, comprar e hipotecar.",
-    "explore": "Explorar todo"
+    "explore": "Ver todos"
+  },
+  "value_props": {
+    "free": {
+      "title": "100% gratis",
+      "caption": "Publica tu inmueble sin costos ocultos"
+    },
+    "fast": {
+      "title": "Fácil y rápido",
+      "caption": "Publica en menos de 3 minutos"
+    },
+    "visibility": {
+      "title": "Mayor visibilidad",
+      "caption": "Llegamos a miles de interesados"
+    },
+    "support": {
+      "title": "Atención personalizada",
+      "caption": "Te acompañamos en todo el proceso"
+    }
   },
   "cities": {
     "title": "Ciudades Populares",

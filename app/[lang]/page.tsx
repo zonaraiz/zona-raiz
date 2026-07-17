@@ -4,6 +4,7 @@ import { LandingHero } from "@/features/landing/landing-hero";
 import { LandingPublishCta } from "@/features/landing/landing-publish-cta";
 import { LandingTrust } from "@/features/landing/landing-trust";
 import { LandingListings } from "@/features/landing/landing-listings";
+import { LandingValueProps } from "@/features/landing/landing-value-props";
 import { LandingCities } from "@/features/landing/landing-cities";
 import { LandingFooter } from "@/features/landing/landing-footer";
 import { getLandingData } from "@/application/actions/landing.actions";
@@ -53,19 +54,25 @@ export default async function HomePage({ params }: HomePageProps) {
       <LandingNav isAuth={isAuth} role={role} profile={profile} />
       <main className="flex-1">
         <Suspense fallback={<HeroSkeleton />}>
-          <LandingHero lang={lang} listings={landingData.listings} stats={landingData.stats} />
-        </Suspense>
-        <LandingPublishCta />
-        <Suspense fallback={<TrustSectionSkeleton />}>
-          <LandingTrust
+          <LandingHero
+            lang={lang}
+            listings={landingData.listings}
             stats={landingData.stats}
-            agentAvatars={landingData.agents}
+            cities={landingData.cities}
           />
         </Suspense>
         <Suspense fallback={<ListingsSectionSkeleton />}>
           <LandingListings
             favoriteIds={favoriteIds}
             listings={landingData.listings}
+          />
+        </Suspense>
+        <LandingValueProps />
+        <LandingPublishCta />
+        <Suspense fallback={<TrustSectionSkeleton />}>
+          <LandingTrust
+            stats={landingData.stats}
+            agentAvatars={landingData.agents}
           />
         </Suspense>
         <Suspense fallback={<CitiesSectionSkeleton />}>
