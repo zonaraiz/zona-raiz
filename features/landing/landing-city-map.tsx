@@ -1,8 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
 import { useTranslation } from "react-i18next";
 import { useRouter, useParams } from "next/navigation";
 import { buildSearchUrl } from "@/i18n/client-router";
@@ -11,10 +8,25 @@ import { LandingCity } from "@/domain/types/landing.types";
 import { CITY_COORDINATES } from "@/lib/city-coordinates";
 import { IconMapPin } from "@tabler/icons-react";
 
-const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
-const COLOMBIA_CENTER: [number, number] = [-74.3, 4.3];
 const MAX_MAP_CITIES = 8;
 const MAX_LIST_CITIES = 7;
+
+// Recorte del corredor andino/caribe donde vive la gran mayoría de los
+// listings — un bbox de todo el país (incluida la Amazonía) dejaría las
+// burbujas apretadas en una esquina. No es una proyección cartográfica
+// real, solo un mapeo lineal lat/lng -> % pensado para verse bien acá.
+const PROJECTION_BOUNDS = { minLat: 1, maxLat: 11.5, minLng: -77.5, maxLng: -71.5 };
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function project(lat: number, lng: number) {
+  const { minLat, maxLat, minLng, maxLng } = PROJECTION_BOUNDS;
+  const left = ((lng - minLng) / (maxLng - minLng)) * 100;
+  const top = ((maxLat - lat) / (maxLat - minLat)) * 100;
+  return { left: clamp(left, 6, 94), top: clamp(top, 8, 92) };
+}
 
 interface LandingCityMapProps {
   cities: LandingCity[];
@@ -25,11 +37,6 @@ export function LandingCityMap({ cities }: LandingCityMapProps) {
   const router = useRouter();
   const params = useParams();
   const lang: Lang = params.lang === "en" ? "en" : "es";
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<maplibregl.Marker[]>([]);
-  const [mapError, setMapError] = useState(false);
 
   const ranked = [...cities].sort((a, b) => b.count - a.count);
   const withCoords = ranked
@@ -42,99 +49,50 @@ export function LandingCityMap({ cities }: LandingCityMapProps) {
     router.push(buildSearchUrl({ lang, city: slug }));
   };
 
-  useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
-
-    let map: maplibregl.Map;
-    try {
-      map = new maplibregl.Map({
-        container: containerRef.current,
-        style: MAP_STYLE,
-        center: COLOMBIA_CENTER,
-        zoom: 4.6,
-        attributionControl: false,
-        interactive: true,
-      });
-    } catch (err) {
-      console.error("MapLibre init error:", err);
-      queueMicrotask(() => setMapError(true));
-      return;
-    }
-
-    map.addControl(
-      new maplibregl.NavigationControl({ showCompass: false }),
-      "bottom-right",
-    );
-    map.scrollZoom.disable();
-
-    mapRef.current = map;
-
-    return () => {
-      map.remove();
-      mapRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    const addMarkers = () => {
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = [];
-
-      withCoords.forEach((city) => {
-        const coords = CITY_COORDINATES[city.slug];
-        if (!coords) return;
-
-        const size = 32 + Math.round((city.count / maxCount) * 40);
-
-        const el = document.createElement("div");
-        el.style.width = `${size}px`;
-        el.style.height = `${size}px`;
-        el.style.borderRadius = "9999px";
-        el.style.background = "#00d6be";
-        el.style.color = "#040a18";
-        el.style.display = "flex";
-        el.style.alignItems = "center";
-        el.style.justifyContent = "center";
-        el.style.fontWeight = "700";
-        el.style.fontSize = size > 50 ? "14px" : "12px";
-        el.style.boxShadow = "0 0 0 4px rgba(0,214,190,0.2)";
-        el.style.cursor = "pointer";
-        el.textContent = String(city.count);
-        el.title = city.name;
-        el.addEventListener("click", () => goToCity(city.slug));
-
-        const marker = new maplibregl.Marker({ element: el, anchor: "center" })
-          .setLngLat([coords.lng, coords.lat])
-          .addTo(map);
-
-        markersRef.current.push(marker);
-      });
-    };
-
-    if (map.isStyleLoaded()) {
-      addMarkers();
-    } else {
-      map.once("load", addMarkers);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cities]);
-
   return (
     <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#040a18] shadow-2xl h-full flex flex-col lg:flex-row">
-      <div className="relative w-full lg:w-3/5 h-64 lg:h-auto min-h-64">
+      <div
+        className="relative w-full lg:w-3/5 h-56 lg:h-auto"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 30% 25%, rgba(0,214,190,0.14), transparent 60%), radial-gradient(circle at 80% 75%, rgba(0,139,186,0.12), transparent 55%)",
+        }}
+      >
         <div
-          ref={containerRef}
-          className="absolute inset-0"
-          style={{ filter: "invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.9)" }}
+          className="absolute inset-0 opacity-[0.12]"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(255,255,255,0.6) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+          }}
         />
-        {mapError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#040a18] text-sm text-white/60 text-center px-4">
-            {t("hero.map.load_error")}
-          </div>
-        )}
+
+        {withCoords.map((city) => {
+          const coords = CITY_COORDINATES[city.slug];
+          if (!coords) return null;
+          const pos = project(coords.lat, coords.lng);
+          const size = 28 + Math.round((city.count / maxCount) * 34);
+
+          return (
+            <button
+              key={city.slug}
+              type="button"
+              onClick={() => goToCity(city.slug)}
+              title={city.name}
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00d6be] text-[#040a18] font-bold flex items-center justify-center shadow-[0_0_0_4px_rgba(0,214,190,0.18)] hover:scale-105 transition-transform cursor-pointer"
+              style={{
+                left: `${pos.left}%`,
+                top: `${pos.top}%`,
+                width: size,
+                height: size,
+                fontSize: size > 46 ? 13 : 11,
+              }}
+            >
+              {city.count}
+            </button>
+          );
+        })}
+
         <button
           type="button"
           onClick={() => router.push(buildSearchUrl({ lang }))}

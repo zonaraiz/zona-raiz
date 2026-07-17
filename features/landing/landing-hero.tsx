@@ -99,13 +99,13 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 min-h-[calc(100vh-64px)] flex flex-col justify-center gap-10 py-16">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 min-h-[calc(100vh-64px)] flex flex-col justify-center gap-5 lg:gap-6 py-8 lg:py-10">
         {/* Texto hero */}
         <div
           className="max-w-xl"
           style={{ animation: "fadeSlideUp 0.6s ease both" }}
         >
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-4 lg:mb-6">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-3 lg:mb-4">
             <span className="size-2 rounded-full bg-primary animate-pulse" />
             <span className="text-white/90 text-xs font-medium tracking-wide">
               {t("hero.badge")}
@@ -113,9 +113,9 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
           </div>
 
           <h1
-            className="text-white font-bold leading-none mb-4 lg:mb-6"
+            className="text-white font-bold leading-none mb-3 lg:mb-4"
             style={{
-              fontSize: "clamp(2rem, 6vw, 4.5rem)",
+              fontSize: "clamp(1.75rem, 5vw, 3.75rem)",
               animation: "fadeSlideUp 0.7s ease 0.1s both",
             }}
           >
@@ -142,7 +142,7 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
           {trustStats.map(({ icon: Icon, value, title, caption }, i) => (
             <div
               key={i}
-              className="flex items-start gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-sm px-4 py-3"
+              className="flex items-start gap-3 rounded-2xl border border-white/15 bg-white/5 backdrop-blur-sm px-3.5 py-2.5"
             >
               <span className="shrink-0 size-9 rounded-xl bg-[#00d6be]/15 text-[#00d6be] flex items-center justify-center">
                 <Icon className="size-5" />
@@ -242,7 +242,7 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
           </div>
 
           {cities.length > 0 && (
-            <div className="w-full lg:w-[380px] shrink-0 min-h-72 lg:min-h-0">
+            <div className="w-full lg:w-[380px] shrink-0 h-72 lg:h-auto">
               <LandingCityMap cities={cities} />
             </div>
           )}
