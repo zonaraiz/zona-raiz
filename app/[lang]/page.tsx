@@ -56,7 +56,6 @@ export default async function HomePage({ params }: HomePageProps) {
         <Suspense fallback={<HeroSkeleton />}>
           <LandingHero
             lang={lang}
-            listings={landingData.listings}
             stats={landingData.stats}
             cities={landingData.cities}
           />

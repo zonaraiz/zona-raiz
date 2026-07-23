@@ -21,18 +21,20 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { IconSearch, IconHome, IconMapPin, IconShieldCheck } from "@tabler/icons-react";
 import { CtaButton } from "./button-cta";
-import { ListingEntity } from "@/domain/entities/listing.entity";
 import { LandingStats } from "@/domain/types/landing.types";
 import { LandingCityMap } from "./landing-city-map";
 
 interface LandingHeroProps {
   cities?: LandingCity[];
   lang?: Lang;
-  listings?: ListingEntity[];
   stats?: LandingStats;
 }
 
-export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: LandingHeroProps) {
+// Foto curada por el cliente para el fondo del hero — se prefiere sobre
+// fotos de listings reales porque esas varían mucho en calidad/encuadre.
+const HERO_IMAGE = "/images/hero-living-room.jpg";
+
+export function LandingHero({ lang = "es", stats, cities = [] }: LandingHeroProps) {
   const { t } = useTranslation("landing");
   const router = useRouter();
   const routes = useRoutes();
@@ -41,13 +43,6 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
   const [propertyType, setPropertyType] = useState<PropertyType | null>(null);
   const [place, setPlace] = useState<ParsedPlace | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-
-  // Una sola foto real de propiedad de fondo (no un mosaico) para que el
-  // hero se sienta como la marca: oscuro, con acento teal, no un collage.
-  const heroImage =
-    listings
-      .map((listing) => listing.property.property_images?.[0]?.public_url)
-      .find((url): url is string => Boolean(url)) ?? "/images/hero.jpeg";
 
   const trustStats = [
     {
@@ -87,7 +82,7 @@ export function LandingHero({ lang = "es", listings = [], stats, cities = [] }: 
       {/* Background */}
       <div className="absolute inset-0 bg-[#040a18]">
         <Image
-          src={heroImage}
+          src={HERO_IMAGE}
           alt="Propiedad publicada en Zonaraíz"
           fill
           className="object-cover opacity-60"
