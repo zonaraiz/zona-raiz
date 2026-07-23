@@ -46,7 +46,7 @@ function CityCard({
       }}
     >
       <div
-        className={`overflow-hidden rounded-3xl border border-white/80 bg-white shadow-md transition-all duration-300 ${
+        className={`overflow-hidden rounded-3xl border border-border bg-card shadow-md transition-all duration-300 ${
           hovered
             ? "scale-[1.03] shadow-xl ring-2 ring-primary/30"
             : "group-hover:shadow-lg group-hover:-translate-y-1"
@@ -62,10 +62,10 @@ function CityCard({
           className="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="px-4 py-4">
-          <p className="text-[18px] font-bold text-neutral-800 leading-tight">
+          <p className="text-[18px] font-bold text-card-foreground leading-tight">
             {city.name}
           </p>
-          <p className="text-[12px] text-neutral-400 mt-1">
+          <p className="text-[12px] text-muted-foreground mt-1">
             {city.count} {t("cities.listings")}
           </p>
         </div>
@@ -84,7 +84,7 @@ export function LandingCities({ cities }: LandingCitiesProps) {
   const { ref: headerRef, inView: headerInView } = useInView();
 
   return (
-    <section className="py-16 bg-neutral-50">
+    <section className="py-16 bg-background">
       <div className="max-w-6xl mx-auto px-6">
         <div
           ref={headerRef}
@@ -97,22 +97,18 @@ export function LandingCities({ cities }: LandingCitiesProps) {
         >
           <div>
             <h2
-              className="text-neutral-900"
-              style={{
-                fontFamily: "'Fraunces', serif",
-                fontSize: "clamp(24px, 3vw, 32px)",
-                fontWeight: 400,
-              }}
+              className="font-bold text-foreground"
+              style={{ fontSize: "clamp(24px, 3vw, 32px)" }}
             >
               {t("cities.title")}
             </h2>
-            <p className="text-[13px] text-neutral-400 mt-1">
+            <p className="text-[13px] text-muted-foreground mt-1">
               {t("cities.subtitle")}
             </p>
           </div>
           <Button
             variant="outline"
-            className="rounded-full border-neutral-200 text-neutral-700 hover:bg-white text-[13px] font-semibold px-5 h-9 transition-all duration-200 hover:scale-105 cursor-pointer"
+            className="rounded-full text-[13px] font-semibold px-5 h-9 transition-all duration-200 hover:scale-105 cursor-pointer"
             onClick={() => router.push(routes.search())}
           >
             {t("cities.explore")} →
