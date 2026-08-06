@@ -179,7 +179,7 @@ export default function PropertyCarouselGallery({
       </Carousel>
 
       <Dialog open={isFullscreenOpen} onOpenChange={setIsFullscreenOpen}>
-        <DialogContent className="h-[100dvh] max-h-[100dvh] w-[100vw] max-w-[100vw] border-0 bg-black/95 p-0 sm:rounded-none">
+        <DialogContent className="top-0 left-0 right-0 bottom-0 translate-x-0 translate-y-0 h-[100dvh] max-h-[100dvh] w-[100vw] max-w-[100vw] border-0 bg-black/95 p-0 sm:rounded-none">
           <DialogTitle className="sr-only">
             {t("detail.gallery.title")}
           </DialogTitle>
